@@ -25,4 +25,6 @@ xset r rate 200 50
 setxkbmap -option ctrl:nocaps
 xrandr --dpi 220
 
+urxvtd -q -f -o
+
 export PATH="$HOME/.cargo/bin:$PATH"
