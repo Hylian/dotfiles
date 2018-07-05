@@ -8,3 +8,5 @@
     XF86AudioLowerVolume
 "pactl set-sink-mute @DEFAULT_SINK@ toggle"
     XF86AudioMute
+"scrot -e 'mv $f ~/screenshots/'"
+    Shift + Print

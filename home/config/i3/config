@@ -13,11 +13,11 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+#font pango:monospace 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Mono 8
 
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
@@ -30,9 +30,10 @@ font pango:monospace 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec "kitty -d /home/eshin/fw-bison"
+bindsym $mod+p exec "kitty --session /home/eshin/.config/kitty/flash.kittysession"
 
-bindsym $mod+q exec "qutebrowser --backend webengine"
+bindsym $mod+q exec "qutebrowser"
 
 # kill focused window
 bindsym $mod+d kill
@@ -82,6 +83,28 @@ bindsym $mod+a focus parent
 # focus the child container
 bindsym $mod+z focus child
 
+# assign workspaces to screens
+workspace 1 output eDP1
+workspace 2 output eDP1
+workspace 3 output eDP1
+workspace 4 output DP2-2
+workspace 5 output DP2-2
+workspace 6 output DP2-1
+workspace 7 output DP2-1
+workspace 8 output DP2-1
+workspace 9 output DP2-1
+workspace 10 output DP2-1
+
+# switch to output
+bindsym $mod+bracketright focus output eDP1
+bindsym $mod+bracketleft focus output DP2-1
+bindsym $mod+shift+bracketright focus output DP2-1
+bindsym $mod+shift+bracketleft focus output eDP1
+
+bindsym $mod+u focus output eDP1
+bindsym $mod+i focus output DP2-2
+bindsym $mod+o focus output DP2-1
+
 # switch to workspace
 bindsym $mod+1 workspace 1
 bindsym $mod+2 workspace 2
@@ -96,6 +119,8 @@ bindsym $mod+0 workspace 10
 
 bindsym $mod+Left workspace prev
 bindsym $mod+Right workspace next
+
+bindsym $mod+Tab workspace back_and_forth
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
@@ -150,6 +175,8 @@ bar {
 }
 
 exec_always --no-startup-id xbindkeys -f $HOME/.xbindkeysrc
+exec_always --no-startup-id dockd --set docked
+exec_always --no-startup-id dockd --daemon
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id nm-applet
-exec_always --no-startup-id feh --bg-scale ~/wallpaper.png
+exec_always --no-startup-id xscreensaver

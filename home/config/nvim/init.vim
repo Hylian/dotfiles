@@ -6,10 +6,15 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 "Plug 'roxma/nvim-completion-manager'
 Plug 'bfredl/nvim-miniyank'
 Plug 'tpope/vim-fugitive'
-Plug '~/.fzf'
+Plug 'brooth/far.vim'
+"Plug '/usr/share/vim/vimfiles/plugin/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 call plug#end()
 
-set t_Co=256
+
+set t_Co=256 
 set laststatus=2
 set noshowmode
 
@@ -38,6 +43,8 @@ set smarttab
 set softtabstop=2
 
 set mouse=a
+
+set clipboard=unnamedplus
  
 set ruler	
 highlight LineNr ctermfg=blue
@@ -59,20 +66,24 @@ if has("autocmd")
                   \| exe "normal! g'\"" | endif
 endif
 
+let g:python3_host_prog = '/usr/bin/python3.6'
+
 let g:loaded_gentags#ctags = 0
-let g:loaded_gentags#gtags = 1
+let g:loaded_gentags#gtags = 0
 let g:gen_tags#gtags_auto_gen = 1
 let g:gen_tags#ctags_auto_gen = 1
-let g:gen_tags#ctags_opts = '--langmap=c:.c.h --languages=c'
+let g:gen_tags#ctags_opts = '--langmap=C:.c.h --languages=C'
 let g:gen_tags#use_cache_dir = 0
 let g:gen_tags#ctags_prune = 0
 let g:gen_tags#blacklist = ['$HOME']
-let g:gen_tags#verbose = 1
+let g:gen_tags#verbose = 0
 
 let g:deoplete#enable_at_startup = 0
 autocmd InsertEnter * call deoplete#enable()
 
-nmap <bar> :FZF<CR>
+nmap _ :GFiles<CR>
+nmap <bar> :Tags<CR>
+nmap ' :BTags<CR>
 
 nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
 nmap <C-[>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
@@ -83,7 +94,7 @@ nmap <C-[>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-[>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <C-[>d :cs find d <C-R>=expand("<cword>")<CR><CR>	
 
-map p <Plug>(miniyank-startput)
+map p <Plug>(miniyank-startput) 
 map P <Plug>(miniyank-startPut)
 map <C-n> <Plug>(miniyank-cycle)
 map <C-c> <Plug>(miniyank-tochar)

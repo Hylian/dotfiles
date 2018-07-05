@@ -1,6 +1,6 @@
     ! Merge with xrdb -merge ~/.Xresources
     
-    URxvt.font:      xft:Input Mono:pixelsize=16
+    URxvt.font:      xft:Input Mono:pixelsize=14
 
     URxvt.scrollBar:        false
     ! URxvt.borderLess:       true
@@ -13,11 +13,11 @@
     URxvt.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&amp;@#-]*[\\w/-]
     URxvt.url-launcher: /usr/local/bin/qutebrowser
 
-    URxvt.keysym.Control-v: perl:keyboard-select:activate
-    URxvt.keysym.Control-s: perl:keyboard-select:search
-    URxvt.keysym.Control-Shift-c: eval:selection_to_clipboard
-    URxvt.keysym.Control-Shift-v: eval:paste_clipboard
-    URxvt.keysym.Control-b: matcher:last
+    URxvt.keysym.M-v: perl:keyboard-select:activate
+    URxvt.keysym.M-s: perl:keyboard-select:search
+    URxvt.keysym.C-C: eval:selection_to_clipboard
+    URxvt.keysym.C-V: eval:paste_clipboard
+    URxvt.keysym.M-b: matcher:last
 
     URxvt.iso14755:    false
     URxvt.iso14755_52: false
@@ -43,3 +43,8 @@
     URxvt.cursorColor: #d0d0d0
     URxvt.cursorColor2: #3a3a3a
     URxvt.colorBD: #e4e4e4
+    Xcursor.size: 16
+    Xft.dpi: 96
+    Xft.antialias: 1
+    rxvt.print-pipe: "cat > /dev/null"
+    urxvt.print-pipe: "cat > /dev/null"

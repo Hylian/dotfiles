@@ -1,0 +1,18 @@
+alias vim='nvim'
+alias gc='git checkout'
+alias gcm='git commit -m'
+alias gs='git status'
+alias gl='git log --pretty --oneline --graph'
+alias gri='git rebase -i'
+alias grid='git rebase -i develop'
+alias gsu='git submodule update --init --recursive'
+alias gp='git pull'
+alias gb='git checkout -b'
+
+h2d(){
+  echo "ibase=16; $@"|bc
+}
+d2h(){
+  echo "obase=16; $@"|bc
+}
+
