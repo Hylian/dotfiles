@@ -1,0 +1,22 @@
+alias vim='nvim'
+alias gc='git checkout'
+alias gcm='git commit -m'
+alias gs='git status'
+alias gl='git log --pretty --oneline --graph'
+alias gri='git rebase -i'
+alias grid='git rebase -i develop'
+alias grih='git rebase -i HEAD~2'
+alias gsu='git submodule update --init --recursive'
+alias gp='git pull'
+alias gb='git checkout -b'
+alias ea='exa'
+alias ra='ranger'
+alias hdmion='xrandr --output HDMI1 --right-of eDP1 --auto'
+alias hdmioff='xrandr --output HDMI1 --off'
+
+h2d(){
+  echo "ibase=16; $@"|bc
+}
+d2h(){
+  echo "obase=16; $@"|bc
+}
