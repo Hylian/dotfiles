@@ -2,18 +2,24 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'jsfaint/gen_tags.vim'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 "Plug 'roxma/nvim-completion-manager'
 Plug 'bfredl/nvim-miniyank'
 Plug 'tpope/vim-fugitive'
 Plug 'brooth/far.vim'
 "Plug '/usr/share/vim/vimfiles/plugin/fzf.vim'
+"Plug 'autozimu/LanguageClient-neovim', {
+    "\ 'branch': 'next',
+    "\ 'do': 'bash install.sh',
+    "\ }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'pbogut/fzf-mru.vim'
 Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'chriskempson/base16-vim'
 Plug 'airblade/vim-gitgutter'
 "Plug 'zxqfl/tabnine-vim'
+Plug 'szw/vim-maximizer'
 call plug#end()
 
 
@@ -105,7 +111,9 @@ let g:deoplete#enable_at_startup = 1
 
 nmap _ :GFiles<CR>
 nmap <bar> :Tags<CR>
-nmap ' :BTags<CR>
+"nmap <C-S-\> :BTags<CR>
+"nmap ' :Hist<CR>
+nmap ' :FZFMru<CR>
 
 nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
 nmap <C-[>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
@@ -122,3 +130,28 @@ map <C-n> <Plug>(miniyank-cycle)
 map <C-c> <Plug>(miniyank-tochar)
 map <C-l> <Plug>(miniyank-toline)
 map <C-b> <Plug>(miniyank-toblock)
+
+" Split settings
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+set splitbelow
+set splitright
+nnoremap m :MaximizerToggle<CR>
+
+let g:LanguageClient_serverCommands = {
+    \ 'cpp': ['cquery', '--log-file=/tmp/cq.log'],
+    \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
+    \ }
+
+let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+let g:LanguageClient_settingsPath = '/home/eshin/.config/nvim/settings.json'
+set completefunc=LanguageClient#complete
+set formatexpr=LanguageClient_textDocument_rangeFormatting()
+
+nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
+nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>

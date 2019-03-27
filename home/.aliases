@@ -1,11 +1,17 @@
 alias vim='nvim'
+alias coa='conda activate Bison'
+alias cod='conda deactivate'
+alias ibc='inv build -c'
+alias ijl='inv jlink'
+alias ijf='inv jflash'
+alias is='inv serial'
 alias gc='git checkout'
 alias gcm='git commit -m'
 alias gs='git status'
 alias gl='git log --pretty --oneline --graph'
 alias gri='git rebase -i'
 alias grid='git rebase -i develop'
-alias grih='git rebase -i HEAD~2'
+alias gsquash='git rebase -i HEAD~2'
 alias gsu='git submodule update --init --recursive'
 alias gp='git pull'
 alias gb='git checkout -b'
@@ -13,10 +19,16 @@ alias ea='exa'
 alias ra='ranger'
 alias hdmion='xrandr --output HDMI1 --right-of eDP1 --auto'
 alias hdmioff='xrandr --output HDMI1 --off'
+alias nw='(kitty &) &> /dev/null'
 
 h2d(){
   echo "ibase=16; $@"|bc
 }
+
 d2h(){
   echo "obase=16; $@"|bc
+}
+
+function zoom () {
+  command zoom "zoommtg://zoom.us/join?confno=$1" &
 }

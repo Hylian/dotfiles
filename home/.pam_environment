@@ -1,0 +1,6 @@
+SSH_AUTH_SOCK DEFAULT=${XDG_RUNTIME_DIR}/ssh-agent.socket
+XDG_CONFIG_HOME=/home/eshin/.config
+XDG_CACHE_HOME=/home/eshin/.cache
+XDG_DATA_HOME=/home/eshin/.local/share
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_CONFIG_DIRS=/etc/xdg

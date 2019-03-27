@@ -1,0 +1,413 @@
+;=====================================================
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/jaagr/polybar
+;
+;   The README contains alot of information
+;
+;=====================================================
+
+[colors]
+background = #222
+background-alt = #444
+foreground = #dfdfdf
+foreground-alt = #555
+primary = #ffb52a
+secondary = #e60053
+blue = #1793d0
+alert = #bd2c40
+a = #288de0
+b = #2795C5
+c = #259CAA
+d = #259CAA
+e = #88BF93
+f = #EBE17B
+g = #F9C530
+h = #F2D356
+i = #F3912A
+j = #EC5D24
+k = #f93b31
+
+[bar/bar1]
+monitor = ${env:MONITOR:}
+width = 100%
+height = 24
+;offset-x = 1%
+;offset-y = 80%
+radius = 0.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 2
+line-color = #f00
+
+border-size = 0
+border-color = #00000000
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = fixed:pixelsize=10;1
+;font-1 = Unifont:style=Sans-Serif:fontformat=truetype:size=8:antialias=false;0
+font-1 = Unifont:style=Sans-Serif
+font-2 = Siji:pixelsize=10;1
+;font-3 = Font Awesome 5 Free,Font Awesome 5 Free Regular:style=Regular
+font-3 = Font Awesome 5 Free,Font Awesome 5 Free Solid:style=Solid
+font-4 = Font Awesome 5 Brands,Font Awesome 5 Brands Regular:style=Regular
+
+modules-left = i3
+modules-right = filesystem xbacklight pulseaudio memory cpu eth wlan battery0 temperature time-utc date powermenu
+
+tray = right
+tray-position = right
+tray-padding = 2
+tray-transparent = false
+tray-background = #0063ff
+wm-restack = i3
+override-redirect = false
+
+[module/i3]
+type = internal/i3
+index-sort = true
+wrapping-scroll = false
+
+; Available tags:
+;   <label-state> (default) - gets replaced with <label-(focused|unfocused|visible|urgent)>
+;   <label-mode> (default)
+format = <label-state> <label-mode>
+
+; Available tokens:
+;   %mode%
+; Default: %mode%
+label-mode = %mode%
+label-mode-padding = 2
+label-mode-background = #e60053
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-focused = %index%
+label-focused-foreground = #ffffff
+label-focused-background = #3f3f3f
+label-focused-underline = #fba922
+label-focused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-unfocused = %index%
+label-unfocused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-visible = %index%
+label-visible-underline = #555555
+label-visible-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-urgent = %index%
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-padding = 4
+
+; Separator in between workspaces
+;label-separator = |
+;label-separator-padding = 0
+;label-separator-foreground = #ffb52a
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+format-mounted-underline = ${colors.a}
+
+mount-0 = /
+
+;label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
+label-mounted = %{F#555}%{F-} %percentage_used%%
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.foreground-alt}
+
+[module/xbacklight]
+type = internal/xbacklight
+format-underline = ${colors.b}
+
+enable-scroll = false
+;   <label> (default)
+;   <ramp>
+;   <bar>
+format =  <ramp>
+format-foreground = ${colors.foreground-alt}
+
+; Available tokens:
+;   %percentage% (default)
+label = %percentage%%
+label-foreground = ${colors.foreground}
+
+; Only applies if <ramp> is used
+;ramp-foreground = ${colors.foreground}
+;ramp-0 = ▄
+;ramp-1 = ▄
+;ramp-2 = ▅
+;ramp-3 = ▆
+;ramp-4 = ▇
+ramp-0 = ▁
+ramp-1 = ▂
+ramp-2 = ▃
+ramp-3 = ▄
+ramp-4 = ▅
+ramp-5 = ▆
+ramp-6 = ▇
+ramp-7 = █
+ramp-foreground = ${colors.foreground}
+;ramp-0 = 
+;ramp-0-foreground = #666
+;ramp-1 = 
+;ramp-1-foreground = #999
+;ramp-2 = 
+;ramp-2-foreground = #fff
+
+; Only applies if <bar> is used
+bar-width = 10
+bar-indicator = |
+bar-fill = ─
+bar-empty = ─
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+sink = alsa_output.usb-FiiO_FiiO_USB_DAC-E07K-01.analog-stereo
+
+use-ui-max = false
+
+format-volume-underline = ${colors.c}
+
+interval = 5
+; Available tags:
+;   <label-volume> (default)
+;   <ramp-volume>
+;   <bar-volume>
+format-volume = <ramp-volume> <label-volume>
+
+; Available tags:
+;   <label-muted> (default)
+;   <ramp-volume>
+;   <bar-volume>
+;format-muted = <label-muted>
+
+; Available tokens:
+;   %percentage% (default)
+;label-volume = %percentage%%
+
+; Available tokens:
+;   %percentage% (default)
+label-muted = 
+label-muted-foreground = #666
+label-muted-underline = ${colors.c}
+
+; Only applies if <ramp-volume> is used
+ramp-volume-0 = 
+ramp-volume-0-foreground = ${colors.foreground-alt}
+ramp-volume-1 = 
+ramp-volume-1-foreground = ${colors.foreground-alt}
+ramp-volume-2 = 
+ramp-volume-2-foreground = ${colors.foreground-alt}
+
+[module/memory]
+type = internal/memory
+interval = 2
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.d}
+label = %percentage_used%%
+
+[module/cpu]
+type = internal/cpu
+interval = 1
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.e}
+;label = %percentage%%
+label = 
+format = <label> <ramp-coreload>
+
+ramp-coreload-spacing = 1
+ramp-coreload-0 = ▁
+ramp-coreload-1 = ▂
+ramp-coreload-2 = ▃
+ramp-coreload-3 = ▄
+ramp-coreload-4 = ▅
+ramp-coreload-5 = ▆
+ramp-coreload-6 = ▇
+ramp-coreload-7 = █
+
+[module/eth]
+type = internal/network
+interface = ens20u1
+interval = 3.0
+
+format-connected-underline = ${colors.f}
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.foreground-alt}
+label-connected = %local_ip%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+[module/battery0]
+type = internal/battery
+battery = BAT0
+adapter = AC
+full-at = 99
+
+format-charging = <animation-charging> <label-charging>
+format-charging-underline = ${colors.g}
+
+format-discharging = <ramp-capacity> <label-discharging>
+format-discharging-underline = ${self.format-charging-underline}
+
+format-full-prefix = " "
+format-full-prefix-foreground = ${colors.foreground-alt}
+format-full-underline = ${self.format-charging-underline}
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-foreground = ${colors.foreground-alt}
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-foreground = ${colors.foreground-alt}
+animation-charging-framerate = 750
+
+[module/wlan]
+type = internal/network
+interface = wlp59s0
+interval = 3.0
+
+format-connected = <ramp-signal> <label-connected>
+format-connected-underline = ${colors.h}
+label-connected = %essid%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+ramp-signal-foreground = ${colors.foreground-alt}
+
+[module/temperature]
+type = internal/temperature
+thermal-zone = 0
+warn-temperature = 60
+
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input
+
+format = <ramp> <label>
+format-underline = ${colors.i}
+format-warn = <ramp> <label-warn>
+format-warn-underline = ${self.format-underline}
+
+label = %temperature%
+label-warn = %temperature%
+label-warn-foreground = ${colors.secondary}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-foreground = ${colors.foreground-alt}
+
+[module/time-utc]
+type = custom/script
+exec = TZ=UTC date +"UTC: %m.%d %H:%M" 
+format-underline = ${colors.j}
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+interval = 10
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = " %m.%d"
+date-alt = " %m.%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.k}
+
+label = Local: %date% %time%
+
+[module/powermenu]
+type = custom/menu
+
+format-spacing = 1
+
+;label-open = 
+label-open = 
+label-open-foreground = ${colors.blue}
+label-close =  cancel
+label-close-foreground = ${colors.secondary}
+label-separator = |
+label-separator-foreground = ${colors.foreground-alt}
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini

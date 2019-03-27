@@ -1,0 +1,6 @@
+rofi.theme: /usr/share/rofi/themes/glue_pro_blue.rasi
+rofi.kb-accept-entry: Return
+rofi.kb-remove-to-eol: 
+rofi.kb-row-down: Control+j,Down
+rofi.kb-row-up: Control+k,Up
+rofi.font: Input Mono 14
