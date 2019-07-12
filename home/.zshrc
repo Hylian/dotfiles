@@ -9,6 +9,9 @@
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="minimal"
+#source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
+#POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
+#POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(vcs)
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -62,7 +65,12 @@ ZSH_THEME="minimal"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git wd cargo)
+fpath=(~/.fpath $fpath)
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+autoload -U deer
+zle -N deer
+bindkey '\ek' deer
 
 if [ -d /etc/profile.d ]; then
   for i in /etc/profile.d/*.zsh; do
@@ -77,16 +85,23 @@ source $ZSH/oh-my-zsh.sh
 source /home/eshin/.aliases
 source /home/eshin/miniconda2/etc/profile.d/conda.sh
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"
 export RUSTC_WRAPPER=sccache
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+
 if (( $+commands[tag] )); then
   export TAG_SEARCH_PROG=rg  # replace with rg for ripgrep
   tag() { command tag "$@"; source ${TAG_ALIAS_FILE:-/tmp/tag_aliases} 2>/dev/null }
-  alias tg=tag  # replace with rg for ripgrep
+  alias rg=tag  # replace with rg for ripgrep
 fi
 
+function chpwd() {
+  emulate -L zsh
+  exa
+}
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
