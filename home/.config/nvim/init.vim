@@ -15,17 +15,25 @@ Plug 'brooth/far.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
-Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
+Plug 'vimwiki/vimwiki'
 Plug 'chriskempson/base16-vim'
 Plug 'airblade/vim-gitgutter'
 "Plug 'zxqfl/tabnine-vim'
 Plug 'szw/vim-maximizer'
+"Plug 'autozimu/LanguageClient-neovim', {
+"    \ 'branch': 'next',
+"    \ 'do': 'bash install.sh',
+"    \ }
+Plug 'Shougo/echodoc.vim'
+Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
 call plug#end()
 
 
 set t_Co=256 
 set laststatus=2
 set noshowmode
+
+set cmdheight=1
 
 let g:airline_theme='murmur'
 let g:airline_powerline_fonts = 0
@@ -89,7 +97,7 @@ if has("autocmd")
                   \| exe "normal! g'\"" | endif
 endif
 
-let g:python3_host_prog = '/usr/bin/python3.7'
+let g:python3_host_prog = '/usr/bin/python3'
 
 let g:loaded_gentags#ctags = 0
 let g:loaded_gentags#gtags = 0
@@ -140,18 +148,99 @@ set splitbelow
 set splitright
 nnoremap m :MaximizerToggle<CR>
 
+
+" # Copy and paste the below into your vimrc or init.vim
+
+fun! Grok()
+  let abspath = expand('%:p')
+  if (matchstr(abspath, "fw-bison") != "")
+    let relpath = split(abspath, "fw-bison/")
+    let url = "https://grok.firmwareci.fitbit.com/source/xref/fw-bison_develop/" . relpath[-1] . "#" . line('.')
+    :call system('xclip -selection "clipboard"', url)
+    echom "Grok URL pasted to clipboard"
+  endif
+endfun
+
+nmap <C-g> :call Grok()<CR>
+
+" Rust language completion
+autocmd BufReadPost *.rs setlocal filetype=rust
+
+" Required for operations modifying multiple buffers like rename.
+set hidden
+
 let g:LanguageClient_serverCommands = {
-    \ 'cpp': ['cquery', '--log-file=/tmp/cq.log'],
-    \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
     \ }
 
-let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
-let g:LanguageClient_settingsPath = '/home/eshin/.config/nvim/settings.json'
-set completefunc=LanguageClient#complete
-set formatexpr=LanguageClient_textDocument_rangeFormatting()
+" Automatically start language servers.
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_hasSnippetSupport = 0
+let g:LanguageClient_hoverPreview = "Never"
 
-nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
-nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | silent! pclose | endif
+
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> gD :call LanguageClient#textDocument_definition({'gotoCmd': 'vsplit'})<CR>
+nnoremap <silent> gx :call LanguageClient#textDocument_references()<CR>
+nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'signature'
+
+set cmdheight=2
+set updatetime=300
+set shortmess+=c
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+"
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+command! -nargs=0 Format :call CocAction('format')
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+
