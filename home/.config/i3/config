@@ -9,6 +9,17 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+
+# Colors
+# class                 border  backgr. text    indicator child_border
+client.focused          #4c7899 #3b70ac #ffffff #2e9ef4   #4c7899 
+client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
+client.unfocused        #333333 #222222 #888888 #292d2e   #222222
+client.urgent           #2f343a #900000 #ffffff #900000   #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+
+client.background       #ffffff
+
 set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -36,7 +47,9 @@ bindsym $mod+p exec "kitty --session /home/eshin/.config/kitty/flash.kittysessio
 bindsym $mod+o exec "kitty --session /home/eshin/.config/kitty/flashm.kittysession"
 
 #bindsym $mod+q exec "qutebrowser"
-bindsym $mod+q exec "qutebrowser --backend webengine --qt-flag ignore-gpu-blacklist --qt-flag enable-gpu-rasterization --qt-flag enable-native-gpu-memory-buffers --qt-flag num-raster-threads=4"
+#bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser --backend webengine --qt-flag ignore-gpu-blacklist --qt-flag enable-gpu-rasterization --qt-flag enable-native-gpu-memory-buffers --qt-flag num-raster-threads=4"
+#bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser --backend webengine --qt-flag num-raster-threads=4"
+bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser"
 #bindsym $mod+g exec "wmfocus"
 
 # kill focused window
@@ -53,6 +66,8 @@ bindsym $mod+t exec "rofi -show run"
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 #
 bindsym $mod+g exec "CM_LAUNCHER=rofi clipmenu"
+bindsym $mod+Shift+g exec "PINENTRY_PROGRAM=pinentry-rofi rofi -modi 1pass:rofi-1pass -show 1pass"
+#bindsym $mod+Shift+g exec "rofi -modi 1pass:rofi-1pass -show 1pass"
 
 # change focus
 bindsym $mod+h focus left
@@ -96,19 +111,19 @@ bindsym $mod+z focus child
 workspace 1 output eDP1
 workspace 2 output eDP1
 workspace 3 output eDP1
-workspace 4 output eDP1
-workspace 5 output DP3
-workspace 6 output DP3
-workspace 7 output DP3
-workspace 8 output DP3
-#workspace 9 
+workspace 4 output DP1
+workspace 5 output DP1
+workspace 6 output DP1
+workspace 7 output DP2
+workspace 8 output DP2
+workspace 9 output DP2
 #workspace 10 
 
 # switch to output
-bindsym $mod+bracketright focus output eDP1
-bindsym $mod+bracketleft focus output DP2-1
-bindsym $mod+shift+bracketright focus output DP2-1
-bindsym $mod+shift+bracketleft focus output eDP1
+bindsym $mod+bracketright focus output DP1
+bindsym $mod+bracketleft focus output DP1
+bindsym $mod+shift+bracketright focus output DP2
+bindsym $mod+shift+bracketleft focus output DP2
 
 #bindsym $mod+u focus output eDP1
 #bindsym $mod+i focus output DP2-2
@@ -127,7 +142,9 @@ bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
 bindsym $mod+Left workspace prev
+bindsym $mod+Control+Left workspace prev_on_output
 bindsym $mod+Right workspace next
+bindsym $mod+Control+Right workspace next_on_output
 
 bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+Shift+grave workspace back_and_forth
@@ -192,5 +209,6 @@ bar {
 #exec_always --no-startup-id $HOME/dockd/dockd --set docked
 #exec_always --no-startup-id $HOME/dockd/dockd --daemon
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id twmnd
 #exec_always --no-startup-id nm-applet
 #exec_always --no-startup-id xscreensaver

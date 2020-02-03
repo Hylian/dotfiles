@@ -30,9 +30,13 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
-# Set rate as a parameter to xserver instead of in xinit to persist
+xset +fp /usr/share/fonts/TTF
+xset +fp /usr/share/fonts/OTF
+
 #xset r rate 200 50
 setxkbmap -option ctrl:nocaps
 xbindkeys
+
+autorandr -c
 
 exec i3

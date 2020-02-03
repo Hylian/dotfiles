@@ -65,12 +65,13 @@ ZSH_THEME="minimal"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
 plugins=(git wd cargo)
 fpath=(~/.fpath $fpath)
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-autoload -U deer
-zle -N deer
-bindkey '\ek' deer
+#autoload -U deer
+#zle -N deer
+#bindkey '\ek' deer
 
 if [ -d /etc/profile.d ]; then
   for i in /etc/profile.d/*.zsh; do
@@ -130,5 +131,25 @@ function chpwd() {
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+
+# zle vim mode options
+#bindkey -v
+
+export KEYTIMEOUT=1
+#bindkey '^P' up-history
+#bindkey '^N' down-history
+#bindkey '^?' backward-delete-char
+#bindkey '^h' backward-delete-char
+#bindkey '^w' backward-kill-word
+#bindkey '^r' history-incremental-search-backward
+
+function zle-line-init zle-keymap-select {
+    VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
+    RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/} $EPS1"
+    zle reset-prompt
+}
+#zle -N zle-line-init
+#zle -N zle-keymap-select
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

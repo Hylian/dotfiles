@@ -31,7 +31,7 @@ k = #f93b31
 [bar/bar1]
 monitor = ${env:MONITOR:}
 width = 100%
-height = 24
+height = 34
 ;offset-x = 1%
 ;offset-y = 80%
 radius = 0.0
@@ -52,16 +52,16 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = fixed:pixelsize=10;1
+font-0 = fixed:pixelsize=18;1
 ;font-1 = Unifont:style=Sans-Serif:fontformat=truetype:size=8:antialias=false;0
 font-1 = Unifont:style=Sans-Serif
-font-2 = Siji:pixelsize=10;1
+font-2 = Siji:pixelsize=18;1
 ;font-3 = Font Awesome 5 Free,Font Awesome 5 Free Regular:style=Regular
 font-3 = Font Awesome 5 Free,Font Awesome 5 Free Solid:style=Solid
 font-4 = Font Awesome 5 Brands,Font Awesome 5 Brands Regular:style=Regular
 
 modules-left = i3
-modules-right = filesystem xbacklight pulseaudio memory cpu eth wlan battery0 temperature time-utc date powermenu
+modules-right = vpn-f5-status updates-arch-combined filesystem xbacklight pulseaudio memory cpu system-cpu-frequency system-cpu-governor eth wlan battery0 temperature time-utc date powermenu
 
 tray = right
 tray-position = right
@@ -134,6 +134,15 @@ label-urgent-padding = 4
 ;label-separator = |
 ;label-separator-padding = 0
 ;label-separator-foreground = #ffb52a
+
+[module/updates-arch-combined]
+type = custom/script
+exec = ~/.config/polybar/updates-arch-combined.sh
+interval = 600
+
+format-prefix-foreground = ${colors.foreground-alt}
+format-prefix = # 
+format-underline = ${colors.a}
 
 [module/filesystem]
 type = internal/fs
@@ -261,6 +270,18 @@ ramp-coreload-5 = ▆
 ramp-coreload-6 = ▇
 ramp-coreload-7 = █
 
+[module/system-cpu-frequency]
+type = custom/script
+exec = ~/.config/polybar/system-cpu-frequency.sh
+format-underline = ${colors.e}
+interval = 3
+
+[module/system-cpu-governor]
+type = custom/script
+exec = ~/.config/polybar/system-cpu-governor.sh
+format-underline = ${colors.e}
+interval = 3
+
 [module/eth]
 type = internal/network
 interface = ens20u1
@@ -328,10 +349,10 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/temperature]
 type = internal/temperature
-thermal-zone = 0
+thermal-zone = 5
 warn-temperature = 60
 
-hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon3/temp1_input
 
 format = <ramp> <label>
 format-underline = ${colors.i}
@@ -398,6 +419,38 @@ menu-2-0 = power off
 menu-2-0-exec = sudo poweroff
 menu-2-1 = cancel
 menu-2-1-exec = menu-open-0
+
+[module/vpn-f5-status]
+type = custom/script
+exec = ~/.config/polybar/vpn-f5-status.sh
+interval = 5
+click-left = ~/.config/polybar/vpn-f5-onclick.sh
+format-prefix = "  "
+format-underline = ${colors.a}
+format-prefix-foreground = ${colors.foreground-alt}
+
+[module/vpn]
+type = custom/script
+
+; Available tokens:
+;   %counter%
+; Command to be executed (using "/usr/bin/env sh -c [command]")
+exec = /home/eshin/.config/polybar/vpnstatus.sh
+
+; Conditional command that, if defined, needs to exit successfully
+; before the main exec command is invoked.
+; Default: ""
+;exec-if = pgrep -x myservice
+
+; Will the script output continous content?
+; Default: false
+tail = false
+
+; Seconds to sleep between updates
+; Default: 5 (0 if `tail = true`)
+interval = 5
+
+;format-prefix = "  "
 
 [settings]
 screenchange-reload = true
