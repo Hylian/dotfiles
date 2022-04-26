@@ -1,7 +1,9 @@
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'jsfaint/gen_tags.vim'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+Plug 'feline-nvim/feline.nvim'
+Plug 'lewis6991/gitsigns.nvim'
+"Plug 'jsfaint/gen_tags.vim'
 Plug 'bfredl/nvim-miniyank'
 Plug 'tpope/vim-fugitive'
 "Plug 'brooth/far.vim'
@@ -10,14 +12,17 @@ Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'chriskempson/base16-vim'
-Plug 'airblade/vim-gitgutter'
+"Plug 'airblade/vim-gitgutter'
 Plug 'szw/vim-maximizer'
 Plug 'Shougo/echodoc.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'bfrg/vim-cpp-modern'
 Plug 'tpope/vim-commentary'
+Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 call plug#end()
 
 set t_Co=256 
@@ -29,7 +34,6 @@ let g:airline_powerline_fonts = 0
 let g:airline#extensions#coc#enabled = 1
 let g:bufferline_echo = 0
 "let base16colorspace=256
-set termguicolors
 colorscheme base16-default-dark
 
 let &runtimepath.=','.$HOME.'/.config/nvim/bundle/darkhorse.vim'
@@ -60,6 +64,7 @@ set smartindent
 set smarttab
 set softtabstop=2
 set previewheight=20
+set termguicolors " this variable must be enabled for colors to be applied properly
 
 set mouse=a
 
@@ -67,7 +72,9 @@ set clipboard=unnamedplus
 
 set updatetime=300
 
-let g:gitgutter_enabled=1
+let mapleader = ","
+
+"let g:gitgutter_enabled=1
 "let g:gitgutter_signs=1
  
 set ruler	
@@ -266,4 +273,295 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-set termguicolors " this variable must be enabled for colors to be applied properly
+nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <leader>r :NvimTreeRefresh<CR>
+nnoremap <leader>n :NvimTreeFindFile<CR>
+
+let g:nvim_tree_show_icons = {
+  \ 'git':1,
+  \ 'folders':1,
+  \ 'files':1,
+  \ 'folder_arrows':1,
+  \}
+
+lua require'nvim-web-devicons'.setup {
+  \ default = true;
+  \ }
+lua require'nvim-tree'.setup {}
+
+nnoremap <silent> gb :BufferLinePick<CR>
+
+nnoremap <A-1> <Cmd>BufferLineGoToBuffer 1<CR>
+nnoremap <A-2> <Cmd>BufferLineGoToBuffer 2<CR>
+nnoremap <A-3> <Cmd>BufferLineGoToBuffer 3<CR>
+nnoremap <A-4> <Cmd>BufferLineGoToBuffer 4<CR>
+nnoremap <A-5> <Cmd>BufferLineGoToBuffer 5<CR>
+nnoremap <A-6> <Cmd>BufferLineGoToBuffer 6<CR>
+nnoremap <A-7> <Cmd>BufferLineGoToBuffer 7<CR>
+nnoremap <A-8> <Cmd>BufferLineGoToBuffer 8<CR>
+nnoremap <A-9> <Cmd>BufferLineGoToBuffer 9<CR>
+
+lua << EOF
+require("bufferline").setup{
+  options = {
+    numbers = "ordinal",
+    tab_size = 12,
+    show_buffer_icons = false,
+    show_buffer_close_icons = false,
+    separator_style = "thin",
+    offsets = {
+      {
+        filetype = "NvimTree",
+        text = function()
+          return vim.fn.getcwd()
+        end,
+        highlight = "Directory",
+        text_align = "left"
+      }
+    },
+  }
+}
+EOF
+
+lua << EOF
+local vi_mode_utils = require('feline.providers.vi_mode')
+
+local M = {
+    active = {},
+    inactive = {},
+}
+
+M.active[1] = {
+    {
+        provider = '▊ ',
+        hl = {
+            fg = 'skyblue',
+        },
+    },
+    {
+        provider = 'vi_mode',
+        hl = function()
+            return {
+                name = vi_mode_utils.get_mode_highlight_name(),
+                fg = vi_mode_utils.get_mode_color(),
+                style = 'NONE',
+            }
+        end,
+    },
+    {
+        provider = 'file_info',
+        hl = {
+            fg = 'white',
+            bg = 'oceanblue',
+            style = 'bold',
+        },
+        left_sep = {
+            'slant_left_2',
+            { str = ' ', hl = { bg = 'oceanblue', fg = 'NONE' } },
+        },
+        right_sep = {
+            { str = ' ', hl = { bg = 'oceanblue', fg = 'NONE' } },
+            'slant_right_2',
+            ' ',
+        },
+    },
+    {
+        provider = 'file_size',
+        right_sep = {
+            ' ',
+            {
+                str = 'slant_left_2_thin',
+                hl = {
+                    fg = 'fg',
+                    bg = 'bg',
+                },
+            },
+        },
+    },
+    {
+        provider = 'position',
+        left_sep = ' ',
+        right_sep = {
+            ' ',
+            {
+                str = 'slant_right_2_thin',
+                hl = {
+                    fg = 'fg',
+                    bg = 'bg',
+                },
+            },
+        },
+    },
+    {
+        provider = 'diagnostic_errors',
+        hl = { fg = 'red' },
+    },
+    {
+        provider = 'diagnostic_warnings',
+        hl = { fg = 'yellow' },
+    },
+    {
+        provider = 'diagnostic_hints',
+        hl = { fg = 'cyan' },
+    },
+    {
+        provider = 'diagnostic_info',
+        hl = { fg = 'skyblue' },
+    },
+}
+
+M.active[2] = {
+    {
+        provider = 'git_branch',
+        hl = {
+            fg = 'white',
+            bg = 'black',
+            style = 'bold',
+        },
+        right_sep = {
+            str = ' ',
+            hl = {
+                fg = 'NONE',
+                bg = 'black',
+            },
+        },
+    },
+    {
+        provider = 'git_diff_added',
+        hl = {
+            fg = 'green',
+            bg = 'black',
+        },
+    },
+    {
+        provider = 'git_diff_changed',
+        hl = {
+            fg = 'orange',
+            bg = 'black',
+        },
+    },
+    {
+        provider = 'git_diff_removed',
+        hl = {
+            fg = 'red',
+            bg = 'black',
+        },
+        right_sep = {
+            str = ' ',
+            hl = {
+                fg = 'NONE',
+                bg = 'black',
+            },
+        },
+    },
+    {
+        provider = 'line_percentage',
+        hl = {
+            style = 'bold',
+        },
+        left_sep = '  ',
+        right_sep = ' ',
+    },
+    {
+        provider = 'scroll_bar',
+        hl = {
+            fg = 'skyblue',
+            style = 'bold',
+        },
+    },
+}
+
+M.inactive[1] = {
+    {
+        provider = 'file_type',
+        hl = {
+            fg = 'white',
+            bg = 'oceanblue',
+            style = 'bold',
+        },
+        left_sep = {
+            str = ' ',
+            hl = {
+                fg = 'NONE',
+                bg = 'oceanblue',
+            },
+        },
+        right_sep = {
+            {
+                str = ' ',
+                hl = {
+                    fg = 'NONE',
+                    bg = 'oceanblue',
+                },
+            },
+            'slant_right',
+        },
+    },
+    -- Empty component to fix the highlight till the end of the statusline
+    {},
+}
+
+require('feline').setup({
+  components = M
+})
+EOF
+
+lua << EOF
+require('gitsigns').setup {
+  signs = {
+    add          = {hl = 'GitSignsAdd'   , text = '│', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
+    change       = {hl = 'GitSignsChange', text = '│', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+  },
+  signcolumn = false,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  watch_gitdir = {
+    interval = 1000,
+    follow_files = true
+  },
+  attach_to_untracked = true,
+  current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+  current_line_blame_opts = {
+    virt_text = true,
+    virt_text_pos = 'right_align', -- 'eol' | 'overlay' | 'right_align'
+    delay = 1000,
+    ignore_whitespace = false,
+  },
+  current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+  sign_priority = 6,
+  update_debounce = 100,
+  status_formatter = nil, -- Use default
+  max_file_length = 40000,
+  preview_config = {
+    -- Options passed to nvim_open_win
+    border = 'single',
+    style = 'minimal',
+    relative = 'cursor',
+    row = 0,
+    col = 1
+  },
+  yadm = {
+    enable = false
+  },
+}
+EOF
+
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "c" },
+  sync_install = false,
+  ignore_install = { "javascript" },
+  highlight = {
+    enable = true,
+    disable = {  },
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+set termguicolors
+
