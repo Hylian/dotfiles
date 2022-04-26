@@ -1,35 +1,60 @@
 alias vim='nvim'
-alias coa='conda activate Bison'
-alias cod='conda deactivate'
-alias ibc='inv build -c'
-alias ijl='inv jlink'
-alias ijf='inv jflash'
-alias is='inv serial'
+alias v='nvim'
 alias gc='git checkout'
+alias gau='git add -u'
 alias gcm='git commit -m'
 alias gs='git status'
 alias gl='git log --pretty --oneline --graph'
+alias gll='git log --pretty --graph'
 alias gri='git rebase -i'
 alias grid='git rebase -i develop'
 alias grih='git rebase -i HEAD~2'
 alias gsu='git submodule update --init --recursive'
 alias gp='git pull'
 alias gb='git checkout -b'
-alias ea='exa'
-alias vpninfo='f5fpc --info'
-alias vpnstop='f5fpc --stop'
-alias ra='ranger'
-alias hdmion='xrandr --output HDMI1 --right-of eDP1 --auto'
-alias hdmioff='xrandr --output HDMI1 --off'
-alias nw='(kitty &) &> /dev/null'
+alias gd='git diff'
+alias gcp='git cherry-pick'
 alias ls='exa'
+alias ll='exa -l -a'
+alias rgc='rg -tc'
+
+fzf-git-branch() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+
+    git branch --color=always --all --sort=-committerdate |
+        grep -v HEAD |
+        fzf --height 50% --ansi --no-multi --preview-window right:65% \
+            --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
+        sed "s/.* //"
+}
+
+fzf-git-checkout() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+
+    local branch
+
+    branch=$(fzf-git-branch)
+    if [[ "$branch" = "" ]]; then
+        echo "No branch selected."
+        return
+    fi
+
+    # If branch name starts with 'remotes/' then it is a remote branch. By
+    # using --track and a remote branch name, it is the same as:
+    # git checkout -b branchName --sort=-committerdate --track origin/branchName
+    if [[ "$branch" = 'remotes/'* ]]; then
+        git checkout --track $branch
+    else
+        git checkout $branch;
+    fi
+}
+
+alias gbf='fzf-git-branch'
+alias gco='fzf-git-checkout'
 
 h2d(){
   echo "ibase=16; $@"|bc
 }
 d2h(){
   echo "obase=16; $@"|bc
-}
-function zoom () {
-  command zoom "zoommtg://zoom.us/join?confno=$1" &
 }

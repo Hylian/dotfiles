@@ -2,44 +2,37 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'jsfaint/gen_tags.vim'
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'roxma/nvim-completion-manager'
 Plug 'bfredl/nvim-miniyank'
 Plug 'tpope/vim-fugitive'
-Plug 'brooth/far.vim'
-"Plug '/usr/share/vim/vimfiles/plugin/fzf.vim'
-"Plug 'autozimu/LanguageClient-neovim', {
-    "\ 'branch': 'next',
-    "\ 'do': 'bash install.sh',
-    "\ }
+"Plug 'brooth/far.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'chriskempson/base16-vim'
 Plug 'airblade/vim-gitgutter'
-"Plug 'zxqfl/tabnine-vim'
 Plug 'szw/vim-maximizer'
-"Plug 'autozimu/LanguageClient-neovim', {
-"    \ 'branch': 'next',
-"    \ 'do': 'bash install.sh',
-"    \ }
 Plug 'Shougo/echodoc.vim'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'bfrg/vim-cpp-modern'
+Plug 'tpope/vim-commentary'
 call plug#end()
-
 
 set t_Co=256 
 set laststatus=2
 set noshowmode
 
-set cmdheight=1
-
 let g:airline_theme='murmur'
 let g:airline_powerline_fonts = 0
+let g:airline#extensions#coc#enabled = 1
+let g:bufferline_echo = 0
 "let base16colorspace=256
 set termguicolors
 colorscheme base16-default-dark
+
+let &runtimepath.=','.$HOME.'/.config/nvim/bundle/darkhorse.vim'
 
 "hi DiffAdd guifg=NONE ctermfg=NONE guibg=#464632 ctermbg=238 gui=NONE cterm=NONE
 "hi DiffChange guifg=NONE ctermfg=NONE guibg=#335261 ctermbg=239 gui=NONE cterm=NONE
@@ -72,7 +65,7 @@ set mouse=a
 
 set clipboard=unnamedplus
 
-set updatetime=1000
+set updatetime=300
 
 let g:gitgutter_enabled=1
 "let g:gitgutter_signs=1
@@ -99,26 +92,26 @@ endif
 
 let g:python3_host_prog = '/usr/bin/python3'
 
-let g:loaded_gentags#ctags = 0
-let g:loaded_gentags#gtags = 0
-let g:gen_tags#gtags_auto_gen = 1
-let g:gen_tags#ctags_auto_gen = 1
-let g:gen_tags#ctags_opts = ['--exclude=@/home/eshin/.ctagsignore', '--langmap=C:.c.h', '--languages=C']
-let g:gen_tags#gtags_opts = ['-c', '-i']
-let g:gen_tags#use_cache_dir = 0
-let g:gen_tags#ctags_prune = 0
+"let g:loaded_gentags#ctags = 0
+"let g:loaded_gentags#gtags = 0
+"let g:gen_tags#gtags_auto_gen = 0
+"let g:gen_tags#ctags_auto_gen = 0
+"let g:gen_tags#ctags_opts = ['--exclude=@/home/eshin/.ctagsignore', '--langmap=C:.c.h', '--languages=C']
+"let g:gen_tags#gtags_opts = ['-c', '-i']
+"let g:gen_tags#use_cache_dir = 0
+"let g:gen_tags#ctags_prune = 0
 "let g:gen_tags#blacklist = ['$HOME']
-let g:gen_tags#blacklist = []
-let g:gen_tags#verbose = 0
-let g:gen_tags#statusline = 0
+"let g:gen_tags#blacklist = []
+"let g:gen_tags#verbose = 0
+"let g:gen_tags#statusline = 0
 
 "let g:fzf_tags_command = 'echo /home/eshin/fw-bison/.git/tags_dir/prj_tags'
 
-let g:deoplete#enable_at_startup = 1
+"let g:deoplete#enable_at_startup = 1
 "autocmd InsertEnter * call deoplete#enable()
 
 nmap _ :GFiles<CR>
-nmap <bar> :Tags<CR>
+nmap <bar>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
 "nmap <C-S-\> :BTags<CR>
 "nmap ' :Hist<CR>
 nmap ' :FZFMru<CR>
@@ -148,50 +141,22 @@ set splitbelow
 set splitright
 nnoremap m :MaximizerToggle<CR>
 
-
-" # Copy and paste the below into your vimrc or init.vim
-
-fun! Grok()
-  let abspath = expand('%:p')
-  if (matchstr(abspath, "fw-bison") != "")
-    let relpath = split(abspath, "fw-bison/")
-    let url = "https://grok.firmwareci.fitbit.com/source/xref/fw-bison_develop/" . relpath[-1] . "#" . line('.')
-    :call system('xclip -selection "clipboard"', url)
-    echom "Grok URL pasted to clipboard"
-  endif
-endfun
-
-nmap <C-g> :call Grok()<CR>
-
 " Rust language completion
 autocmd BufReadPost *.rs setlocal filetype=rust
 
 " Required for operations modifying multiple buffers like rename.
 set hidden
 
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-    \ }
-
-" Automatically start language servers.
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_hasSnippetSupport = 0
-let g:LanguageClient_hoverPreview = "Never"
-
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | silent! pclose | endif
-
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> gD :call LanguageClient#textDocument_definition({'gotoCmd': 'vsplit'})<CR>
-nnoremap <silent> gx :call LanguageClient#textDocument_references()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 let g:echodoc#enable_at_startup = 1
-let g:echodoc#type = 'signature'
+let g:echodoc#type = 'virtual'
 
+set nobackup
+set nowritebackup
 set cmdheight=2
 set updatetime=300
-set shortmess+=c
+"set shortmess+=c
+
+let g:coc_node_path='/usr/bin/node'
 
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -204,20 +169,36 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
 " Or use `complete_info` if your vim support it, like:
 " inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 "
+"nmap <silent> gd <Plug>(coc-definition)
+
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> Gd : call CocActionAsync('jumpDeclaration', 'vsplit')<CR>
 nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> Gi : call CocActionAsync('jumpImplementation', 'vsplit')<CR>
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> Gy : call CocActionAsync('jumpTypeDefinition', 'vsplit')<CR>
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> Gr : call CocActionAsync('jumpReferences', 'vsplit')<CR>
 
 inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
@@ -227,20 +208,62 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
   else
-    call CocAction('doHover')
+    execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
 
-
-" Highlight symbol under cursor on CursorHold
+" Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
-
 
 " Remap for rename current word
 nmap <leader>rn <Plug>(coc-rename)
 
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of language server.
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+"set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+set termguicolors " this variable must be enabled for colors to be applied properly

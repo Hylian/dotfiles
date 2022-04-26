@@ -9,6 +9,7 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+exec dex -ae i3
 
 # Colors
 # class                 border  backgr. text    indicator child_border
@@ -40,16 +41,21 @@ font pango:DejaVu Sans Mono 8
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+for_window [class="^.*"] border pixel 2
+for_window [class="google-chrome"] border none
+
 # start a terminal
-bindsym $mod+Return exec "kitty -d /home/eshin"
-bindsym $mod+Delete exec "kitty -d /home/eshin/monorepo/comms"
-bindsym $mod+p exec "kitty --session /home/eshin/.config/kitty/flash.kittysession"
-bindsym $mod+o exec "kitty --session /home/eshin/.config/kitty/flashm.kittysession"
+#bindsym $mod+Return exec "kitty -d /home/shined"
+bindsym $mod+Return exec "alacritty"
+#bindsym $mod+p exec "kitty --session /home/shined/.config/kitty/flash.kittysession"
+#bindsym $mod+p exec "kitty --session /home/shined/.config/kitty/flash.kittysession"
+#bindsym $mod+o exec "kitty --session /home/shined/.config/kitty/flashm.kittysession"
 
 #bindsym $mod+q exec "qutebrowser"
 #bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser --backend webengine --qt-flag ignore-gpu-blacklist --qt-flag enable-gpu-rasterization --qt-flag enable-native-gpu-memory-buffers --qt-flag num-raster-threads=4"
 #bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser --backend webengine --qt-flag num-raster-threads=4"
-bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser"
+#bindsym $mod+q exec "QT_AUTO_SCREEN_SCALE_FACTOR=1 qutebrowser"
+bindsym $mod+q exec "google-chrome" border none
 #bindsym $mod+g exec "wmfocus"
 
 # kill focused window
@@ -58,7 +64,7 @@ bindsym $mod+d kill
 # start dmenu (a program launcher)
 #bindsym $mod+t exec dmenu_run
 #bindsym $mod+t exec "rofi -show run"
-bindsym $mod+t exec "rofi -show run"
+bindsym $mod+t exec "rofi -kb-remove-to-eol '' -show run"
 #bindsym $mod+g exec "rofi -show window"
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -108,22 +114,32 @@ bindsym $mod+a focus parent
 bindsym $mod+z focus child
 
 # assign workspaces to screens
-workspace 1 output eDP1
-workspace 2 output eDP1
-workspace 3 output eDP1
-workspace 4 output DP1
-workspace 5 output DP1
-workspace 6 output DP1
-workspace 7 output DP2
-workspace 8 output DP2
-workspace 9 output DP2
+#workspace 1 output eDP-1
+#workspace 2 output eDP-1
+#workspace 3 output eDP-1
+#workspace 4 output HDMI-1-0
+#workspace 5 output HDMI-1-0
+#workspace 6 output HDMI-1-0
+#workspace 7 output HDMI-1-0
+#workspace 8 output HDMI-1-0
+#workspace 9 output HDMI-1-0
+
+workspace 1 output DP-2
+workspace 2 output DP-2
+workspace 3 output DP-2
+workspace 4 output HDMI-0
+workspace 5 output HDMI-0
+workspace 6 output HDMI-0
+workspace 7 output HDMI-0
+workspace 8 output HDMI-0
+workspace 9 output HDMI-0
 #workspace 10 
 
 # switch to output
-bindsym $mod+bracketright focus output DP1
-bindsym $mod+bracketleft focus output DP1
-bindsym $mod+shift+bracketright focus output DP2
-bindsym $mod+shift+bracketleft focus output DP2
+bindsym $mod+bracketright focus output eDP1
+bindsym $mod+bracketleft focus output eDP1
+bindsym $mod+shift+bracketright focus output HDMI-1-0
+bindsym $mod+shift+bracketleft focus output HDMI-1-0
 
 #bindsym $mod+u focus output eDP1
 #bindsym $mod+i focus output DP2-2
@@ -168,7 +184,10 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 #bindsym $mod+Control+l exec "i3lock -c 000000"
-bindsym $mod+Control+l exec "i3lock"
+#bindsym $mod+Control+l exec "i3lock"
+bindsym $mod+Control+l exec /usr/share/goobuntu-desktop-files/xsecurelock.sh
+#bindsym $mod+p exec cinnamon-screensaver-command --lock
+
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -208,7 +227,11 @@ bar {
 #exec_always --no-startup-id dockd --daemon
 #exec_always --no-startup-id $HOME/dockd/dockd --set docked
 #exec_always --no-startup-id $HOME/dockd/dockd --daemon
+exec_always --no-startup-id picom --config $HOME/.config/picom.conf -C -G
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id twmnd
+exec_always --no-startup-id setxkbmap -option ctrl:nocaps
+exec_always --no-startup-id xset r rate 200 50
 #exec_always --no-startup-id nm-applet
 #exec_always --no-startup-id xscreensaver
+
