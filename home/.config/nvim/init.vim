@@ -18,6 +18,7 @@ Plug 'tpope/vim-commentary'
 Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'antoinemadec/coc-fzf'
+Plug 'akinsho/toggleterm.nvim'
 call plug#end()
 
 set t_Co=256 
@@ -79,10 +80,17 @@ if has("autocmd")
 endif
 
 " Split settings
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+
+nnoremap <A-j> <C-W><C-j>
+nnoremap <A-k> <C-W><C-k>
+nnoremap <A-l> <C-W><C-l>
+nnoremap <A-h> <C-W><C-h>
+nnoremap <A-J> <C-W>+
+nnoremap <A-K> <C-W>-
+nnoremap <A-L> <C-W><
+nnoremap <A-H> <C-W>>
+nnoremap <A-;> <C-W>=
+
 set splitbelow
 set splitright
 nnoremap m :MaximizerToggle<CR>
@@ -324,11 +332,17 @@ nnoremap <A-9> <Cmd>BufferLineGoToBuffer 9<CR>
 lua << EOF
 require("bufferline").setup{
   options = {
+    mode = "tabs",
     numbers = "ordinal",
     tab_size = 12,
+    diagnostics = "coc",
+    diagnostics_update_in_insert = false,
+    diagnostics_indicator = function(count, level, diagnostics_dict, context)
+      return "("..count..")"
+    end,
     show_buffer_icons = false,
     show_buffer_close_icons = false,
-    separator_style = "thin",
+    separator_style = "slant",
     offsets = {
       {
         filetype = "NvimTree",
@@ -338,8 +352,43 @@ require("bufferline").setup{
         highlight = "Directory",
         text_align = "left"
       }
+    }
+  },
+  highlights = {
+    buffer_selected = {
+      gui = "bold"
     },
-  }
+    diagnostic_selected = {
+      gui = "bold"
+    },
+    info_selected = {
+      gui = "bold"
+    },
+    info_diagnostic_selected = {
+      gui = "bold"
+    },
+    warning_selected = {
+      gui = "bold"
+    },
+    warning_diagnostic_selected = {
+      gui = "bold"
+    },
+    error_selected = {
+      gui = "bold"
+    },
+    error_diagnostic_selected = {
+      gui = "bold"
+    },
+    pick_selected = {
+      gui = "bold"
+    },
+    pick_visible = {
+      gui = "bold"
+    },
+    pick = {
+      gui = "bold"
+    },
+  },
 }
 EOF
 
@@ -586,6 +635,37 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
+" Toggleterm Configuration
+lua << EOF
+require("toggleterm").setup {
+  size = function(term)
+    if term.direction == "horizontal" then
+      return 15
+    elseif term.direction == "vertical" then
+      return vim.o.columns * 0.4
+    end
+  end,
+  open_mapping = [[_]],
+  hide_numbers = true,
+  shade_filetypes = {},
+  shade_terminals = true,
+  shading_factor = '1',
+  start_in_insert = true,
+  insert_mappings = true, 
+  terminal_mappings = true,
+  persist_size = true,
+  direction = 'float',
+  close_on_exit = true,
+  shell = vim.o.shell,
+  float_opts = {
+    border = 'curved',
+    width = 120,
+    height = 80,
+    winblend = 3,
+  }
+}
+EOF
+
 " Open Fzf GitFiles at startup if opened without any buffers
 function! IsBlank( bufnr )
   return (empty(bufname(a:bufnr)) &&
@@ -604,9 +684,7 @@ function! IsEmpty()
 endfunction
 
 function! OpenFzfIfEmpty()
-  echom "a"
   if IsEmpty()
-    echom "hello"
     :GitFiles!
   endif
 endfunction
