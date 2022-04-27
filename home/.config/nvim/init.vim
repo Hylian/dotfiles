@@ -96,9 +96,25 @@ set splitright
 nnoremap m :MaximizerToggle<CR>
 
 " FZF / CocFzfList Configuration and Keybinds
-let g:fzf_preview_window = ['right:50%', 'ctrl-/']
-let g:coc_fzf_preview = 'right:50%'
+let g:fzf_preview_window = ['up:50%', 'ctrl-/']
+let g:coc_fzf_preview = 'up:50%'
 
+command! -bang -nargs=* Rgc
+  \ call fzf#vim#grep(
+  \   'rg -tc --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview(), <bang>0)
+
+function! RipgrepCFzf(query, fullscreen)
+  let command_fmt = 'rg -tc --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepCFzf(<q-args>, <bang>0)
+
+nmap _ :RG!<CR>
 nmap ' :GitFiles!<CR>
 nmap <Bar> :History!<CR>
 nmap { :CocFzfList symbols<CR>
@@ -207,7 +223,7 @@ require'nvim-tree'.setup {
   hijack_cursor = true,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
-  ignore_buffer_on_setup = true,
+  ignore_buffer_on_setup = false,
   open_on_setup = false,
   open_on_setup_file = false,
   open_on_tab = false,
@@ -247,7 +263,7 @@ require'nvim-tree'.setup {
     auto_open = false,
   },
   update_focused_file = {
-    enable = false,
+    enable = true,
     update_cwd = false,
     ignore_list = {},
   },
