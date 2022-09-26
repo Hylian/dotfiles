@@ -56,6 +56,7 @@ set nobackup
 set nowritebackup
 set cmdheight=1
 set updatetime=300
+set colorcolumn=80
 
 let g:bufferline_echo = 0
 let mapleader = " "
@@ -167,7 +168,7 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> Gd : call CocActionAsync('jumpDeclaration', 'vsplit')<CR>
+nmap <silent> Gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> Gi : call CocActionAsync('jumpImplementation', 'vsplit')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -201,14 +202,6 @@ augroup mygroup
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
-
-" Nvim Tree Configuration
-let g:nvim_tree_show_icons = {
-  \ 'git':1,
-  \ 'folders':1,
-  \ 'files':1,
-  \ 'folder_arrows':1,
-  \}
 
 lua << EOF
 require'nvim-web-devicons'.setup {
@@ -256,6 +249,12 @@ require'nvim-tree'.setup {
     },
     icons = {
       webdev_colors = true,
+      show = {
+        git = true,
+        folder = true,
+        file = true,
+        folder_arrow = true
+      },
     },
   },
   hijack_directories = {
@@ -372,37 +371,37 @@ require("bufferline").setup{
   },
   highlights = {
     buffer_selected = {
-      gui = "bold"
+      italic = true
     },
     diagnostic_selected = {
-      gui = "bold"
+      italic = true
     },
     info_selected = {
-      gui = "bold"
+      italic = true
     },
     info_diagnostic_selected = {
-      gui = "bold"
+      italic = true
     },
     warning_selected = {
-      gui = "bold"
+      italic = true
     },
     warning_diagnostic_selected = {
-      gui = "bold"
+      italic = true
     },
     error_selected = {
-      gui = "bold"
+      italic = true
     },
     error_diagnostic_selected = {
-      gui = "bold"
+      italic = true
     },
     pick_selected = {
-      gui = "bold"
+      italic = true
     },
     pick_visible = {
-      gui = "bold"
+      italic = true
     },
     pick = {
-      gui = "bold"
+      italic = true
     },
   },
 }
@@ -706,3 +705,7 @@ function! OpenFzfIfEmpty()
 endfunction
 
 autocmd VimEnter * :call OpenFzfIfEmpty()
+
+
+let g:WorkspaceFolders = []
+"autocmd User CocNvimInit :sleep 30m | call coc_fzf#lists#fzf_run(1, "symbols")

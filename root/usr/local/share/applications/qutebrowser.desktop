@@ -1,9 +1,0 @@
-[Desktop Entry]
-
-Type=Application
-Version=1.0
-Name=Qutebrowser
-Path=/usr/local/bin
-Exec=qutebrowser
-Terminal=false
-Categories=Application;Network

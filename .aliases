@@ -1,5 +1,11 @@
 alias vim='nvim'
 alias v='nvim'
+alias ls='exa'
+alias ll='exa -l -a'
+alias rgc='rg -tc'
+alias fd='fdfind'
+
+# Git
 alias gc='git checkout'
 alias gau='git add -u'
 alias gcm='git commit -m'
@@ -9,14 +15,12 @@ alias gll='git log --pretty --graph'
 alias gri='git rebase -i'
 alias grid='git rebase -i develop'
 alias grih='git rebase -i HEAD~2'
+alias grhh='git reset --hard HEAD'
 alias gsu='git submodule update --init --recursive'
 alias gp='git pull'
 alias gb='git checkout -b'
 alias gd='git diff'
 alias gcp='git cherry-pick'
-alias ls='exa'
-alias ll='exa -l -a'
-alias rgc='rg -tc'
 
 fzf-git-branch() {
     git rev-parse HEAD > /dev/null 2>&1 || return
@@ -53,8 +57,13 @@ alias gbf='fzf-git-branch'
 alias gco='fzf-git-checkout'
 
 h2d(){
-  echo "ibase=16; $@"|bc
+  echo "ibase=16; $(echo $@ | tr a-f A-F)"|bc
 }
+
 d2h(){
   echo "obase=16; $@"|bc
+}
+
+h2b(){
+  echo "ibase=16; obase=2; $(echo $@ | tr a-f A-F)" | bc
 }
