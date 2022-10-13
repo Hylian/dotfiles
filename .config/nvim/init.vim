@@ -443,7 +443,12 @@ M.active[1] = {
         end,
     },
     {
-        provider = 'file_info',
+        provider = {
+            name = 'file_info',
+            opts = {
+                type = 'relative-short',
+            },
+        },
         hl = {
             fg = 'white',
             bg = 'oceanblue',
@@ -460,30 +465,10 @@ M.active[1] = {
         },
     },
     {
-        provider = 'file_size',
-        right_sep = {
-            ' ',
-            {
-                str = 'slant_left_2_thin',
-                hl = {
-                    fg = 'fg',
-                    bg = 'bg',
-                },
-            },
-        },
-    },
-    {
         provider = 'position',
-        left_sep = ' ',
+        left_sep = '',
         right_sep = {
             ' ',
-            {
-                str = 'slant_right_2_thin',
-                hl = {
-                    fg = 'fg',
-                    bg = 'bg',
-                },
-            },
         },
     },
     {
@@ -555,14 +540,7 @@ M.active[2] = {
         },
         left_sep = '  ',
         right_sep = ' ',
-    },
-    {
-        provider = 'scroll_bar',
-        hl = {
-            fg = 'skyblue',
-            style = 'bold',
-        },
-    },
+    }
 }
 
 M.inactive[1] = {
