@@ -1,0 +1,26 @@
+{
+  "languageserver": {
+    "ccls": {
+      "command": "ccls",
+      "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"],
+      "rootPatterns": [".ccls", "compile_commands.json", ".git/", ".hg/"],
+      "initializationOptions": {
+        "cache": {
+            "directory": "/tmp/ccls"
+        }
+      }
+    }
+  },
+  "hover.target": "preview",
+  "hover.autoHide": false,
+  "suggest.autoTrigger": "always",
+  "suggest.echodocSupport": true,
+  "diagnostic.messageTarget": "echo",
+  "diagnostic.messageDelay": "0",
+  "diagnostic.displayByAle": false,
+  "diagnostic.virtualText": true,
+  "diagnostic.floatConfig": {
+    "border": true
+  },
+  "diagnostic.enableSign": false
+}

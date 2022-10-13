@@ -1,24 +1,25 @@
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'feline-nvim/feline.nvim'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'bfredl/nvim-miniyank'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'vimwiki/vimwiki'
 Plug 'chriskempson/base16-vim'
-Plug 'szw/vim-maximizer'
-Plug 'Shougo/echodoc.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'kyazdani42/nvim-tree.lua'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'bfrg/vim-cpp-modern'
 Plug 'tpope/vim-commentary'
 Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'antoinemadec/coc-fzf'
-Plug 'akinsho/toggleterm.nvim'
+if !exists('g:vscode')
+  Plug 'feline-nvim/feline.nvim'
+  Plug 'bfredl/nvim-miniyank'
+  Plug 'szw/vim-maximizer'
+  Plug 'Shougo/echodoc.vim'
+  Plug 'kyazdani42/nvim-web-devicons'
+  Plug 'kyazdani42/nvim-tree.lua'
+  Plug 'akinsho/toggleterm.nvim'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 call plug#end()
 
 set t_Co=256 
@@ -57,12 +58,14 @@ set nowritebackup
 set cmdheight=1
 set updatetime=300
 set colorcolumn=80
+set shortmess=aostTA
 
 let g:bufferline_echo = 0
 let mapleader = " "
 
 colorscheme base16-default-dark
 
+let &runtimepath.=','.$HOME.'/.config/nvim/bundle/darkhorse.vim'
 let g:python3_host_prog = '/usr/bin/python3'
  
 highlight LineNr ctermfg=blue
@@ -136,19 +139,20 @@ autocmd BufReadPost *.rs setlocal filetype=rust
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'virtual'
 
+if !exists('g:vscode')
 " Coc Configuration
 let g:coc_node_path='/usr/bin/node'
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 " Use <c-space> to trigger completion.
 if has('nvim')
@@ -202,7 +206,10 @@ augroup mygroup
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
+endif
+" coc configuration end
 
+if !exists('g:vscode')
 lua << EOF
 require'nvim-web-devicons'.setup {
   default = true;
@@ -331,6 +338,7 @@ require'nvim-tree'.setup {
 EOF
 
 nnoremap <C-n> :NvimTreeToggle<CR>
+endif
 
 " Bufferline Config
 nnoremap <silent> gb :BufferLinePick<CR>
@@ -407,6 +415,7 @@ require("bufferline").setup{
 }
 EOF
 
+if !exists('g:vscode')
 " Feline Config
 lua << EOF
 local vi_mode_utils = require('feline.providers.vi_mode')
@@ -590,6 +599,7 @@ require('feline').setup({
   components = M
 })
 EOF
+endif
 
 " Gitsigns Configuration
 lua << EOF
@@ -650,6 +660,7 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
+if !exists('g:vscode')
 " Toggleterm Configuration
 lua << EOF
 require("toggleterm").setup {
@@ -680,6 +691,7 @@ require("toggleterm").setup {
   }
 }
 EOF
+endif
 
 " Open Fzf GitFiles at startup if opened without any buffers
 function! IsBlank( bufnr )
@@ -707,5 +719,5 @@ endfunction
 autocmd VimEnter * :call OpenFzfIfEmpty()
 
 
-let g:WorkspaceFolders = []
+let g:WorkspaceFolders = ['/home/shined/fw-darkhorse']
 "autocmd User CocNvimInit :sleep 30m | call coc_fzf#lists#fzf_run(1, "symbols")
