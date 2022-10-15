@@ -1,9 +1,10 @@
 call plug#begin('~/.local/share/nvim/plugged')
+Plug 'chriskempson/base16-vim'
+Plug 'sainnhe/everforest'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'chriskempson/base16-vim'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'bfrg/vim-cpp-modern'
 Plug 'tpope/vim-commentary'
@@ -60,10 +61,17 @@ set updatetime=300
 set colorcolumn=80
 set shortmess=aostTA
 
-let g:bufferline_echo = 0
 let mapleader = " "
 
-colorscheme base16-default-dark
+if has('termguicolors')
+  set termguicolors
+endif
+set background=dark
+let g:everforest_background = 'hard'
+let g:everforest_better_performance = 1
+colorscheme everforest
+
+let g:bufferline_echo = 0
 
 let &runtimepath.=','.$HOME.'/.config/nvim/bundle/darkhorse.vim'
 let g:python3_host_prog = '/usr/bin/python3'
@@ -231,7 +239,6 @@ require'nvim-tree'.setup {
   update_cwd = false,
   view = {
     width = 30,
-    height = 30,
     hide_root_folder = false,
     side = "left",
     preserve_window_proportions = false,
@@ -573,6 +580,9 @@ M.inactive[1] = {
     {},
 }
 
+local feline_colors = require('themes.everforest')
+
+require('feline').use_theme(feline_colors)
 require('feline').setup({
   components = M
 })
