@@ -2,8 +2,8 @@
   "height": 30,
   "spacing": 4,
   "output": ["DP-1"],
-  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "custom/media"],
-  "modules-center": ["sway/window"],
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "sway/window", "custom/media"],
+  "modules-center": [],
   "modules-right": ["wireplumber", "network", "cpu", "memory", "temperature", "clock", "tray"],
 
   "sway/workspaces": {
@@ -12,6 +12,11 @@
 
   "sway/mode": {
     "format": "<span style=\"italic\">{}</span>"
+  },
+
+  "sway/window": {
+    "all-outputs": true,
+    "icon": true
   },
 
   "sway/scratchpad": {
@@ -29,8 +34,8 @@
 
   "clock": {
       "timezone": "America/New_York",
-      "tooltip-format": "<span font='Atkinson Monolegible 16'><big>{:%Y %B}</big>\n<tt>{calendar}</tt></span>",
-      "format-alt": "{:%Y-%m-%d}",
+      //"tooltip-format": "<span font='Atkinson Monolegible 16'><big>{:%Y %B}</big>\n<tt>{calendar}</tt></span>",
+      "format": "{:%a %b %d   %I:%M %p} ",
 
       "calendar-weeks-pos": "right",
       "today-format": "<span color='#ff6699'><b><u>{}</u></b></span>",
@@ -38,12 +43,12 @@
       "format-calendar-weeks": "",
       "format-calendar-weekdays": "<span color='#ffcc66'><b>{}</b></span>",
       "on-scroll": {
-        "calendar": 1
+        "calendar": 0
       }
   },
 
   "cpu": {
-      "format": "{usage:2}% {min_frequency:4} GHz / {avg_frequency:4} GHz / {max_frequency:4} GHz ",
+      "format": "{usage:2}% {min_frequency:.2f} GHz / {avg_frequency:.2f} GHz / {max_frequency:.2f} GHz ",
       "interval": 1,
       "tooltip": false
   },

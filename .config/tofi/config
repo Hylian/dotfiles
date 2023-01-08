@@ -1,0 +1,72 @@
+font = "/usr/share/fonts/TTF/Atkinson-Hyperlegible-Bold.ttf"
+
+font-size = 18
+
+hint-font = false
+
+text-color = #ADE8ED80
+
+prompt-color = #FFD36Bf0
+prompt-background = #00000000
+prompt-background-padding = 0
+prompt-background-corner-radius = 0
+
+input-color = #FC8D95e0
+input-background = #00000000
+input-background-padding = 0
+input-background-corner-radius = 0
+
+selection-color = #18848E
+selection-background = #FC8D95
+selection-background-padding = 2, 10
+selection-background-corner-radius = 4
+selection-match-color = #FFEABA
+
+prompt-text = " >"
+prompt-padding = 18
+
+result-spacing = 5
+
+width = 440
+height = 190
+
+background-color = #18848Ee0
+
+outline-width = 5
+outline-color = #F94A5710
+
+border-width = 1
+border-color = #FFD36Bc0
+
+corner-radius = 0
+
+padding-top = 6
+padding-bottom = 0
+padding-left = 4
+padding-right = 4
+
+clip-to-padding = true
+scale = true
+
+# Location on screen to anchor the window to.
+#
+# Supported values: top-left, top, top-right, right, bottom-right,
+# bottom, bottom-left, left, center.
+anchor = center
+
+exclusive-zone = -1
+
+
+history = true
+
+fuzzy-match = true
+
+require-match = true
+
+drun-launch = false
+
+late-keyboard-init = false
+
+multi-instance = false
+
+ascii-input = true
