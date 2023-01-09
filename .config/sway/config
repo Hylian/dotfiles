@@ -33,7 +33,7 @@ smart_gaps off
 smart_borders on
 hide_edge_borders smart_no_gaps
 
-bindsym $mod+Return exec "kitty -d $HOME"
+bindsym $mod+Return exec "foot -D $HOME"
 bindsym $mod+q exec "firefox"
 
 bindsym $mod+d kill
