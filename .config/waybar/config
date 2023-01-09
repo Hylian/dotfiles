@@ -4,10 +4,14 @@
   "output": ["DP-1"],
   "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "sway/window", "custom/media"],
   "modules-center": [],
-  "modules-right": ["wireplumber", "network", "cpu", "memory", "temperature", "clock", "tray"],
+  "modules-right": ["wireplumber", "network", "disk", "cpu", "memory", "temperature", "clock", "tray"],
 
   "sway/workspaces": {
-    "all-outputs": true
+    "all-outputs": true,
+    "persistent_workspaces": {
+      "1": [],
+      "6": []
+    }
   },
 
   "sway/mode": {
@@ -32,6 +36,12 @@
       "spacing": 10
   },
 
+  "disk": {
+      "format": "{percentage_used}% [{used}] ",
+      "interval": 30,
+      "path": "/",
+  },
+
   "clock": {
       "timezone": "America/New_York",
       //"tooltip-format": "<span font='Atkinson Monolegible 16'><big>{:%Y %B}</big>\n<tt>{calendar}</tt></span>",
@@ -48,13 +58,13 @@
   },
 
   "cpu": {
-      "format": "{usage:2}% {min_frequency:.2f} GHz / {avg_frequency:.2f} GHz / {max_frequency:.2f} GHz ",
+      "format": "Min[{min_frequency:.2f}GHz] Avg[{avg_frequency:.2f}GHz] Max[{max_frequency:.2f}GHz] {usage:2}% ",
       "interval": 1,
       "tooltip": false
   },
 
   "memory": {
-      "format": "{}% "
+      "format": "{}% [{used:.2f}GiB] "
   },
 
   "temperature": {
