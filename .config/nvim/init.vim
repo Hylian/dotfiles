@@ -111,7 +111,13 @@ nnoremap <A-t> <C-W>T
 
 set splitbelow
 set splitright
+
+if !exists('g:vscode')
 nnoremap m :MaximizerToggle<CR>
+else
+nnoremap m :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
+nnoremap M :call VSCodeCall('workbench.action.toggleZenMode')<CR>
+endif
 
 " FZF / CocFzfList Configuration and Keybinds
 let g:fzf_preview_window = ['up:50%', 'ctrl-/']
