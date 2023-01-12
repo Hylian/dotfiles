@@ -1,0 +1,12 @@
+[Unit]
+Description=An overlay that shows schemas for all workspaces to make navigation in sway easier
+PartOf=graphical-session.target
+After=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+
+[Service]
+StandardInput=socket
+ExecStart=/usr/local/bin/sov -t 180 -a b -r 6 -m 30 -c 4
+
+[Install]
+WantedBy=graphical-session.target
