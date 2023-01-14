@@ -1,5 +1,5 @@
-call plug#begin('~/.local/share/nvim/plugged')
 if !exists('g:vscode')
+call plug#begin('~/.local/share/nvim/plugged')
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   "Plug 'junegunn/fzf.vim'
   Plug '~/fzf.vim'
@@ -22,9 +22,23 @@ if !exists('g:vscode')
   Plug 'kyazdani42/nvim-tree.lua'
   Plug 'akinsho/toggleterm.nvim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
 call plug#end()
+endif
 
+" VSCode-specific Configuration
+if exists('g:vscode')
+  nnoremap m :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
+  nnoremap M :call VSCodeCall('workbench.action.toggleZenMode')<CR>
+  nmap ' :Find<CR>
+  nmap { :call VSCodeCall('workbench.action.showAllSymbols')<CR>
+  nmap } :call VSCodeCall('workbench.action.gotoSymbol')<CR>
+  nmap <silent> gd :call VSCodeCall('editor.action.peekDefinition')<CR>
+  nmap <silent> gD :call VSCodeCall('editor.action.revealDefinition')<CR>
+  nmap <silent> gr :call VSCodeCall('editor.action.referenceSearch.trigger')<CR>
+  nmap <silent> gR :call VSCodeCall('references-view.findReferences')<CR>
+endif
+
+" Global Configuration
 set t_Co=256
 set laststatus=2
 set noshowmode
@@ -66,37 +80,9 @@ set shortmess=aostTA
 let mapleader = " "
 let localleader = "\\"
 
-if !exists('g:vscode')
-  if has('termguicolors')
-    set termguicolors
-  endif
-  set background=dark
-  let g:everforest_background = 'hard'
-  let g:everforest_better_performance = 1
-  colorscheme everforest
-endif
-
-let g:bufferline_echo = 0
-
-let g:python3_host_prog = '/usr/bin/python3'
-
 highlight LineNr ctermfg=blue
 
-" Automatically strip trailing whitespace
-fun! <SID>StripTrailingWhitespaces()
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e
-    call cursor(l, c)
-endfun
-autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-                  \| exe "normal! g'\"" | endif
-endif
-
 " Split settings
-
 nnoremap <A-j> <C-W><C-j>
 nnoremap <A-k> <C-W><C-k>
 nnoremap <A-l> <C-W><C-l>
@@ -112,180 +98,195 @@ nnoremap <A-t> <C-W>T
 set splitbelow
 set splitright
 
-if !exists('g:vscode')
-nnoremap m :MaximizerToggle<CR>
-else
-nnoremap m :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
-nnoremap M :call VSCodeCall('workbench.action.toggleZenMode')<CR>
+" Automatically strip trailing whitespace
+fun! <SID>StripTrailingWhitespaces()
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
+autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+                  \| exe "normal! g'\"" | endif
 endif
 
-" FZF / CocFzfList Configuration and Keybinds
-let g:fzf_preview_window = ['up:50%', 'ctrl-/']
-let g:coc_fzf_preview = 'up:50%'
-
-command! -bang -nargs=* Rgc
-  \ call fzf#vim#grep(
-  \   'rg -tc --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
-  \   fzf#vim#with_preview(), <bang>0)
-
-function! RipgrepCFzf(query, fullscreen)
-  let command_fmt = 'rg -tc --column --line-number --no-heading --color=always --smart-case -- %s || true'
-  let initial_command = printf(command_fmt, shellescape(a:query))
-  let reload_command = printf(command_fmt, '{q}')
-  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-endfunction
-
-command! -bang -nargs=? GitAllFiles call fzf#vim#gitallfiles(<q-args>, fzf#vim#with_preview(<q-args> == "?" ? { "placeholder": "" } : {}), <bang>0)
-
-command! -nargs=* -bang RG call RipgrepCFzf(<q-args>, <bang>0)
-
-function! NeorgOpen()
-  :execute "Neorg workspace fitbit"
-  :execute "NvimTreeOpen ~/notes/fitbit"
-endfunction
-command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
+" Neovim-specific Configuration
 
 if !exists('g:vscode')
-  nmap _ :NeorgOpen<CR>
+  if has('termguicolors')
+    set termguicolors
+  endif
+  set background=dark
+  let g:everforest_background = 'hard'
+  let g:everforest_better_performance = 1
+  colorscheme everforest
+
+  let g:bufferline_echo = 0
+
+  let g:python3_host_prog = '/usr/bin/python3'
+
+  nnoremap m :MaximizerToggle<CR>
+
+  " FZF / CocFzfList Configuration and Keybinds
+  let g:fzf_preview_window = ['up:50%', 'ctrl-/']
+  let g:coc_fzf_preview = 'up:50%'
+
+  command! -bang -nargs=* Rgc
+    \ call fzf#vim#grep(
+    \   'rg -tc --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+    \   fzf#vim#with_preview(), <bang>0)
+
+  function! RipgrepCFzf(query, fullscreen)
+    let command_fmt = 'rg -tc --column --line-number --no-heading --color=always --smart-case -- %s || true'
+    let initial_command = printf(command_fmt, shellescape(a:query))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  endfunction
+
+  command! -bang -nargs=? GitAllFiles call fzf#vim#gitallfiles(<q-args>, fzf#vim#with_preview(<q-args> == "?" ? { "placeholder": "" } : {}), <bang>0)
+
+  command! -nargs=* -bang RG call RipgrepCFzf(<q-args>, <bang>0)
+
   nmap <Bar> :RG!<CR>
   nmap ' :GitAllFiles<CR>
   nmap { :CocFzfList symbols<CR>
   nmap } :CocFzfList outline<CR>
-else
-  nmap ' :Find<CR>
-  nmap { :call VSCodeCall('workbench.action.showAllSymbols')<CR>
-  nmap } :call VSCodeCall('workbench.action.gotoSymbol')<CR>
-endif
 
-" Rust language completion
-autocmd BufReadPost *.rs setlocal filetype=rust
+  " Neorg Configuration
+  function! NeorgOpen()
+    :execute "Neorg workspace fitbit"
+    :execute "NvimTreeOpen ~/notes/fitbit"
+  endfunction
+  command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
 
-" Echodoc Configuration
-let g:echodoc#enable_at_startup = 1
-let g:echodoc#type = 'virtual'
+  nmap _ :NeorgOpen<CR>
 
-if !exists('g:vscode')
-" Coc Configuration
-let g:coc_node_path='/usr/bin/node'
+  " Rust language completion
+  autocmd BufReadPost *.rs setlocal filetype=rust
 
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+  " Echodoc Configuration
+  let g:echodoc#enable_at_startup = 1
+  let g:echodoc#type = 'virtual'
 
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+  " Coc Configuration
+  let g:coc_node_path='/usr/bin/node'
 
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  function! CheckBackspace() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+
+  inoremap <silent><expr> <TAB>
+        \ coc#pum#visible() ? coc#pum#next(1) :
+        \ CheckBackspace() ? "\<Tab>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+  " Make <CR> to accept selected completion item or notify coc.nvim to format
+  " <C-g>u breaks current undo, please make your own choice.
+  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 
-" Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
-
-" Make <CR> auto-select the first completion item and notify coc.nvim to
-" format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> Gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> Gi : call CocActionAsync('jumpImplementation', 'vsplit')<CR>
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> Gy : call CocActionAsync('jumpTypeDefinition', 'vsplit')<CR>
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> Gr : call CocActionAsync('jumpReferences', 'vsplit')<CR>
-nmap <leader>rn <Plug>(coc-rename)
-
-inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
-inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
+  " Use <c-space> to trigger completion.
+  if has('nvim')
+    inoremap <silent><expr> <c-space> coc#refresh()
   else
-    execute '!' . &keywordprg . " " . expand('<cword>')
+    inoremap <silent><expr> <c-@> coc#refresh()
   endif
-endfunction
 
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+  " Make <CR> auto-select the first completion item and notify coc.nvim to
+  " format on enter, <cr> could be remapped by other vim plugin
+  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-endif
-" coc configuration end
+  " Use `[g` and `]g` to navigate diagnostics
+  " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+  nmap <silent> [g <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-nnoremap <C-n> :NvimTreeToggle<CR>
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> Gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> Gi : call CocActionAsync('jumpImplementation', 'vsplit')<CR>
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> Gy : call CocActionAsync('jumpTypeDefinition', 'vsplit')<CR>
+  nmap <silent> gr <Plug>(coc-references)
+  nmap <silent> Gr : call CocActionAsync('jumpReferences', 'vsplit')<CR>
+  nmap <leader>rn <Plug>(coc-rename)
 
-" Bufferline Config
-nnoremap <silent> gb :BufferLinePick<CR>
-nnoremap <A-1> <Cmd>BufferLineGoToBuffer 1<CR>
-nnoremap <A-2> <Cmd>BufferLineGoToBuffer 2<CR>
-nnoremap <A-3> <Cmd>BufferLineGoToBuffer 3<CR>
-nnoremap <A-4> <Cmd>BufferLineGoToBuffer 4<CR>
-nnoremap <A-5> <Cmd>BufferLineGoToBuffer 5<CR>
-nnoremap <A-6> <Cmd>BufferLineGoToBuffer 6<CR>
-nnoremap <A-7> <Cmd>BufferLineGoToBuffer 7<CR>
-nnoremap <A-8> <Cmd>BufferLineGoToBuffer 8<CR>
-nnoremap <A-9> <Cmd>BufferLineGoToBuffer 9<CR>
+  inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
+  inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
 
-" Open Fzf GitFiles at startup if opened without any buffers
-function! IsBlank( bufnr )
-  return (empty(bufname(a:bufnr)) &&
-  \ getbufvar(a:bufnr, '&modified') == 0 &&
-  \ empty(getbufvar(a:bufnr, '&buftype'))
-  \)
-endfunction
+  " Use K to show documentation in preview window
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+      call CocActionAsync('doHover')
+    else
+      execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+  endfunction
 
-function! ExistOtherBuffers( targetBufNr )
-  return ! empty(filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != a:targetBufNr'))
-endfunction
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
 
-function! IsEmpty()
-  let l:currentBufNr = bufnr('')
-  return IsBlank(l:currentBufNr) && ! ExistOtherBuffers(l:currentBufNr)
-endfunction
+  augroup mygroup
+    autocmd!
+    " Setup formatexpr specified filetype(s).
+    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+    " Update signature help on jump placeholder.
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  augroup end
 
-function! OpenFzfIfEmpty()
-  if IsEmpty()
-    :GitAllFiles!
-  endif
-endfunction
+  " Coc Configuration End
+  
+  nnoremap <C-n> :NvimTreeToggle<CR>
 
-if !exists('g:vscode')
+  " Bufferline Config
+  nnoremap <silent> gb :BufferLinePick<CR>
+  nnoremap <A-1> <Cmd>BufferLineGoToBuffer 1<CR>
+  nnoremap <A-2> <Cmd>BufferLineGoToBuffer 2<CR>
+  nnoremap <A-3> <Cmd>BufferLineGoToBuffer 3<CR>
+  nnoremap <A-4> <Cmd>BufferLineGoToBuffer 4<CR>
+  nnoremap <A-5> <Cmd>BufferLineGoToBuffer 5<CR>
+  nnoremap <A-6> <Cmd>BufferLineGoToBuffer 6<CR>
+  nnoremap <A-7> <Cmd>BufferLineGoToBuffer 7<CR>
+  nnoremap <A-8> <Cmd>BufferLineGoToBuffer 8<CR>
+  nnoremap <A-9> <Cmd>BufferLineGoToBuffer 9<CR>
+
+  " Open Fzf GitFiles at startup if opened without any buffers
+  function! IsBlank( bufnr )
+    return (empty(bufname(a:bufnr)) &&
+    \ getbufvar(a:bufnr, '&modified') == 0 &&
+    \ empty(getbufvar(a:bufnr, '&buftype'))
+    \)
+  endfunction
+
+  let g:WorkspaceFolders = ['']
+
+  function! ExistOtherBuffers( targetBufNr )
+    return ! empty(filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != a:targetBufNr'))
+  endfunction
+
+  function! IsEmpty()
+    let l:currentBufNr = bufnr('')
+    return IsBlank(l:currentBufNr) && ! ExistOtherBuffers(l:currentBufNr)
+  endfunction
+
+  function! OpenFzfIfEmpty()
+    if IsEmpty()
+      :GitAllFiles!
+    endif
+  endfunction
+
   autocmd VimEnter * :call OpenFzfIfEmpty()
-endif
 
-
-"autocmd User CocNvimInit :sleep 30m | call coc_fzf#lists#fzf_run(1, "symbols")
-
-if !exists('g:vscode')
+  " Pull in lua configs
   lua require('config.bufferline')
   lua require('config.feline')
   lua require('config.gitsigns')
@@ -294,4 +295,4 @@ if !exists('g:vscode')
   lua require('config.treesitter')
   lua require('config.nvim-tree')
   lua require('config.nvim-web-devicons')
-endif
+endif "if !exists('g:vscode')
