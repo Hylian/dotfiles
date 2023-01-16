@@ -3,7 +3,9 @@ alias v='nvim'
 alias ls='exa'
 alias ll='exa -l -a'
 alias rgc='rg -tc'
-alias fd='fdfind'
+if (( $+commands[fdfind] )); then
+  alias fd='fdfind'
+fi
 
 # Git
 alias gc='git checkout'

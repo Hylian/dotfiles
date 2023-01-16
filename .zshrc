@@ -1,47 +1,55 @@
-export ZSH="/home/shined/.oh-my-zsh"
+# Setup Antigen
+source /usr/share/zsh/share/antigen.zsh
 
-ZSH_THEME="minimal"
+antigen use oh-my-zsh
+
+antigen bundle direnv
+antigen bundle fd
+antigen bundle fzf
+antigen bundle pip
+antigen bundle ripgrep
+antigen bundle rust
+antigen bundle zsh-users/zsh-autosuggestions
+
+antigen theme minimal
+
+antigen apply
+
+export PATH="$HOME/.local/bin:$PATH"
+export KEYTIMEOUT=1
+export WINEARCH=win32
+
+source $HOME/.aliases
 
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-plugins=(fzf-tab zsh-autosuggestions)
-fpath=(~/.fpath $fpath)
+if (( $+commands[nvim] )); then
+  export VISUAL=nvim
+  export EDITOR="$VISUAL"
+fi
 
-source $ZSH/oh-my-zsh.sh
+if (( $+commands[sccache] )); then
+  export RUSTC_WRAPPER=sccache
+fi
 
-export KEYTIMEOUT=1
-
-source /home/shined/.aliases
-#export RUSTC_WRAPPER=sccache
-export VISUAL=nvim
-export EDITOR=nvim
-
-function chpwd() {
-  emulate -L zsh
-  exa
-}
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source /usr/share/doc/fzf/examples/key-bindings.zsh
-source /usr/share/doc/fzf/examples/completion.zsh
-
-. /usr/share/autojump/autojump.sh
+if (( $+commands[exa] )); then
+  function chpwd() {
+    emulate -L zsh
+    exa
+  }
+fi
 
 if (( $+commands[tag] )); then
-  export TAG_SEARCH_PROG=rg
+  export TAG_SEARCH_PROG=rg 
   tag() { command tag "$@"; source ${TAG_ALIAS_FILE:-/tmp/tag_aliases} 2>/dev/null }
   alias rg=tag
 fi
 
-export C_INCLUDE_PATH="/lib/gcc/arm-none-eabi/10.3.1/include/"
+if (( $+commands[fd] )); then
+  export FZF_DEFAULT_COMMAND="fd"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
 
-export ANACONDA_HOME=$HOME/miniconda3
-source $ANACONDA_HOME/etc/profile.d/conda.sh
 
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="/home/shined/fitbit/bin/releases/bootstrap:${PATH}"
-export PATH="/home/shined/.scripts:${PATH}"
-export PATH="/home/shined/.local/bin:${PATH}"
-export PATH="/home/shined/git-fuzzy/bin:$PATH"
-
+eval "$(zoxide init zsh --cmd j)"
 eval "$(starship init zsh)"

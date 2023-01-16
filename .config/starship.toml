@@ -1,6 +1,6 @@
 add_newline = true
 
-[python]
+[c]
 disabled = true
 
 [conda]
@@ -13,4 +13,10 @@ disabled = false
 disabled = false
 
 [git_status]
+disabled = true
+
+[lua]
+disabled = true
+
+[python]
 disabled = true
