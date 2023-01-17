@@ -1,27 +1,39 @@
 # Setup Antigen
-source /usr/share/zsh/share/antigen.zsh
+ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
+ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
+has_antigen=false
 
-antigen use oh-my-zsh
+if test -f "$ANTIGEN_PATH_ARCH"; then
+  source $ANTIGEN_PATH_ARCH
+  has_antigen=true
+elif test -f "$ANTIGEN_PATH_DEBIAN"; then
+  source $ANTIGEN_PATH_DEBIAN
+  has_antigen=true
+fi
 
-antigen bundle direnv
-antigen bundle fd
-antigen bundle fzf
-antigen bundle pip
-antigen bundle ripgrep
-antigen bundle rust
-antigen bundle zsh-users/zsh-autosuggestions
+if [ "$has_antigen" = true ]; then
+  antigen use oh-my-zsh
 
-antigen theme minimal
+  antigen bundle direnv
+  antigen bundle fd
+  antigen bundle fzf
+  antigen bundle pip
+  antigen bundle ripgrep
+  antigen bundle rust
+  antigen bundle zsh-users/zsh-autosuggestions
 
-antigen apply
+  antigen theme minimal
+
+  antigen apply
+fi
+
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 export PATH="$HOME/.local/bin:$PATH"
 export KEYTIMEOUT=1
 export WINEARCH=win32
 
 source $HOME/.aliases
-
-DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 if (( $+commands[nvim] )); then
   export VISUAL=nvim
