@@ -8,7 +8,7 @@
     "security.workspace.trust.untrustedFiles": "open",
     "cmake.configureOnOpen": false,
     "cmake.configureOnEdit": false,
-    "terminal.integrated.fontFamily": "'Atkinson Monolegible'",
+    "terminal.integrated.fontFamily": "'Atkinson Monolegible', 'UbuntuMono Nerd Font', 'Font Awesome 6 Free'",
     "update.mode": "none",
     "telemetry.telemetryLevel": "off",
     "extensions.experimental.affinity": {
@@ -24,6 +24,13 @@
     "editor.hover.delay": 100,
     "terminal.integrated.gpuAcceleration": "on",
     "workbench.startupEditor": "none",
-    "window.zoomLevel": 1,
-    "vscode_custom_css.imports": ["file:///home/shined/scripts/code-custom.css"]
+    "vscode_custom_css.imports": [
+      "file:///home/shined/scripts/code-custom.css"
+    ],
+    "extensions.ignoreRecommendations": true,
+    "clangd.checkUpdates": true,
+    "window.titleBarStyle": "custom",
+    "window.customMenuBarAltFocus": false,
+    "zenMode.hideLineNumbers": false,
+    "window.zoomLevel": 4
 }

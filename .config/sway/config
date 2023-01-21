@@ -27,13 +27,29 @@ font pango:Atkinson Hyperlegible 10
 
 floating_modifier $mod
 
-for_window [class=".*"] border pixel 0
-
 for_window {
+  [class=".*"] {
+    border pixel 0
+  }
+
   [title="ssh-askpass"] {
     floating enable
   }
+
+  [app_id="code-url.*"] {
+    fullscreen enable
+  }
+
+  [app_id="Plexamp"] {
+    move container to scratchpad, scratchpad show
+    resize set 1000 800
+  }
 }
+
+bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
+
+default_border none
+default_floating_border none
 
 gaps inner 5
 smart_gaps off
@@ -41,7 +57,7 @@ smart_borders on
 hide_edge_borders smart_no_gaps
 
 bindsym $mod+Return exec "foot -D $HOME"
-bindsym $mod+q exec "firefox"
+bindsym $mod+q exec "google-chrome"
 
 bindsym $mod+d kill
 
@@ -175,9 +191,11 @@ bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bar swaybar_command waybar
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
-exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
+#exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
+exec $HOME/.cargo/bin/sway-opacity --opacity 0.85
 exec wl-paste -t text --watch clipman store --no-persist
 exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec_always pkill kanshi; exec kanshi
 #exec swayidle -w \
 #  timeout 1800 'swaylock -f' \
 #  timeout 1805 'swaymsg "output * dpms off"' \

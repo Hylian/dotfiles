@@ -36,6 +36,8 @@ if exists('g:vscode')
   nmap <silent> gD :call VSCodeCall('editor.action.revealDefinition')<CR>
   nmap <silent> gr :call VSCodeCall('editor.action.referenceSearch.trigger')<CR>
   nmap <silent> gR :call VSCodeCall('references-view.findReferences')<CR>
+  nmap <silent> gy :call VSCodeCall('editor.action.goToTypeDefinition')<CR>
+  nmap <silent> grn :call VSCodeCall('editor.action.rename')<CR>
 endif
 
 " Global Configuration

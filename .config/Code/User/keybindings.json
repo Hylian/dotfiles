@@ -267,5 +267,15 @@
     "key": "ctrl+shift+m",
     "command": "-workbench.actions.view.problems",
     "when": "workbench.panel.markers.view.active"
+  },
+  {
+    "key": "shift+k",
+    "command": "workbench.action.previousEditorInGroup",
+    "when": "editorFocus && neovim.mode == 'normal'"
+  },
+  {
+    "key": "shift+j",
+    "command": "workbench.action.nextEditorInGroup",
+    "when": "editorFocus && neovim.mode == 'normal'"
   }
 ]

@@ -16,11 +16,12 @@ if [ "$has_antigen" = true ]; then
 
   antigen bundle direnv
   antigen bundle fd
-  antigen bundle fzf
   antigen bundle pip
   antigen bundle ripgrep
-  antigen bundle rust
+  #antigen bundle rust
+  antigen bundle vi-mode
   antigen bundle zsh-users/zsh-autosuggestions
+  antigen bundle fzf
 
   antigen theme minimal
 
@@ -28,6 +29,9 @@ if [ "$has_antigen" = true ]; then
 fi
 
 DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
+VI_MODE_SET_CURSOR=true
 
 export PATH="$HOME/.local/bin:$PATH"
 export KEYTIMEOUT=1
