@@ -1,0 +1,27 @@
+# Home Desk
+profile {
+  output eDP-1 disable
+  output "Dell Inc. Dell S2417DG YNY1D89709RU" mode 2560x1440@59.951Hz position 0,0 scale 1
+  output "Dell Inc. DELL U2723QE 7S2KXN3" mode 3840x2160@59.997Hz position 2560,0 scale 2
+  exec pkill waybar; waybar -c $HOME/.config/waybar/config-home-dock -s $HOME/.config/waybar/style-home-dock.css
+  exec swaymsg 'output "Dell Inc. Dell S2417DG YNY1D89709RU" subpixel rgb'
+  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel rgb'
+  exec swaymsg 'workspace 1 output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 1, move workspace to output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 2 output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 2, move workspace to output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 3 output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 3, move workspace to output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 4 output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 4, move workspace to output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 5 output "Dell Inc. Dell S2417DG YNY1D89709RU", workspace 5, move workspace to output "Dell Inc. Dell S2417DG YNY1D89709RU"'
+  exec swaymsg 'workspace 6 output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 6, move workspace to output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 7 output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 7, move workspace to output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 8 output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 8, move workspace to output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 9 output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 9, move workspace to output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 10 output "Dell Inc. DELL U2723QE 7S2KXN3", workspace 10, move workspace to output "Dell Inc. DELL U2723QE 7S2KXN3"'
+}
+
+# Work Desk
+profile {
+  output eDP-1 mode 3840x2400@60Hz position 0,0 scale 2.0
+  output "Lenovo Group Limited LEN T32p-20 VNA7645L" mode 3840x2160@59.997Hz position 1920,0 scale 2.0
+  exec pkill waybar; waybar -c $HOME/.config/waybar/config-desk -s $HOME/.config/waybar/style-desk.css
+  exec swaymsg 'workspace 1 output eDP-1, workspace 1, move workspace to output eDP-1, workspace 2 output eDP-1, workspace 2, move workspace to output eDP-1, workspace 3 output eDP-1, workspace 3, move workspace to output eDP-1, workspace 4 output eDP-1, workspace 4, move workspace to output eDP-1, workspace 5 output eDP-1, workspace 5, move workspace to output eDP-1'
+  exec swaymsg 'workspace 6 output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 6, move workspace to output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 7 output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 7, move workspace to output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 8 output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 8, move workspace to output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 9 output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 9, move workspace to output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 10 output "Lenovo Group Limited LEN T32p-20 VNA7645L", workspace 10, move workspace to output "Lenovo Group Limited LEN T32p-20 VNA7645L"'
+}
+
+# Laptop mode
+profile {
+  output eDP-1 enable scale 2
+  exec pkill waybar; waybar -c $HOME/.config/waybar/config
+  exec swaymsg 'workspace 1 output eDP-1, workspace 1, move workspace to output eDP-1, workspace 2 output eDP-1, workspace 2, move workspace to output eDP-1, workspace 3 output eDP-1, workspace 3, move workspace to output eDP-1, workspace 4 output eDP-1, workspace 4, move workspace to output eDP-1, workspace 5 output eDP-1, workspace 5, move workspace to output eDP-1, workspace 6, move workspace to output eDP-1, workspace 7, move workspace to output eDP-1, workspace 8, move workspace to output eDP-1, workspace 9, move workspace to output eDP-1, workspace 10, move workspace to output eDP-1, workspace next'
+}

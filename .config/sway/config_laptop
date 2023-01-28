@@ -1,0 +1,224 @@
+input type:keyboard {
+    repeat_delay 230
+    repeat_rate 50
+    xkb_options ctrl:nocaps
+}
+
+input type:mouse {
+  scroll_factor 0.5
+}
+
+input "2:10:TPPS/2_Elan_TrackPoint" {
+  accel_profile "flat"
+  pointer_accel 0.3
+}
+
+input "65261:24672:qmkbuilder_keyboard" {
+  scroll_factor 1
+}
+
+input "ELAN067A:00 04F3:3197" {
+  accel_profile "flat"
+  pointer_accel 0.44
+  dwt disabled
+  scroll_factor 8
+}
+
+#output eDP-1 scale 2 pos 0 0 mode 3840x2400@60.0Hz
+#output DP-2 scale 2 pos 1920 0 mode 3840x2160@59.997Hz
+#output DP-6 scale 2 pos 1920 0 mode 3840x2160@60.0Hz
+#output DP-1 scale 1.5 pos 3840 0 mode 2560x1440@59.951Hz
+
+# Colors
+# class                 border  backgr. text    indicator child_border
+client.focused          #FACE48 #3b70ac #ffffff #2e9ef4   #4c7899 
+client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
+client.unfocused        #333333 #222222 #888888 #292d2e   #222222
+client.urgent           #2f343a #900000 #ffffff #900000   #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.background       #ffffff
+
+set $mod Mod4
+
+#font pango:Atkinson Hyperlegible
+
+floating_modifier $mod
+
+for_window {
+  [class=".*"] {
+    border pixel 0
+  }
+
+  [title="ssh-askpass"] {
+    floating enable
+  }
+
+  [app_id="code-url.*"] {
+    fullscreen enable
+  }
+
+  [app_id="Plexamp"] {
+    move container to scratchpad, scratchpad show
+    resize set 1000 800
+  }
+}
+
+bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
+
+default_border none
+default_floating_border none
+font pango:Atkinson Hyperlegible 12
+titlebar_padding 1
+titlebar_border_thickness 0
+
+gaps inner 5
+smart_gaps off
+smart_borders on
+hide_edge_borders smart_no_gaps
+
+bindsym $mod+Return exec "foot -D $HOME"
+bindsym $mod+space exec "foot zsh -c '~/scripts/cloudtop.sh'"
+bindsym $mod+q exec "google-chrome"
+
+bindsym $mod+d kill
+
+set $drun tofi-drun | xargs swaymsg exec --
+bindsym $mod+t exec $drun
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+mod1+h move workspace to output left
+bindsym $mod+mod1+j move workspace to output down
+bindsym $mod+mod1+k move workspace to output up
+bindsym $mod+mod1+l move workspace to output right
+
+bindsym $mod+b split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+a focus parent
+bindsym $mod+z focus child
+
+#workspace 1 output eDP-1
+#workspace 2 output eDP-1
+#workspace 3 output eDP-1
+#workspace 4 output DP-2 
+#workspace 5 output DP-2 
+#workspace 6 output DP-2 
+#workspace 7 output DP-2 
+#workspace 8 output DP-1 
+#workspace 9 output DP-1 
+#workspace 10 output DP-1 
+
+set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
+set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
+
+bindsym --no-repeat $mod+1 workspace 1; $sov-on 
+bindsym --no-repeat $mod+2 workspace 2; $sov-on  
+bindsym --no-repeat $mod+3 workspace 3; $sov-on  
+bindsym --no-repeat $mod+4 workspace 4; $sov-on  
+bindsym --no-repeat $mod+5 workspace 5; $sov-on  
+bindsym --no-repeat $mod+6 workspace 6; $sov-on  
+bindsym --no-repeat $mod+7 workspace 7; $sov-on  
+bindsym --no-repeat $mod+8 workspace 8; $sov-on  
+bindsym --no-repeat $mod+9 workspace 9; $sov-on  
+bindsym --no-repeat $mod+0 workspace 10; $sov-on
+
+bindsym --release $mod+1 $sov-off 
+bindsym --release $mod+2 $sov-off 
+bindsym --release $mod+3 $sov-off 
+bindsym --release $mod+4 $sov-off 
+bindsym --release $mod+5 $sov-off 
+bindsym --release $mod+6 $sov-off 
+bindsym --release $mod+7 $sov-off 
+bindsym --release $mod+8 $sov-off 
+bindsym --release $mod+9 $sov-off 
+bindsym --release $mod+0 $sov-off 
+
+bindsym --no-repeat $mod+Left workspace prev_on_output; $sov-on
+bindsym --release   $mod+Left $sov-off
+bindsym --no-repeat $mod+Right workspace next_on_output; $sov-on
+bindsym --release   $mod+Right $sov-off
+
+bindsym --no-repeat $mod+Tab workspace back_and_forth; $sov-on
+bindsym --release $mod+Tab $sov-off
+bindsym --no-repeat $mod+Shift+grave workspace back_and_forth; $sov-on
+bindsym --release $mod+Shift+grave $sov-off
+
+bindsym --no-repeat $mod+Shift+1 move container to workspace 1; $sov-on
+bindsym --release $mod+Shift+1 $sov-off
+bindsym --no-repeat $mod+Shift+2 move container to workspace 2; $sov-on
+bindsym --release $mod+Shift+2 $sov-off
+bindsym --no-repeat $mod+Shift+3 move container to workspace 3; $sov-on
+bindsym --release $mod+Shift+3 $sov-off
+bindsym --no-repeat $mod+Shift+4 move container to workspace 4; $sov-on
+bindsym --release $mod+Shift+4 $sov-off
+bindsym --no-repeat $mod+Shift+5 move container to workspace 5; $sov-on
+bindsym --release $mod+Shift+5 $sov-off
+bindsym --no-repeat $mod+Shift+6 move container to workspace 6; $sov-on
+bindsym --release $mod+Shift+6 $sov-off
+bindsym --no-repeat $mod+Shift+7 move container to workspace 7; $sov-on
+bindsym --release $mod+Shift+7 $sov-off
+bindsym --no-repeat $mod+Shift+8 move container to workspace 8; $sov-on
+bindsym --release $mod+Shift+8 $sov-off
+bindsym --no-repeat $mod+Shift+9 move container to workspace 9; $sov-on
+bindsym --release $mod+Shift+9 $sov-off
+bindsym --no-repeat $mod+Shift+0 move container to workspace 10; $sov-on
+bindsym --release $mod+Shift+0 $sov-off
+bindsym $mod+Shift+bracketleft move scratchpad
+bindsym $mod+bracketleft scratchpad show
+bindsym $mod+Shift+f floating toggle
+
+bindsym $mod+Control+l exec swaylock
+bindsym $mod+Shift+c reload
+
+mode "resize" {
+  bindsym h resize shrink width 10 px or 10 ppt
+  bindsym j resize grow height 10 px or 10 ppt
+  bindsym k resize shrink height 10 px or 10 ppt
+  bindsym l resize grow width 10 px or 10 ppt
+
+  bindsym Left resize shrink width 10 px or 10 ppt
+  bindsym Down resize grow height 10 px or 10 ppt
+  bindsym Up resize shrink height 10 px or 10 ppt
+  bindsym Right resize grow width 10 px or 10 ppt
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+
+bar swaybar_command waybar
+
+#exec swaymsg create_output
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec wl-paste -t text --watch clipman store --no-persist
+#exec_always pkill sov && rm -f /tmp/sovpipe && mkfifo /tmp/sovpipe && tail -f /tmp/sovpipe | sov -t 0 -a b -r 6 -m 30 -c 4
+exec_always pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.85
+exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec_always sleep 1; pkill kanshi; exec kanshi
+exec_always sleep 1; pkill swaybg; swaybg -i $HOME/wallpapers/glassbeach.jpg -m center
+#exec swayidle -w \
+  #timeout 1800 'swaylock -f' \
+  #timeout 1805 'swaymsg "output * dpms off"' \
+  #resume 'swaymsg "output * dpms on"'

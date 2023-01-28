@@ -1,10 +1,26 @@
-alias vim='nvim'
-alias v='nvim'
-alias ls='exa'
-alias ll='exa -l -a'
-alias rgc='rg -tc'
+if (( $+commands[nvim] )); then
+  alias vim='nvim'
+  alias v='vim'
+fi
+
+if (( $+commands[rg] )); then
+  alias rgc='rg -tc'
+fi
+
+if (( $+commands[exa] )); then
+  alias ls='exa'
+  alias ll='exa -l -a'
+fi
+
 if (( $+commands[fdfind] )); then
   alias fd='fdfind'
+fi
+
+if (( $+commands[batcat] )); then
+  alias bat='batcat'
+  alias cat='batcat'
+elif (( $+commands[bat] )); then
+  alias cat='bat'
 fi
 
 # Git
@@ -16,6 +32,7 @@ alias gl='git log --pretty --oneline --graph'
 alias gll='git log --pretty --graph'
 alias gri='git rebase -i'
 alias grid='git rebase -i develop'
+alias grim='git rebase -i origin/main'
 alias grih='git rebase -i HEAD~2'
 alias grhh='git reset --hard HEAD'
 alias gsu='git submodule update --init --recursive'
@@ -23,40 +40,103 @@ alias gp='git pull'
 alias gb='git checkout -b'
 alias gd='git diff'
 alias gcp='git cherry-pick'
+alias gitrootdir='git rev-parse --show-toplevel'
+
+gpush() {
+  git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main
+}
+
+gamendto() {
+  local target_commit=$(git log --pretty=oneline | fzf | cut -d ' ' -f1)
+  SHA=`git rev-parse "$target_commit"`; git stash -k && git commit --fixup "$SHA" && GIT_SEQUENCE_EDITOR=true git rebase --interactive --autosquash "$SHA^" && git stash pop;
+}
+
+gsync() {
+  git fetch origin main && \
+  git stash -k && \
+  git rebase -i origin/main && \
+  git submodule --quiet sync && \
+  git submodule update --init -j 20
+}
+
 
 fzf-git-branch() {
-    git rev-parse HEAD > /dev/null 2>&1 || return
+  git rev-parse HEAD > /dev/null 2>&1 || return
 
-    git branch --color=always --all --sort=-committerdate |
-        grep -v HEAD |
-        fzf --height 50% --ansi --no-multi --preview-window right:65% \
-            --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
-        sed "s/.* //"
+  git branch --color=always --all --sort=-committerdate |
+    rg -v HEAD |
+    fzf --height 50% --ansi --no-multi --preview-window right:65% \
+        --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
+    sed "s/.* //"
 }
 
 fzf-git-checkout() {
-    git rev-parse HEAD > /dev/null 2>&1 || return
+  git rev-parse HEAD > /dev/null 2>&1 || return
 
-    local branch
+  local branch
 
-    branch=$(fzf-git-branch)
-    if [[ "$branch" = "" ]]; then
-        echo "No branch selected."
-        return
-    fi
+  branch=$(fzf-git-branch)
+  if [[ "$branch" = "" ]]; then
+    echo "No branch selected."
+    return
+  fi
 
-    # If branch name starts with 'remotes/' then it is a remote branch. By
-    # using --track and a remote branch name, it is the same as:
-    # git checkout -b branchName --sort=-committerdate --track origin/branchName
-    if [[ "$branch" = 'remotes/'* ]]; then
-        git checkout --track $branch
-    else
-        git checkout $branch;
-    fi
+  # If branch name starts with 'remotes/' then it is a remote branch. By
+  # using --track and a remote branch name, it is the same as:
+  # git checkout -b branchName --sort=-committerdate --track origin/branchName
+  if [[ "$branch" = 'remotes/'* ]]; then
+    git checkout --track $branch
+  else
+    git checkout $branch;
+  fi
 }
 
-alias gbf='fzf-git-branch'
-alias gco='fzf-git-checkout'
+fzf-git-pick-commit() {
+  git rev-parse HEAD > /dev/null 2>&1 || return
+
+  local filter
+  if [ -n $@ ] && [ -f $@ ]; then
+    filter="-- $@"
+  fi
+
+  local gitlog=(
+    git log
+    --color=always
+    --abbrev=7
+    --format='%C(auto)%h %an %C(blue)%s %C(yellow)%cr'
+    $@
+  )
+
+  local fzf=(
+    fzf
+    --ansi --no-sort --reverse --tiebreak=index
+    --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always \$1 $filter; }; f {}"
+    --bind "ctrl-q:abort"
+    --bind "enter:accept"
+    --preview-window=right:60%
+  )
+
+  echo $($gitlog | $fzf | rg -o '[a-f0-9]{7}')
+}
+
+fzf-git-difftool() {
+  local commit
+  commit=$(fzf-git-pick-commit)
+  if [[! -z "$commit"]] && git difftool $commit~1 $commit
+}
+
+fzf-git-show() {
+  local commit
+  commit=$(fzf-git-pick-commit)
+  if [[! -z "$commit"]] && git show $commit
+}
+
+alias gbranch='fzf-git-branch'
+alias gcheckout='fzf-git-checkout'
+alias gdiff='fzf-git-difftool'
+alias gshow='fzf-git-show'
+
+# Helpers
 
 h2d(){
   echo "ibase=16; $(echo $@ | tr a-f A-F)"|bc

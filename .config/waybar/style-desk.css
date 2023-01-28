@@ -60,14 +60,23 @@ button:hover {
 #workspaces button#sway-workspace-2,
 #workspaces button#sway-workspace-3,
 #workspaces button#sway-workspace-4,
-#workspaces button#sway-workspace-5,
+#workspaces button#sway-workspace-5
+{
+    border-bottom: 3px solid #f56c42;
+}
+
+#workspaces button#sway-workspace-6
+{
+  margin-left: 10px;
+}
+
 #workspaces button#sway-workspace-6,
 #workspaces button#sway-workspace-7,
 #workspaces button#sway-workspace-8,
 #workspaces button#sway-workspace-9,
 #workspaces button#sway-workspace-10
 {
-    border-bottom: 3px solid #f56c42;
+    border-bottom: 3px solid #4de398;
 }
 
 #workspaces button:hover {
