@@ -30,14 +30,18 @@ if exists('g:vscode')
   nnoremap m :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
   nnoremap M :call VSCodeCall('workbench.action.toggleZenMode')<CR>
   nmap ' :Find<CR>
-  nmap { :call VSCodeCall('workbench.action.showAllSymbols')<CR>
-  nmap } :call VSCodeCall('workbench.action.gotoSymbol')<CR>
+  " nmap { :call VSCodeCall('workbench.action.showAllSymbols')<CR>
+  " nmap } :call VSCodeCall('workbench.action.gotoSymbol')<CR>
   nmap <silent> gd :call VSCodeCall('editor.action.peekDefinition')<CR>
   nmap <silent> gD :call VSCodeCall('editor.action.revealDefinition')<CR>
   nmap <silent> gr :call VSCodeCall('editor.action.referenceSearch.trigger')<CR>
   nmap <silent> gR :call VSCodeCall('references-view.findReferences')<CR>
   nmap <silent> gy :call VSCodeCall('editor.action.goToTypeDefinition')<CR>
   nmap <silent> grn :call VSCodeCall('editor.action.rename')<CR>
+  nnoremap <C-J> <C-W><C-J>
+  nnoremap <C-K> <C-W><C-K>
+  nnoremap <C-L> <C-W><C-L>
+  nnoremap <C-H> <C-W><C-H>
 endif
 
 " Global Configuration
@@ -83,6 +87,9 @@ let mapleader = " "
 let localleader = "\\"
 
 highlight LineNr ctermfg=blue
+
+" search for visually hightlighted text
+vnoremap <c-f> y<ESC>/<c-r>"<CR>
 
 " Split settings
 nnoremap <A-j> <C-W><C-j>
