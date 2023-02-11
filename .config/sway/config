@@ -1,15 +1,31 @@
+input pointer {
+  accel_profile "flat"
+  pointer_accel 0.6
+}
+
 input "7185:45133:Input:Club_Infinity_Ergodox_(QMK)" {
-    repeat_delay 200
-    repeat_rate 50
-    xkb_options ctrl:nocaps
+  repeat_delay 200
+  repeat_rate 50
+  xkb_options ctrl:nocaps
+}
+
+input "0:0:Shuttle_Emulated_Keyboard" {
+  scroll_factor 0.7
+}
+
+input "19788:6:Neoknob_KN01_Mouse" {
+  scroll_factor 0.7
 }
 
 output DP-1 scale 1
 output DP-1 mode 2560x1440@143.998001Hz
 output DP-1 bg ~/Wallpapers/70785500_p1.png fill
+output DP-1 subpixel rgb
 output DP-2 scale 2
 output DP-2 mode 3840x2160@59.997002Hz
 output DP-2 bg ~/Wallpapers/70785500_p1.png fill
+output DP-2 subpixel rgb
+#output HEADLESS-1 mode 1404x1872
 
 # Colors
 # class                 border  backgr. text    indicator child_border
@@ -27,6 +43,8 @@ font pango:Atkinson Hyperlegible 10
 
 floating_modifier $mod
 
+mouse_warping container
+
 for_window {
   [class=".*"] {
     border pixel 0
@@ -36,17 +54,15 @@ for_window {
     floating enable
   }
 
-  [app_id="code-url.*"] {
-    fullscreen enable
+  [title=".*- YouTube - Google Chrome"] {
+    opacity set 1.0
   }
 
   [app_id="Plexamp"] {
     move container to scratchpad, scratchpad show
-    resize set 1000 800
+    resize set 1500 1000
   }
 }
-
-bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
 
 default_border none
 default_floating_border none
@@ -59,7 +75,9 @@ hide_edge_borders smart_no_gaps
 focus_follows_mouse yes
 
 bindsym $mod+Return exec "foot -D $HOME"
-bindsym $mod+q exec "google-chrome"
+bindsym $mod+q exec "google-chrome-stable"
+
+bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1500 1000, move position center
 
 bindsym $mod+d kill
 
@@ -191,15 +209,12 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym XF86AudioPlay exec playerctl play-pause
 
+bindsym --no-repeat Alt_L exec mumble rpc starttalking
+bindsym --release Alt_L exec mumble rpc stoptalking
+
 bar swaybar_command waybar
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
-#exec /usr/share/sway/scripts/inactive-windows-transparency.py --opacity 0.85
-exec $HOME/.cargo/bin/sway-opacity --opacity 0.85
 exec wl-paste -t text --watch clipman store --no-persist
 exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
-exec_always pkill kanshi; exec kanshi
-#exec swayidle -w \
-#  timeout 1800 'swaylock -f' \
-#  timeout 1805 'swaymsg "output * dpms off"' \
-#  resume 'swaymsg "output * dpms on"'
+exec_always sleep 2; pkill sway-opacity; sway-opacity --opacity 0.95
