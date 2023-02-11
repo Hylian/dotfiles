@@ -286,3 +286,7 @@ label:focus {
 #keyboard-state > label.locked {
     background: rgba(0, 0, 0, 0.2);
 }
+
+#custom-wl-gammarelay-temperature {
+  min-width: 54px;
+}

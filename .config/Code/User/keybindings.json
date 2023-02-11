@@ -1,19 +1,13 @@
 // Place your key bindings in this file to override the defaultsauto[]
 [
   {
-    "key": "ctrl+shift+`",
-    "command": "workbench.action.terminal.toggleTerminal",
-    "when": "terminal.active"
+    "key": "ctrl+]",
+    "command": "workbench.action.terminal.toggleTerminal"
   },
   {
     "key": "ctrl+`",
     "command": "-workbench.action.terminal.toggleTerminal",
     "when": "terminal.active"
-  },
-  {
-    "key": "ctrl+shift+alt+`",
-    "command": "workbench.action.terminal.new",
-    "when": "terminalProcessSupported || terminalWebExtensionContributedProfile"
   },
   {
     "key": "ctrl+shift+`",
@@ -28,12 +22,12 @@
   {
     "key": "ctrl+j",
     "command": "list.focusDown",
-    "when": "listFocus && !inputFocus"
+    "when": "listFocus && !inputFocus && !editorTextFocus"
   },
   {
     "key": "ctrl+k",
     "command": "list.focusUp",
-    "when": "listFocus && !inputFocus"
+    "when": "listFocus && !inputFocus && !editorTextFocus"
   },
   {
     "key": "ctrl+j",
@@ -69,13 +63,14 @@
     "command": "-workbench.action.showAllSymbols"
   },
   {
-    "key": "ctrl+t",
-    "command": "workbench.action.showAllSymbols"
+    "key": "shift+[",
+    "command": "workbench.action.showAllSymbols",
+    "when": "editorTextFocus && neovim.init && !dirtyDiffVisible && !findWidgetVisible && !inReferenceSearchEditor && !markersNavigationVisible && !notebookCellFocused && !notificationCenterVisible && !parameterHintsVisible && !referenceSearchVisible && neovim.mode == 'normal'"
   },
   {
-    "key": "ctrl+shift+o",
+    "key": "shift+]",
     "command": "workbench.action.gotoSymbol",
-    "when": "editorTextFocus && neovim.init && !dirtyDiffVisible && !findWidgetVisible && !inReferenceSearchEditor && !markersNavigationVisible && !notebookCellFocused && !notificationCenterVisible && !parameterHintsVisible && !referenceSearchVisible && neovim.mode == 'normal'"
+    "when": "editorTextFocus && neovim.init && !textCompareEditorVIsible && !dirtyDiffVisible && !findWidgetVisible && !inReferenceSearchEditor && !markersNavigationVisible && !notebookCellFocused && !notificationCenterVisible && !parameterHintsVisible && !referenceSearchVisible && neovim.mode == 'normal'"
   },
   {
     "key": "ctrl+shift+o",
@@ -121,14 +116,14 @@
     "when": "inSearchEditor && searchInputBoxFocus"
   },
   {
-    "key": "ctrl+j",
+    "key": "ctrl+shift+j",
     "command": "search.action.focusNextSearchResult",
-    "when": "hasSearchResult || focusedView == 'workbench.view.search'"
+    "when": "hasSearchResult && activeViewlet == 'workbench.view.search'"
   },
   {
-    "key": "ctrl+k",
+    "key": "ctrl+shift+k",
     "command": "search.action.focusPreviousSearchResult",
-    "when": "hasSearchResult || focusedView == 'workbench.view.search'"
+    "when": "hasSearchResult && activeViewlet == 'workbench.view.search'"
   },
   {
     "key": "ctrl+u",
@@ -138,7 +133,7 @@
   {
     "key": "shift+-",
     "command": "editor.action.startFindReplaceAction",
-    "when": "editorFocus && neovim.mode == 'normal'"
+    "when": "editorFocus && neovim.mode == 'normal' && !renameInputVisible"
   },
   {
     "key": "ctrl+shift+f",
@@ -277,5 +272,189 @@
     "key": "shift+j",
     "command": "workbench.action.nextEditorInGroup",
     "when": "editorFocus && neovim.mode == 'normal'"
+  },
+  {
+    "key": "shift+]",
+    "command": "workbench.action.compareEditor.nextChange",
+    "when": "textCompareEditorVisible"
+  },
+  {
+    "key": "alt+f5",
+    "command": "-workbench.action.compareEditor.nextChange",
+    "when": "textCompareEditorVisible"
+  },
+  {
+    "key": "shift+[",
+    "command": "workbench.action.compareEditor.previousChange",
+    "when": "textCompareEditorVisible"
+  },
+  {
+    "key": "shift+alt+f5",
+    "command": "-workbench.action.compareEditor.previousChange",
+    "when": "textCompareEditorVisible"
+  },
+  {
+    "key": "alt+s",
+    "command": "git.stageSelectedRanges",
+    "when": "isInDiffEditor"
+  },
+  {
+    "key": "ctrl+k ctrl+alt+s",
+    "command": "-git.stageSelectedRanges",
+    "when": "isInDiffEditor"
+  },
+  {
+    "key": "shift+alt+s",
+    "command": "git.unstageSelectedRanges",
+    "when": "isInDiffEditor"
+  },
+  {
+    "key": "ctrl+k ctrl+n",
+    "command": "-git.unstageSelectedRanges",
+    "when": "isInDiffEditor"
+  },
+  {
+    "key": "ctrl+s",
+    "command": "git.stage",
+    "when": "isInDiffEditor"
+  },
+  {
+    "key": "ctrl+shift+]",
+    "command": "-editor.unfold",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+shift+]",
+    "command": "-notebook.unfold",
+    "when": "notebookEditorFocused && !inputFocus && activeEditor == 'workbench.editor.notebook'"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "actions.find",
+    "when": "(editorFocus || editorIsOpen) && neovim.mode == 'normal'"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-actions.find",
+    "when": "editorFocus || editorIsOpen"
+  },
+  {
+    "key": "ctrl+g",
+    "command": "workbench.view.scm",
+    "when": "workbench.scm.active"
+  },
+  {
+    "key": "ctrl+shift+g",
+    "command": "-workbench.view.scm",
+    "when": "workbench.scm.active"
+  },
+  {
+    "key": "ctrl+b",
+    "command": "workbench.action.focusSideBar",
+    "when": "!sideBarFocus"
+  },
+  {
+    "key": "ctrl+0",
+    "command": "-workbench.action.focusSideBar"
+  },
+  {
+    "key": "[",
+    "command": "workbench.action.compareEditor.focusSecondarySide",
+    "when": "textCompareEditorVisible"
+  },
+  {
+    "key": "]",
+    "command": "workbench.action.compareEditor.focusPrimarySide",
+    "when": "textCompareEditorVisible"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "workbench.action.moveEditorToAboveGroup",
+    "when": "editorFocus && !inQuickOpen && !listFocus && focusedView != 'workbench.view.search'"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.moveEditorToBelowGroup",
+    "when": "editorFocus && !inQuickOpen && !listFocus && focusedView != 'workbench.view.search'"
+  },
+  {
+    "key": "ctrl+h",
+    "command": "workbench.action.moveEditorToLeftGroup",
+    "when": "editorFocus && !inQuickOpen && !listFocus && focusedView != 'workbench.view.search'"
+  },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.moveEditorToRightGroup",
+    "when": "editorFocus && !inQuickOpen && !listFocus && focusedView != 'workbench.view.search'"
+  },
+  {
+    "key": "ctrl+`",
+    "command": "workbench.action.terminal.toggleTerminal",
+    "when": "terminal.active"
+  },
+  {
+    "key": "ctrl+[",
+    "command": "workbench.action.togglePanel"
+  },
+  {
+    "key": "ctrl+shift+b",
+    "command": "-workbench.action.tasks.build",
+    "when": "taskCommandsRegistered"
+  },
+  {
+    "key": "ctrl+]",
+    "command": "-editor.action.indentLines",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "workbench.action.toggleMaximizedPanel",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+[",
+    "command": "-editor.action.outdentLines",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+shift+]",
+    "command": "outline.focus",
+    "when": "editorFocus && neovim.init && neovim.mode == 'normal'"
+  },
+  {
+    "key": "ctrl+e",
+    "command": "-workbench.action.quickOpen"
+  },
+  {
+    "key": "ctrl+shift+j",
+    "command": "-workbench.action.search.toggleQueryDetails",
+    "when": "inSearchEditor || searchViewletFocus"
+  },
+  {
+    "key": "f4",
+    "command": "-search.action.focusNextSearchResult",
+    "when": "hasSearchResult || inSearchEditor"
+  },
+  {
+    "key": "shift+f4",
+    "command": "-search.action.focusPreviousSearchResult",
+    "when": "hasSearchResult || inSearchEditor"
+  },
+  {
+    "key": "ctrl+y",
+    "command": "-redo"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-workbench.action.quickOpen"
+  },
+  {
+    "key": "'",
+    "command": "workbench.action.quickOpen",
+    "when": "editorTextFocus && neovim.init && !dirtyDiffVisible && !findWidgetVisible && !inReferenceSearchEditor && !markersNavigationVisible && !notebookCellFocused && !notificationCenterVisible && !parameterHintsVisible && !referenceSearchVisible && neovim.mode == 'normal'"
   }
 ]

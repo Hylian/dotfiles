@@ -1,10 +1,10 @@
 {
     "workbench.colorTheme": "One Dark Pro Darker",
-    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+    "vscode-neovim.neovimExecutablePaths.linux": "~/.local/bin/nvim",
     "vscode-neovim.neovimInitVimPaths.linux": "~/.config/nvim/init.vim",
     "editor.fontFamily": "'Atkinson Monolegible', 'Droid Sans Mono', 'UbuntuMono Nerd Font', 'monospace', monospace",
     "editor.codeLensFontFamily": "'Atkinson Hyperlegible'",
-    "terminal.external.linuxExec": "kitty",
+    "terminal.external.linuxExec": "foot",
     "security.workspace.trust.untrustedFiles": "open",
     "cmake.configureOnOpen": false,
     "cmake.configureOnEdit": false,
@@ -32,5 +32,29 @@
     "window.titleBarStyle": "custom",
     "window.customMenuBarAltFocus": false,
     "zenMode.hideLineNumbers": false,
-    "window.zoomLevel": 4
+    "clangd.onConfigChanged": "restart",
+    "gitlens.views.commits.avatars": false,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.useWslProfiles": false,
+    "search.exclude": {
+      "/tmp/*": true
+    },
+    "files.exclude": {
+      "/tmp/**": true
+    },
+    "terminal.integrated.commandsToSkipShell": [
+      "workbench.action.toggleSidebarVisibility",
+      "workbench.action.focusSideBar"
+    ],
+    "rust-analyzer.linkedProjects": [
+      "Cargo.toml",
+    ],
+    "scm.diffDecorationsGutterPattern": {
+      "added": true
+    },
+    "oneDarkPro.editorTheme": "One Dark Pro Flat",
+    "editor.wordWrap": "on",
+    "window.zoomLevel": 1,
+    "editor.fontSize": 16,
+    "debug.console.fontSize": 16
 }

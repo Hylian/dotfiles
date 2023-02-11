@@ -8,26 +8,30 @@ input type:mouse {
   scroll_factor 0.5
 }
 
+# Shuttlexpress
+input "0:0:Shuttle_Emulated_Keyboard" {
+  scroll_factor 0.6
+}
+
+# Thinkpad Trackpoint
 input "2:10:TPPS/2_Elan_TrackPoint" {
   accel_profile "flat"
   pointer_accel 0.3
 }
 
+# Ergodox Infinity
 input "65261:24672:qmkbuilder_keyboard" {
   scroll_factor 1
 }
 
-input "ELAN067A:00 04F3:3197" {
-  accel_profile "flat"
-  pointer_accel 0.44
-  dwt disabled
-  scroll_factor 8
+input "1149:32793:ExpertBT5.0_Mouse" {
+  scroll_factor 0.3
 }
 
-#output eDP-1 scale 2 pos 0 0 mode 3840x2400@60.0Hz
-#output DP-2 scale 2 pos 1920 0 mode 3840x2160@59.997Hz
-#output DP-6 scale 2 pos 1920 0 mode 3840x2160@60.0Hz
-#output DP-1 scale 1.5 pos 3840 0 mode 2560x1440@59.951Hz
+input "19788:6:Neoknob_KN01_Mouse" {
+  scroll_factor 0.7
+}
+
 
 # Colors
 # class                 border  backgr. text    indicator child_border
@@ -37,12 +41,6 @@ client.unfocused        #333333 #222222 #888888 #292d2e   #222222
 client.urgent           #2f343a #900000 #ffffff #900000   #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       #ffffff
-
-set $mod Mod4
-
-#font pango:Atkinson Hyperlegible
-
-floating_modifier $mod
 
 for_window {
   [class=".*"] {
@@ -63,6 +61,10 @@ for_window {
   }
 }
 
+set $mod Mod4
+
+floating_modifier $mod
+
 bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
 
 default_border none
@@ -75,9 +77,11 @@ gaps inner 5
 smart_gaps off
 smart_borders on
 hide_edge_borders smart_no_gaps
+focus_follows_mouse yes
 
 bindsym $mod+Return exec "foot -D $HOME"
-bindsym $mod+space exec "foot zsh -c '~/scripts/cloudtop.sh'"
+bindsym $mod+space exec "foot zsh -c '~/dotfiles/scripts/ssh/cloudtop.sh'"
+bindsym $mod+Control+space exec "foot zsh -c '~/dotfiles/scripts/ssh/desktop.sh'"
 bindsym $mod+q exec "google-chrome"
 
 bindsym $mod+d kill
@@ -111,17 +115,6 @@ bindsym $mod+e layout toggle split
 
 bindsym $mod+a focus parent
 bindsym $mod+z focus child
-
-#workspace 1 output eDP-1
-#workspace 2 output eDP-1
-#workspace 3 output eDP-1
-#workspace 4 output DP-2 
-#workspace 5 output DP-2 
-#workspace 6 output DP-2 
-#workspace 7 output DP-2 
-#workspace 8 output DP-1 
-#workspace 9 output DP-1 
-#workspace 10 output DP-1 
 
 set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
 set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
@@ -202,22 +195,27 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioRaiseVolume exec $HOME/dotfiles/scripts/change_volume.sh 5%+
+bindsym XF86AudioLowerVolume exec $HOME/dotfiles/scripts/change_volume.sh 5%-
 bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86AudioPlay exec playerctl play-pause
 
 bar swaybar_command waybar
 
-#exec swaymsg create_output
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+#exec /home/shined/scripts/inactive-windows-transparency.py --opacity 0.85
 exec wl-paste -t text --watch clipman store --no-persist
 #exec_always pkill sov && rm -f /tmp/sovpipe && mkfifo /tmp/sovpipe && tail -f /tmp/sovpipe | sov -t 0 -a b -r 6 -m 30 -c 4
-exec_always pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.85
-exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
-exec_always sleep 1; pkill kanshi; exec kanshi
-exec_always sleep 1; pkill swaybg; swaybg -i $HOME/wallpapers/glassbeach.jpg -m center
+exec_always "pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.85"
+exec_always "pkill wl-gammarelay; wl-gammarelay"
+exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
+exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 5200"
+#exec_always "sleep 1; pkill swaybg; swaybg -i $HOME/wallpapers/glassbeach.jpg -m center"
+#exec_always "sleep 1; pkill swaybg; swaybg -o DP-3 -c '#783f2a' -o DP-4 -c '#783f2a' -o DP-2 '#000000'"
+exec_always "pkill swaybg; swaybg -c '#783f2a'"
+exec_always "pkill kanshi; exec kanshi"
 #exec swayidle -w \
   #timeout 1800 'swaylock -f' \
   #timeout 1805 'swaymsg "output * dpms off"' \
