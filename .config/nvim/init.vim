@@ -27,8 +27,8 @@ endif
 
 " VSCode-specific Configuration
 if exists('g:vscode')
-  nnoremap m :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
-  nnoremap M :call VSCodeCall('workbench.action.toggleZenMode')<CR>
+  nnoremap , :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
+  nnoremap . :call VSCodeCall('workbench.action.toggleZenMode')<CR>
   nmap ' :Find<CR>
   " nmap { :call VSCodeCall('workbench.action.showAllSymbols')<CR>
   " nmap } :call VSCodeCall('workbench.action.gotoSymbol')<CR>
@@ -90,6 +90,8 @@ highlight LineNr ctermfg=blue
 
 " search for visually hightlighted text
 vnoremap <c-f> y<ESC>/<c-r>"<CR>
+
+nmap <s-w> :call search('[A-Z]', 'W')<CR>
 
 " Split settings
 nnoremap <A-j> <C-W><C-j>
@@ -165,8 +167,8 @@ if !exists('g:vscode')
 
   " Neorg Configuration
   function! NeorgOpen()
-    :execute "Neorg workspace fitbit"
-    :execute "NvimTreeOpen ~/notes/fitbit"
+    :execute "Neorg workspace scratch"
+    :execute "NvimTreeOpen ~/notes/scratch"
   endfunction
   command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
 
