@@ -1,24 +1,26 @@
 {
-  "height": 24,
+  "height": 30,
   "spacing": 4,
-  "output": ["eDP-1"],
-  "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
+  "output": ["DP-1"],
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "sway/window", "custom/media"],
   "modules-center": [],
-  "modules-right": ["pulseaudio", "backlight", "network", "disk", "memory", "cpu", "temperature", "battery", "clock", "tray"],
+  "modules-right": ["custom/wl-gammarelay-temperature", "wireplumber", "network", "disk", "cpu", "memory", "temperature", "clock", "tray"],
 
   "sway/workspaces": {
     "all-outputs": true,
     "persistent_workspaces": {
       "1": [],
+      "6": []
     }
-  },
-
-  "sway/window": {
-    "all-outputs": true
   },
 
   "sway/mode": {
     "format": "<span style=\"italic\">{}</span>"
+  },
+
+  "sway/window": {
+    "all-outputs": true,
+    "icon": true
   },
 
   "sway/scratchpad": {
@@ -34,29 +36,25 @@
       "spacing": 10
   },
 
-  "clock": {
-      "timezone": "America/New_York",
-      "format": "{:%a %b %d   %I:%M %p} ",
-  },
-
-  "battery": {
-      "bat": "BAT0",
-      "adapter": "AC",
-      "states": {
-        "warning": 30,
-        "critical": 15
-      },
-      "full-at": 99,
-      "format": "{capacity}% {time} {icon} ",
-      "format-time": "{H}h{M}m",
-      "format-icons": ["", "", "", "", ""],
-      "format-charging": "{capacity}%  "
-  },
-
   "disk": {
       "format": "{percentage_used}% [{used}] ",
       "interval": 30,
       "path": "/",
+  },
+
+  "clock": {
+      "timezone": "America/New_York",
+      //"tooltip-format": "<span font='Atkinson Monolegible 16'><big>{:%Y %B}</big>\n<tt>{calendar}</tt></span>",
+      "format": "{:%a %b %d   %I:%M %p} ",
+
+      "calendar-weeks-pos": "right",
+      "today-format": "<span color='#ff6699'><b><u>{}</u></b></span>",
+      "format-calendar": "<span color='#ecc6d9'><b>{}</b></span>",
+      "format-calendar-weeks": "",
+      "format-calendar-weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+      "on-scroll": {
+        "calendar": 0
+      }
   },
 
   "cpu": {
@@ -70,19 +68,20 @@
   },
 
   "temperature": {
-      "thermal-zone": 9,
+      "thermal-zone": 0,
+      "hwmon-path": "/sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon4/temp3_input",
       "critical-threshold": 80,
       // "format-critical": "{temperatureC}°C {icon}",
       "format": "{temperatureC}°C {icon}",
-      "format-icons": [""]
+      "format-icons": ["", "", ""]
   },
 
   "network": {
       // "interface": "wlp2*", // (Optional) To force the use of this interface
       "format-wifi": "{essid} ({signalStrength}%) ",
-      "format-ethernet": "{ipaddr}/{cidr} ",
-      "tooltip-format": "{ifname} via {gwaddr} ",
-      "format-linked": "{ifname} (No IP) ",
+      "format-ethernet": "{ipaddr}/{cidr} ",
+      "tooltip-format": "{ifname} via {gwaddr} ",
+      "format-linked": "{ifname} (No IP) ",
       "format-disconnected": "Disconnected ⚠",
       "format-alt": "{ifname}: {ipaddr}/{cidr}"
   },
@@ -98,7 +97,7 @@
       "format": "{volume}% {icon} {format_source}",
       "format-bluetooth": "{volume}% {icon} {format_source}",
       "format-bluetooth-muted": " {icon} {format_source}",
-      "format-muted": " {format_source}",
+      "format-muted": " {format_source}",
       "format-source": "{volume}% ",
       "format-source-muted": "",
       "format-icons": {
@@ -111,12 +110,6 @@
           "default": ["", "", ""]
       },
       "on-click": "pavucontrol"
-  },
-
-  "backlight": {
-    "device": "intel_backlight",
-    "format": "{percent}% {icon}",
-    "format-icons": ["", ""]
   },
 
   "custom/media": {

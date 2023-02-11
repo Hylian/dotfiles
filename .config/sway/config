@@ -14,7 +14,7 @@ input "0:0:Shuttle_Emulated_Keyboard" {
 }
 
 input "19788:6:Neoknob_KN01_Mouse" {
-  scroll_factor 0.7
+  scroll_factor 0.8
 }
 
 output DP-1 scale 1
@@ -217,4 +217,5 @@ bar swaybar_command waybar
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 exec wl-paste -t text --watch clipman store --no-persist
 exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec_always "pkill wl-gammarelay; wl-gammarelay"
 exec_always sleep 2; pkill sway-opacity; sway-opacity --opacity 0.95

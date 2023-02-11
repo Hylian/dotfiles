@@ -51,6 +51,7 @@ format = '[ $ssh_symbol $hostname]($style) '
 ssh_symbol = "🌐"
 
 [c]
+disabled = true
 format = '\[[$symbol($version(-$name))]($style)\]'
 
 [cmake]
