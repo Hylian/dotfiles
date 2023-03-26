@@ -37,3 +37,7 @@
   max-height: 800px !important;
   margin: 0;
 }
+
+.editor-container {
+  -webkit-font-smoothing: antialiased;
+}

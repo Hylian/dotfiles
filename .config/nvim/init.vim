@@ -27,9 +27,9 @@ endif
 
 " VSCode-specific Configuration
 if exists('g:vscode')
-  nnoremap , :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
-  nnoremap . :call VSCodeCall('workbench.action.toggleZenMode')<CR>
-  nmap ' :Find<CR>
+  "nnoremap , :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
+  "nnoremap . :call VSCodeCall('workbench.action.toggleZenMode')<CR>
+  " nmap ' :Find<CR>
   " nmap { :call VSCodeCall('workbench.action.showAllSymbols')<CR>
   " nmap } :call VSCodeCall('workbench.action.gotoSymbol')<CR>
   nmap <silent> gd :call VSCodeCall('editor.action.peekDefinition')<CR>
@@ -38,17 +38,25 @@ if exists('g:vscode')
   nmap <silent> gR :call VSCodeCall('references-view.findReferences')<CR>
   nmap <silent> gy :call VSCodeCall('editor.action.goToTypeDefinition')<CR>
   nmap <silent> grn :call VSCodeCall('editor.action.rename')<CR>
+  nmap <silent> gp :call VSCodeCall('editor.action.marker.next')<CR>
   nnoremap <C-J> <C-W><C-J>
   nnoremap <C-K> <C-W><C-K>
   nnoremap <C-L> <C-W><C-L>
   nnoremap <C-H> <C-W><C-H>
 endif
 
+" Quit if trying to edit directory
+for f in argv()
+  if isdirectory(f)
+    quit
+  endif
+endfor
+
 " Global Configuration
 set t_Co=256
 set laststatus=2
 set noshowmode
-set nowrap
+set wrap
 set number
 set linebreak
 set showbreak=+++
@@ -166,13 +174,13 @@ if !exists('g:vscode')
   nmap } :CocFzfList outline<CR>
 
   " Neorg Configuration
-  function! NeorgOpen()
-    :execute "Neorg workspace scratch"
-    :execute "NvimTreeOpen ~/notes/scratch"
-  endfunction
-  command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
+  "function! NeorgOpen()
+    ":execute "Neorg workspace fitbit"
+    ":execute "NvimTreeOpen ~/notes/fitbit"
+  "endfunction
+  "command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
 
-  nmap _ :NeorgOpen<CR>
+  "nmap _ :NeorgOpen<CR>
 
   " Rust language completion
   autocmd BufReadPost *.rs setlocal filetype=rust

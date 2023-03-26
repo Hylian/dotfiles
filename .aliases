@@ -18,10 +18,9 @@ fi
 
 if (( $+commands[batcat] )); then
   alias bat='batcat'
-  alias cat='batcat'
-elif (( $+commands[bat] )); then
-  alias cat='bat'
 fi
+
+alias cat='bat'
 
 # Git
 alias gc='git checkout'
@@ -41,9 +40,18 @@ alias gb='git checkout -b'
 alias gd='git diff'
 alias gcp='git cherry-pick'
 alias gitrootdir='git rev-parse --show-toplevel'
+alias stgs='stg status'
+alias stgss='stg series'
+alias stgr='stg refresh'
+alias stguc='stg uncommit'
+alias stgc='stg commit'
 
 gpush() {
   git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main
+}
+
+gpushwip() {
+  git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main%wip --no-verify
 }
 
 gamendto() {
@@ -54,7 +62,7 @@ gamendto() {
 gsync() {
   git fetch origin main && \
   git stash -k && \
-  git rebase -i origin/main && \
+  stg rebase --merged origin/main && \
   git submodule --quiet sync && \
   git submodule update --init -j 20
 }
@@ -122,19 +130,63 @@ fzf-git-pick-commit() {
 fzf-git-difftool() {
   local commit
   commit=$(fzf-git-pick-commit)
-  if [[! -z "$commit"]] && git difftool $commit~1 $commit
+  if [[ ! -z "$commit" ]] && git difftool $commit~1 $commit
+}
+
+fzf-git-difftool-to() {
+  local commit
+  commit=$(fzf-git-pick-commit)
+  if [[ ! -z "$commit" ]] && git difftool $commit
 }
 
 fzf-git-show() {
   local commit
   commit=$(fzf-git-pick-commit)
-  if [[! -z "$commit"]] && git show $commit
+  if [[ ! -z "$commit" ]] && git show $commit
+}
+
+fzf-git-unstage() {
+  git restore --staged $(git diff --cached --name-only | fzf -m)
+  git status
+}
+
+fzf-git-add() {
+  git add $(git diff --name-only | fzf -m)
+  git status
 }
 
 alias gbranch='fzf-git-branch'
 alias gcheckout='fzf-git-checkout'
 alias gdiff='fzf-git-difftool'
+alias gdiffto='fzf-git-difftool-to'
 alias gshow='fzf-git-show'
+alias gunstage='fzf-git-unstage'
+alias gadd='fzf-git-add'
+
+stg-squashpush() {
+  local origbranch && \
+  origbranch=$(stg branch) && \
+  echo "Deleting branch: stg-temp" && \
+  stg branch --delete --force stg-temp
+  echo "Switching branch: stg-temp" && \
+  stg branch --clone stg-temp && \
+  local patches && \
+  patches=( $(stg series --no-description --no-prefix | \
+            fzf -m --preview-window right:65% --preview 'stg show --color=always -p {}') ) && \
+  echo "Squashing patches: $patches" && \
+  stg squash $patches && \
+  echo "Committing squashed patch" && \
+  stg commit ${patches[0]} && \
+  echo "Deleting all remaining patches" && \
+  stg branch --cleanup --force && \
+  echo "Pushing to Gerrit..." && \
+  git push origin HEAD:refs/for/main
+
+  echo "Switching branch: $origbranch" && \
+  stg branch $origbranch && \
+  echo "Deleting branch: stg-temp" && \
+  stg branch --delete --force stg-temp
+}
 
 # Helpers
 

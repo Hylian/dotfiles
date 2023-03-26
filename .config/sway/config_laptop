@@ -1,5 +1,5 @@
 input type:keyboard {
-    repeat_delay 230
+    repeat_delay 210
     repeat_rate 50
     xkb_options ctrl:nocaps
 }
@@ -10,13 +10,19 @@ input type:mouse {
 
 # Shuttlexpress
 input "0:0:Shuttle_Emulated_Keyboard" {
-  scroll_factor 0.6
+  scroll_factor 0.1
 }
 
 # Thinkpad Trackpoint
 input "2:10:TPPS/2_Elan_TrackPoint" {
   accel_profile "flat"
   pointer_accel 0.3
+}
+
+input "21298:5120:Clearly_Superior_Technologies._CST_Laser_Trackball" {
+  accel_profile "flat"
+  pointer_accel 0.4
+  scroll_factor 0.3
 }
 
 # Ergodox Infinity
@@ -32,6 +38,8 @@ input "19788:6:Neoknob_KN01_Mouse" {
   scroll_factor 0.7
 }
 
+output * background #783f2a solid_color
+output "Nreal nreal air 0x00008800" background #000000 solid_color
 
 # Colors
 # class                 border  backgr. text    indicator child_border
@@ -51,13 +59,13 @@ for_window {
     floating enable
   }
 
-  [app_id="code-url.*"] {
-    fullscreen enable
-  }
-
   [app_id="Plexamp"] {
     move container to scratchpad, scratchpad show
     resize set 1000 800
+  }
+
+  [shell="^((?!xdg_shell).)*$"] {
+    title_format "%shell :: %title"
   }
 }
 
@@ -65,7 +73,7 @@ set $mod Mod4
 
 floating_modifier $mod
 
-bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
+bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
 
 default_border none
 default_floating_border none
@@ -74,7 +82,7 @@ titlebar_padding 1
 titlebar_border_thickness 0
 
 gaps inner 5
-smart_gaps off
+smart_gaps on
 smart_borders on
 hide_edge_borders smart_no_gaps
 focus_follows_mouse yes
@@ -93,6 +101,11 @@ bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
+
+bindsym $mod+Control+h focus output left
+bindsym $mod+Control+j focus output down
+bindsym $mod+Control+k focus output up
+bindsym $mod+Control+l focus output right
 
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
@@ -116,8 +129,8 @@ bindsym $mod+e layout toggle split
 bindsym $mod+a focus parent
 bindsym $mod+z focus child
 
-set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
-set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
+#set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
+#set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
 
 bindsym --no-repeat $mod+1 workspace 1; $sov-on 
 bindsym --no-repeat $mod+2 workspace 2; $sov-on  
@@ -175,7 +188,8 @@ bindsym $mod+Shift+bracketleft move scratchpad
 bindsym $mod+bracketleft scratchpad show
 bindsym $mod+Shift+f floating toggle
 
-bindsym $mod+Control+l exec swaylock
+bindsym $mod+Control+Shift+l exec swaylock
+bindsym $mod+c exec pkill -SIGHUP kanshi
 bindsym $mod+Shift+c reload
 
 mode "resize" {
@@ -204,19 +218,12 @@ bindsym XF86AudioPlay exec playerctl play-pause
 
 bar swaybar_command waybar
 
-exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway XDG_SESSION_DESKTOP=sway
 #exec /home/shined/scripts/inactive-windows-transparency.py --opacity 0.85
 exec wl-paste -t text --watch clipman store --no-persist
 #exec_always pkill sov && rm -f /tmp/sovpipe && mkfifo /tmp/sovpipe && tail -f /tmp/sovpipe | sov -t 0 -a b -r 6 -m 30 -c 4
 exec_always "pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.85"
 exec_always "pkill wl-gammarelay; wl-gammarelay"
 exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
-exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 5200"
-#exec_always "sleep 1; pkill swaybg; swaybg -i $HOME/wallpapers/glassbeach.jpg -m center"
-#exec_always "sleep 1; pkill swaybg; swaybg -o DP-3 -c '#783f2a' -o DP-4 -c '#783f2a' -o DP-2 '#000000'"
-exec_always "pkill swaybg; swaybg -c '#783f2a'"
-exec_always "pkill kanshi; exec kanshi"
-#exec swayidle -w \
-  #timeout 1800 'swaylock -f' \
-  #timeout 1805 'swaymsg "output * dpms off"' \
-  #resume 'swaymsg "output * dpms on"'
+exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
+exec_always "systemctl --user restart kanshi.service"

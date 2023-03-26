@@ -34,7 +34,7 @@ VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
 export PATH="$HOME/.local/bin:$PATH"
-export KEYTIMEOUT=1
+export KEYTIMEOUT=200
 export WINEARCH=win32
 
 precmd() {

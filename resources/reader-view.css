@@ -2,10 +2,10 @@ body {
   padding-bottom: 64px;
 }
 a:visited {
-  color: #39334a;
+  color: #F43CDC;
 }
 a:link, a:link:hover, a:link:active, a:link * {
-  color: #33404a;
+  color: #FF773E;
 }
 a:link {
   text-decoration: none;
@@ -30,7 +30,7 @@ body[data-mode="dark"] pre code {
 body[data-font=sans-serif] {}
 /* CSS for serif fonts */
 body[data-font=serif] {
-  font-family: "Atkinson Hyperlegible", serif;
+  font-family: "Atkinson Hyperlegible";
 }
 
 /* CSS for "sepia" theme */
@@ -41,4 +41,7 @@ body[data-mode=sepia] {
 /* CSS for "light" theme */
 body[data-mode=light] {}
 /* CSS for "dark" theme */
-body[data-mode=dark] {}
+body[data-mode=dark] {
+  color: #ff829f;
+  background-color: #072241;
+}
