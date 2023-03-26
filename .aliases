@@ -201,3 +201,8 @@ d2h(){
 h2b(){
   echo "ibase=16; obase=2; $(echo $@ | tr a-f A-F)" | bc
 }
+
+alias imv-date='exa --oneline --reverse --sort=modified | imv'
+alias imv-random='exa --oneline | shuf | imv'
+alias disp-rotate='swaymsg output DP-2 transform 270'
+alias disp-normal='swaymsg output DP-2 transform 0'

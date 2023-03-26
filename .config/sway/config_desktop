@@ -1,30 +1,51 @@
 input pointer {
   accel_profile "flat"
   pointer_accel 0.6
+  scroll_factor 2.0
 }
 
-input "7185:45133:Input:Club_Infinity_Ergodox_(QMK)" {
-  repeat_delay 200
-  repeat_rate 50
-  xkb_options ctrl:nocaps
+input type:keyboard {
+    repeat_delay 210
+    repeat_rate 50
+    xkb_options ctrl:nocaps
 }
 
 input "0:0:Shuttle_Emulated_Keyboard" {
-  scroll_factor 0.7
+  scroll_factor 0.1
+}
+
+input "2:10:TPPS/2_Elan_TrackPoint" {
+  accel_profile "flat"
+  pointer_accel 0.3
 }
 
 input "19788:6:Neoknob_KN01_Mouse" {
-  scroll_factor 0.8
+  scroll_factor 0.6
+}
+
+input "21298:5120:Clearly_Superior_Technologies._CST_Laser_Trackball" {
+  accel_profile "flat"
+  pointer_accel 0.4
+  scroll_factor 0.3
+}
+
+input "65261:24672:qmkbuilder_keyboard" {
+  scroll_factor 1
+}
+
+input "1149:32793:ExpertBT5.0_Mouse" {
+  scroll_factor 0.3
 }
 
 output DP-1 scale 1
-output DP-1 mode 2560x1440@143.998001Hz
-output DP-1 bg ~/Wallpapers/70785500_p1.png fill
-output DP-1 subpixel rgb
+output DP-1 mode 2560x1440@239.970Hz
+output DP-1 bg #000000 solid_color
+output DP-1 subpixel none
 output DP-2 scale 2
 output DP-2 mode 3840x2160@59.997002Hz
 output DP-2 bg ~/Wallpapers/70785500_p1.png fill
 output DP-2 subpixel rgb
+output "Nreal nreal air 0x00008800" background #000000 solid_color
 #output HEADLESS-1 mode 1404x1872
 
 # Colors
@@ -34,16 +55,7 @@ client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
 client.unfocused        #333333 #222222 #888888 #292d2e   #222222
 client.urgent           #2f343a #900000 #ffffff #900000   #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
-
 client.background       #ffffff
-
-set $mod Mod4
-
-font pango:Atkinson Hyperlegible 10
-
-floating_modifier $mod
-
-mouse_warping container
 
 for_window {
   [class=".*"] {
@@ -60,24 +72,35 @@ for_window {
 
   [app_id="Plexamp"] {
     move container to scratchpad, scratchpad show
-    resize set 1500 1000
+    resize set 1000 800
+  }
+
+  [shell="^((?!xdg_shell).)*$"] {
+    title_format "%shell :: %title"
   }
 }
+
+set $mod Mod4
+
+font pango:Atkinson Hyperlegible 10
+
+floating_modifier $mod
+
+mouse_warping container
 
 default_border none
 default_floating_border none
 
 gaps inner 5
-smart_gaps off
+smart_gaps on
 smart_borders on
 hide_edge_borders smart_no_gaps
-
 focus_follows_mouse yes
 
 bindsym $mod+Return exec "foot -D $HOME"
 bindsym $mod+q exec "google-chrome-stable"
 
-bindsym --no-repeat $mod+bracketright exec $HOME/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1500 1000, move position center
+bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
 
 bindsym $mod+d kill
 
@@ -122,8 +145,8 @@ workspace 8 output DP-2
 workspace 9 output DP-2
 workspace 0 output DP-2
 
-set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
-set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
+#set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
+#set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
 
 bindsym --no-repeat $mod+1 workspace 1; $sov-on 
 bindsym --no-repeat $mod+2 workspace 2; $sov-on  
@@ -183,6 +206,7 @@ bindsym $mod+bracketleft scratchpad show
 bindsym $mod+Shift+f floating toggle
 
 bindsym $mod+Control+l exec swaylock
+bindsym $mod+c exec pkill -SIGHUP kanshi
 bindsym $mod+Shift+c reload
 
 mode "resize" {
@@ -216,6 +240,8 @@ bar swaybar_command waybar
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 exec wl-paste -t text --watch clipman store --no-persist
-exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
 exec_always "pkill wl-gammarelay; wl-gammarelay"
-exec_always sleep 2; pkill sway-opacity; sway-opacity --opacity 0.95
+exec_always "pkill sway-opacity; sway-opacity --opacity 0.95"
+exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
+exec_always "systemctl --user restart kanshi.service"
