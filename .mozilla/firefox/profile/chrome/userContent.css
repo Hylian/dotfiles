@@ -1,0 +1,14 @@
+@-moz-document url-prefix("about:reader")
+{
+  body.sepia
+  {
+    color: #5c6a72 !important;
+    background-color: #f8f5e4 !important;
+    --main-background: #f8f5e4 !important;
+  }
+  body.serif
+  {
+    font-family: "PragmataPro" !important;
+  }
+}
+
