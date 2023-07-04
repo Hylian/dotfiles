@@ -153,9 +153,9 @@ M.inactive[1] = {
     {},
 }
 
-local feline_colors = require('themes.everforest')
+-- local feline_colors = require('themes.everforest')
 
-require('feline').use_theme(feline_colors)
+-- require('feline').use_theme(feline_colors)
 require('feline').setup({
   components = M
 })

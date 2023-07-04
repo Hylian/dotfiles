@@ -9,12 +9,13 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'antoinemadec/coc-fzf'
   Plug 'chriskempson/base16-vim'
-  Plug 'sainnhe/everforest'
+  " Plug 'sainnhe/everforest'
+  Plug 'neanias/everforest-nvim', { 'branch': 'main' }
   Plug 'tpope/vim-fugitive'
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'bfrg/vim-cpp-modern'
   Plug 'feline-nvim/feline.nvim'
-  Plug 'nvim-neorg/neorg' | Plug 'nvim-lua/plenary.nvim'
+  "Plug 'nvim-neorg/neorg' | Plug 'nvim-lua/plenary.nvim'
   Plug 'bfredl/nvim-miniyank'
   Plug 'szw/vim-maximizer'
   Plug 'Shougo/echodoc.vim'
@@ -136,10 +137,9 @@ if !exists('g:vscode')
   if has('termguicolors')
     set termguicolors
   endif
-  set background=dark
+  set background=light
   let g:everforest_background = 'hard'
   let g:everforest_better_performance = 1
-  colorscheme everforest
 
   let g:bufferline_echo = 0
 
@@ -174,13 +174,13 @@ if !exists('g:vscode')
   nmap } :CocFzfList outline<CR>
 
   " Neorg Configuration
-  "function! NeorgOpen()
-    ":execute "Neorg workspace fitbit"
-    ":execute "NvimTreeOpen ~/notes/fitbit"
-  "endfunction
-  "command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
+  function! NeorgOpen()
+    :execute "Neorg workspace fitbit"
+    :execute "NvimTreeOpen ~/notes/fitbit"
+  endfunction
+  command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
 
-  "nmap _ :NeorgOpen<CR>
+  nmap _ :NeorgOpen<CR>
 
   " Rust language completion
   autocmd BufReadPost *.rs setlocal filetype=rust
@@ -308,10 +308,13 @@ if !exists('g:vscode')
   " Pull in lua configs
   lua require('config.bufferline')
   lua require('config.feline')
+  "lua require('config.everforest')
   lua require('config.gitsigns')
-  lua require('config.neorg')
+  "lua require('config.neorg')
   lua require('config.toggleterm')
   lua require('config.treesitter')
   lua require('config.nvim-tree')
   lua require('config.nvim-web-devicons')
+
+  lua require("everforest").load()
 endif "if !exists('g:vscode')
