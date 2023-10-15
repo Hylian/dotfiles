@@ -20,7 +20,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'szw/vim-maximizer'
   Plug 'Shougo/echodoc.vim'
   Plug 'kyazdani42/nvim-web-devicons'
-  Plug 'kyazdani42/nvim-tree.lua'
+  "Plug 'kyazdani42/nvim-tree.lua'
   Plug 'akinsho/toggleterm.nvim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
@@ -118,12 +118,19 @@ nnoremap <A-t> <C-W>T
 set splitbelow
 set splitright
 
+function! UpdateWaylandDisplay()
+  if !empty($TMUX)
+    let wd = system("tmux show-env WAYLAND_DISPLAY 2> /dev/null")
+    let $WAYLAND_DISPLAY = trim(split(wd, "=")[1])
+  endif
+endfunction
+
 " Automatically strip trailing whitespace
 fun! <SID>StripTrailingWhitespaces()
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e
-    call cursor(l, c)
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
 endfun
 autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 if has("autocmd")
@@ -173,14 +180,6 @@ if !exists('g:vscode')
   nmap { :CocFzfList symbols<CR>
   nmap } :CocFzfList outline<CR>
 
-  " Neorg Configuration
-  function! NeorgOpen()
-    :execute "Neorg workspace fitbit"
-    :execute "NvimTreeOpen ~/notes/fitbit"
-  endfunction
-  command! -nargs=0 -bang NeorgOpen :call NeorgOpen()
-
-  nmap _ :NeorgOpen<CR>
 
   " Rust language completion
   autocmd BufReadPost *.rs setlocal filetype=rust
@@ -297,13 +296,26 @@ if !exists('g:vscode')
     return IsBlank(l:currentBufNr) && ! ExistOtherBuffers(l:currentBufNr)
   endfunction
 
-  function! OpenFzfIfEmpty()
-    if IsEmpty()
-      :GitAllFiles!
+  "function! OpenFzfIfEmpty()
+    "if IsEmpty()
+      ":GitAllFiles!
+    "endif
+  "endfunction
+
+  "autocmd VimEnter * :call OpenFzfIfEmpty()
+
+  function! TmuxWaylandRefresh()
+    if !empty($TMUX)
+      let prev_display = $WAYLAND_DISPLAY
+      let display = split(system("tmux show-env WAYLAND_DISPLAY 2> /dev/null"), "=")[1][:-2]
+      let $WAYLAND_DISPLAY = display
+      echom "Changed $WAYLAND_DISPLAY from " . prev_display . " to " . $WAYLAND_DISPLAY
     endif
   endfunction
 
-  autocmd VimEnter * :call OpenFzfIfEmpty()
+  if exists('$TMUX')
+    autocmd BufEnter,FocusGained * call TmuxWaylandRefresh()
+  endif
 
   " Pull in lua configs
   lua require('config.bufferline')
@@ -313,7 +325,7 @@ if !exists('g:vscode')
   "lua require('config.neorg')
   lua require('config.toggleterm')
   lua require('config.treesitter')
-  lua require('config.nvim-tree')
+  "lua require('config.nvim-tree')
   lua require('config.nvim-web-devicons')
 
   lua require("everforest").load()

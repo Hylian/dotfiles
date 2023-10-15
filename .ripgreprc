@@ -1,0 +1,10 @@
+#--max-columns=80
+--max-columns-preview
+
+--type-add
+selinux:*.{te}*
+
+--type-add
+android:*.{bp,mk}*
+
+--smart-case

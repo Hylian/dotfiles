@@ -7,8 +7,11 @@ if (( $+commands[rg] )); then
   alias rgc='rg -tc'
 fi
 
-if (( $+commands[exa] )); then
-  alias ls='exa'
+if (( $+commands[eza] )); then
+  alias ls='eza --icons'
+  alias ll='eza -l -a'
+elif (( $+commands[exa] )); then
+  alias ls='exa --icons'
   alias ll='exa -l -a'
 fi
 
@@ -67,7 +70,6 @@ gsync() {
   git submodule update --init -j 20
 }
 
-
 fzf-git-branch() {
   git rev-parse HEAD > /dev/null 2>&1 || return
 
@@ -118,10 +120,13 @@ fzf-git-pick-commit() {
   local fzf=(
     fzf
     --ansi --no-sort --reverse --tiebreak=index
-    --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always \$1 $filter; }; f {}"
+    --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always \$1 --pretty=full $filter | delta --light --true-color always -n --no-gitconfig; }; f {}"
+    --bind "pgup:preview-half-page-up"
+    --bind "pgdn:preview-half-page-down"
+    --bind "ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down"
     --bind "ctrl-q:abort"
     --bind "enter:accept"
-    --preview-window=right:60%
+    --preview-window=right:65%
   )
 
   echo $($gitlog | $fzf | rg -o '[a-f0-9]{7}')
@@ -142,7 +147,7 @@ fzf-git-difftool-to() {
 fzf-git-show() {
   local commit
   commit=$(fzf-git-pick-commit)
-  if [[ ! -z "$commit" ]] && git show $commit
+  if [[ ! -z "$commit" ]] && git show $commit --pretty
 }
 
 fzf-git-unstage() {
@@ -201,8 +206,3 @@ d2h(){
 h2b(){
   echo "ibase=16; obase=2; $(echo $@ | tr a-f A-F)" | bc
 }
-
-alias imv-date='exa --oneline --reverse --sort=modified | imv'
-alias imv-random='exa --oneline | shuf | imv'
-alias disp-rotate='swaymsg output DP-2 transform 270'
-alias disp-normal='swaymsg output DP-2 transform 0'
