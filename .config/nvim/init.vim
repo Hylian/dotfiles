@@ -9,18 +9,17 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'antoinemadec/coc-fzf'
   Plug 'chriskempson/base16-vim'
+  Plug 'nvim-lualine/lualine.nvim'
+  Plug 'nvim-tree/nvim-web-devicons'
   " Plug 'sainnhe/everforest'
   Plug 'neanias/everforest-nvim', { 'branch': 'main' }
   Plug 'tpope/vim-fugitive'
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'bfrg/vim-cpp-modern'
   Plug 'feline-nvim/feline.nvim'
-  "Plug 'nvim-neorg/neorg' | Plug 'nvim-lua/plenary.nvim'
   Plug 'bfredl/nvim-miniyank'
   Plug 'szw/vim-maximizer'
   Plug 'Shougo/echodoc.vim'
-  Plug 'kyazdani42/nvim-web-devicons'
-  "Plug 'kyazdani42/nvim-tree.lua'
   Plug 'akinsho/toggleterm.nvim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
@@ -319,14 +318,10 @@ if !exists('g:vscode')
 
   " Pull in lua configs
   lua require('config.bufferline')
-  lua require('config.feline')
-  "lua require('config.everforest')
+  lua require('config.lualine')
   lua require('config.gitsigns')
-  "lua require('config.neorg')
   lua require('config.toggleterm')
   lua require('config.treesitter')
-  "lua require('config.nvim-tree')
   lua require('config.nvim-web-devicons')
-
   lua require("everforest").load()
 endif "if !exists('g:vscode')
