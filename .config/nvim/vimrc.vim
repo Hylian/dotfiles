@@ -90,7 +90,7 @@ set nobackup
 set nowritebackup
 set cmdheight=1
 set updatetime=300
-set colorcolumn=80
+"set colorcolumn=80
 set shortmess=aostTA
 
 let mapleader = " "
