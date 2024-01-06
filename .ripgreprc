@@ -7,4 +7,14 @@ selinux:*.{te}*
 --type-add
 android:*.{bp,mk}*
 
+--type-add
+rc:*.{rc}
+
+--glob
+!.git/*
+
+--glob
+!out/*
+
 --smart-case
+

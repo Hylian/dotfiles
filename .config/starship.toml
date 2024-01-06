@@ -45,14 +45,19 @@ $hostname"""
 
 [directory]
 format = '[$path]($style)[$read_only]($read_only_style) '
+style = 'bold blue'
+before_repo_root_style = 'bright-green'
+repo_root_style = 'bold cyan'
+truncation_length = 5
+truncate_to_repo = false
 
 [hostname]
 format = '[ $ssh_symbol $hostname]($style) '
 ssh_symbol = "🌐"
 
 [c]
-disabled = true
 format = '\[[$symbol($version(-$name))]($style)\]'
+disabled = true
 
 [cmake]
 format = '\[[$symbol($version)]($style)\]'

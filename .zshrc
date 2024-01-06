@@ -38,23 +38,32 @@ VI_MODE_SET_CURSOR=true
 export PATH="$HOME/.local/bin:$PATH"
 export KEYTIMEOUT=200
 export WINEARCH=win32
-export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+#export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
-if [ -n "$TMUX" ]; then
-  function refresh {
+function refresh {
+  if [ -n "$TMUX" ] && [ -n "$WAYLAND_DISPLAY" ]; then
     export $(tmux show-env WAYLAND_DISPLAY 2> /dev/null)
-  }
-else
-  function refresh { }
-fi
+  fi
+}
+
+TMOUT=10
+
+TRAPALRM() {
+  refresh
+}
 
 function preexec {
   refresh
 }
 
 precmd() {
-    print -Pn "\e]133;A\e\\"
+    #if [[ ${#WAYLAND_DISPLAY} -gt 9 ]]; then
+    if [[ ${#SSH_TTY} ]]; then
+      export FZF_DEFAULT_OPTS='--color=bg:#fffbef,bg+:#f0f2d4,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,preview-bg:#fffbef,prompt:#fffbef,hl+:#fa8987';
+    else
+      export FZF_DEFAULT_OPTS='--color=bg:#ffffff,bg+:#f0f2d4,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,preview-bg:#ffffff,prompt:#fffbef,hl+:#fa8987'
+    fi
 }
 
 function osc7 {
@@ -183,6 +192,7 @@ cd-fzf() {
   cd-fzf-helper 0 '.'
 
   if [[ -z "$finaldir" || $finaldir = "" ]]; then
+    zle reset-prompt
     return 0
   fi
 
@@ -221,6 +231,7 @@ zoxide-fzf() {
     --bind 'enter:become(echo {2})')
 
   if [[ -z "$dir" || $dir = "" ]]; then
+    zle reset-prompt
     return 0
   fi
 
@@ -233,17 +244,48 @@ bindkey -M emacs '^j' zoxide-fzf
 bindkey -M vicmd '^j' zoxide-fzf
 bindkey -M viins '^j' zoxide-fzf
 
+zoxide-fzf-curdir() {
+  local zoxide_prefix="zoxide query -l -s "
+  local dir=$(fzf --ansi --disabled \
+    --height '40%' \
+    --color prompt:green \
+    --prompt 'z (curdir)> ' \
+    --header "${2:2}" \
+    --preview "eza -G --color=always --icons --group-directories-first -s modified {2}" \
+    --preview-window 'top,50%' \
+    --bind "start:reload:$zoxide_prefix {q} | rg -w '${PWD}'" \
+    --bind "change:reload:sleep 0.02; $zoxide_prefix {q} | rg -w '${PWD}' || true" \
+    --bind 'pgup:preview-half-page-up' \
+    --bind 'pgdn:preview-half-page-down' \
+    --bind 'ctrl-delete:clear-query' \
+    --bind 'esc:become(echo "")' \
+    --bind 'enter:become(echo {2})')
+
+  if [[ -z "$dir" || $dir = "" ]]; then
+    zle reset-prompt
+    return 0
+  fi
+
+  echo "\n"
+  _z_cd ${dir}
+  zle reset-prompt
+}
+zle     -N            zoxide-fzf-curdir
+bindkey -M emacs '^k' zoxide-fzf-curdir
+bindkey -M vicmd '^k' zoxide-fzf-curdir
+bindkey -M viins '^k' zoxide-fzf-curdir
+
 # rg + fzf
 rg-fzf() {
-RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
-INITIAL_QUERY="${*:-}"
-: | fzf --ansi --disabled --query "$INITIAL_QUERY" \
+  RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
+  INITIAL_QUERY="${*:-}"
+  : | fzf --ansi --disabled --query "$INITIAL_QUERY" \
     --color prompt:green \
     --prompt "rg> " \
     --header "" \
     --bind "start:reload:$RG_PREFIX {q}" \
     --bind "change:change-header()+reload:sleep 0.1; $RG_PREFIX {q} || true" \
-    --bind "alt-c:change-header([C])+reload:$RG_PREFIX -tc {q} || true" \
+    --bind "ctrl-C:change-header([C])+reload:$RG_PREFIX -tc {q} || true" \
     --bind "alt-v:change-header([C++])+reload:$RG_PREFIX -tcpp {q} || true" \
     --bind "alt-m:change-header([Makefile])+reload:$RG_PREFIX -tmake {q} || true" \
     --bind "alt-a:change-header([Android])+reload:$RG_PREFIX -tandroid {q} || true" \
@@ -253,6 +295,7 @@ INITIAL_QUERY="${*:-}"
     --bind 'enter:become(nvim {1} +{2})' \
     --bind 'ctrl-space:execute(nvim {1} +{2})' \
     --bind 'tab:execute(batcat --color=always {1} --highlight-line {2} | less)'
+  zle reset-prompt
 }
 zle     -N            rg-fzf
 bindkey -M emacs '^f' rg-fzf
@@ -261,17 +304,19 @@ bindkey -M viins '^f' rg-fzf
 
 # vim + fzf
 vim-fzf() {
-fdfind --max-depth 1 --type f | fzf --ansi \
-    --color prompt:green \
-    --prompt "nvim> " \
-    --header "" \
-    --height '40%' \
-    --preview 'batcat --color=always {1}' \
-    --preview-window 'right,50%' \
-    --bind 'enter:become(nvim {1})' \
-    --bind 'pgup:preview-half-page-up' \
-    --bind 'pgdn:preview-half-page-down' \
-    --bind 'ctrl-delete:clear-query' 
+  fdfind --type f | fzf --ansi \
+      --color prompt:green \
+      --prompt "nvim> " \
+      --header "" \
+      --height '40%' \
+      --preview 'batcat --color=always {1}' \
+      --preview-window 'right,50%' \
+      --bind 'enter:become(nvim {1})' \
+      --bind 'pgup:preview-half-page-up' \
+      --bind 'pgdn:preview-half-page-down' \
+      --bind 'ctrl-delete:clear-query'
+
+  zle reset-prompt
 }
 zle     -N            vim-fzf
 bindkey -M emacs '^v' vim-fzf
@@ -281,5 +326,5 @@ bindkey -M viins '^v' vim-fzf
 eval "$(zoxide init zsh --cmd j)"
 eval "$(starship init zsh)"
 
-export FZF_DEFAULT_OPTS='--color=bg:#fffbef,bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,preview-bg:#fffbef,prompt:#fffbef,hl+:#fa8987'
+export FZF_DEFAULT_OPTS='--color=bg:#ffffff,bg+:#f0f2d4,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,preview-bg:#ffffff,prompt:#fffbef,hl+:#fa8987'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

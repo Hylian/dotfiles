@@ -2,7 +2,7 @@
 Description=kanshi
 
 [Service]
-ExecStart=/home/shined/.local/bin/kanshi
+ExecStart=kanshi
 Type=simple
 
 [Install]

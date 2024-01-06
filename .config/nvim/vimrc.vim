@@ -6,23 +6,23 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'tpope/vim-commentary'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'antoinemadec/coc-fzf'
   Plug 'chriskempson/base16-vim'
+  Plug 'nvim-lualine/lualine.nvim'
+  Plug 'nvim-tree/nvim-web-devicons'
   " Plug 'sainnhe/everforest'
   Plug 'neanias/everforest-nvim', { 'branch': 'main' }
   Plug 'tpope/vim-fugitive'
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'bfrg/vim-cpp-modern'
   Plug 'feline-nvim/feline.nvim'
-  "Plug 'nvim-neorg/neorg' | Plug 'nvim-lua/plenary.nvim'
   Plug 'bfredl/nvim-miniyank'
   Plug 'szw/vim-maximizer'
   Plug 'Shougo/echodoc.vim'
-  Plug 'kyazdani42/nvim-web-devicons'
-  "Plug 'kyazdani42/nvim-tree.lua'
   Plug 'akinsho/toggleterm.nvim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'axelf4/vim-strip-trailing-whitespace'
 call plug#end()
 endif
 
@@ -75,11 +75,12 @@ set shiftwidth=2
 set smartindent
 set smarttab
 set softtabstop=2
+set tabstop=4
 set previewheight=20
 set termguicolors
 set ruler
 set mouse=a
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 set updatetime=300
 set undolevels=1000
 set backspace=indent,eol,start
@@ -99,6 +100,7 @@ highlight LineNr ctermfg=blue
 
 " search for visually hightlighted text
 vnoremap <c-f> y<ESC>/<c-r>"<CR>
+
 
 nmap <s-w> :call search('[A-Z]', 'W')<CR>
 
@@ -132,11 +134,11 @@ fun! <SID>StripTrailingWhitespaces()
   %s/\s\+$//e
   call cursor(l, c)
 endfun
-autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-                  \| exe "normal! g'\"" | endif
-endif
+"autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+"if has("autocmd")
+  "au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+                  "\| exe "normal! g'\"" | endif
+"endif
 
 " Neovim-specific Configuration
 
@@ -145,8 +147,6 @@ if !exists('g:vscode')
     set termguicolors
   endif
   set background=light
-  let g:everforest_background = 'hard'
-  let g:everforest_better_performance = 1
 
   let g:bufferline_echo = 0
 
@@ -182,7 +182,7 @@ if !exists('g:vscode')
 
 
   " Rust language completion
-  autocmd BufReadPost *.rs setlocal filetype=rust
+  "autocmd BufReadPost *.rs setlocal filetype=rust
 
   " Echodoc Configuration
   let g:echodoc#enable_at_startup = 1
@@ -233,7 +233,7 @@ if !exists('g:vscode')
   nmap <silent> Gy : call CocActionAsync('jumpTypeDefinition', 'vsplit')<CR>
   nmap <silent> gr <Plug>(coc-references)
   nmap <silent> Gr : call CocActionAsync('jumpReferences', 'vsplit')<CR>
-  nmap <leader>rn <Plug>(coc-rename)
+  nmap <silent> gn <Plug>(coc-rename)
 
   inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
   inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
@@ -267,15 +267,15 @@ if !exists('g:vscode')
 
   " Bufferline Config
   nnoremap <silent> gb :BufferLinePick<CR>
-  nnoremap <A-1> <Cmd>BufferLineGoToBuffer 1<CR>
-  nnoremap <A-2> <Cmd>BufferLineGoToBuffer 2<CR>
-  nnoremap <A-3> <Cmd>BufferLineGoToBuffer 3<CR>
-  nnoremap <A-4> <Cmd>BufferLineGoToBuffer 4<CR>
-  nnoremap <A-5> <Cmd>BufferLineGoToBuffer 5<CR>
-  nnoremap <A-6> <Cmd>BufferLineGoToBuffer 6<CR>
-  nnoremap <A-7> <Cmd>BufferLineGoToBuffer 7<CR>
-  nnoremap <A-8> <Cmd>BufferLineGoToBuffer 8<CR>
-  nnoremap <A-9> <Cmd>BufferLineGoToBuffer 9<CR>
+  nnoremap <C-A-1> <Cmd>BufferLineGoToBuffer 1<CR>
+  nnoremap <C-A-2> <Cmd>BufferLineGoToBuffer 2<CR>
+  nnoremap <C-A-3> <Cmd>BufferLineGoToBuffer 3<CR>
+  nnoremap <C-A-4> <Cmd>BufferLineGoToBuffer 4<CR>
+  nnoremap <C-A-5> <Cmd>BufferLineGoToBuffer 5<CR>
+  nnoremap <C-A-6> <Cmd>BufferLineGoToBuffer 6<CR>
+  nnoremap <C-A-7> <Cmd>BufferLineGoToBuffer 7<CR>
+  nnoremap <C-A-8> <Cmd>BufferLineGoToBuffer 8<CR>
+  nnoremap <C-A-9> <Cmd>BufferLineGoToBuffer 9<CR>
 
   " Open Fzf GitFiles at startup if opened without any buffers
   function! IsBlank( bufnr )
@@ -305,28 +305,24 @@ if !exists('g:vscode')
   "autocmd VimEnter * :call OpenFzfIfEmpty()
 
   function! TmuxWaylandRefresh()
-    if !empty($TMUX)
+    if !empty($TMUX) && !empty($WAYLAND_DISPLAY)
       let prev_display = $WAYLAND_DISPLAY
       let display = split(system("tmux show-env WAYLAND_DISPLAY 2> /dev/null"), "=")[1][:-2]
       let $WAYLAND_DISPLAY = display
-      echom "Changed $WAYLAND_DISPLAY from " . prev_display . " to " . $WAYLAND_DISPLAY
+      "echom "Changed $WAYLAND_DISPLAY from " . prev_display . " to " . $WAYLAND_DISPLAY
     endif
   endfunction
 
-  if exists('$TMUX')
-    autocmd BufEnter,FocusGained * call TmuxWaylandRefresh()
-  endif
+  "if exists('$TMUX')
+    "autocmd BufEnter,FocusGained * call TmuxWaylandRefresh()
+  "endif
 
   " Pull in lua configs
-  lua require('config.bufferline')
-  lua require('config.feline')
-  "lua require('config.everforest')
-  lua require('config.gitsigns')
-  "lua require('config.neorg')
-  lua require('config.toggleterm')
-  lua require('config.treesitter')
-  "lua require('config.nvim-tree')
-  lua require('config.nvim-web-devicons')
-
-  lua require("everforest").load()
+  " lua require('config.bufferline')
+  " lua require('config.lualine')
+  " lua require('config.gitsigns')
+  " lua require('config.toggleterm')
+  " "lua require('config.treesitter')
+  " lua require('config.nvim-web-devicons')
+  " lua require("everforest").load()
 endif "if !exists('g:vscode')
