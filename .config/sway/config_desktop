@@ -5,9 +5,21 @@ input pointer {
 }
 
 input type:keyboard {
-    repeat_delay 210
+    repeat_delay 240
     repeat_rate 50
     xkb_options ctrl:nocaps
+}
+
+input "1386:828:Wacom_Intuos_PT_S_2_Pad" {
+  map_to_output DP-4
+}
+
+input "1386:828:Wacom_Intuos_PT_S_2_Pen" {
+  map_to_output DP-4
+}
+
+input "1386:828:Wacom_Intuos_PT_S_2_Finger" {
+  events disabled
 }
 
 input "0:0:Shuttle_Emulated_Keyboard" {
@@ -20,7 +32,7 @@ input "2:10:TPPS/2_Elan_TrackPoint" {
 }
 
 input "19788:6:Neoknob_KN01_Mouse" {
-  scroll_factor 0.6
+  scroll_factor 1.0
 }
 
 input "21298:5120:Clearly_Superior_Technologies._CST_Laser_Trackball" {
@@ -37,16 +49,44 @@ input "1149:32793:ExpertBT5.0_Mouse" {
   scroll_factor 0.3
 }
 
-output DP-1 scale 1
-output DP-1 mode 2560x1440@239.970Hz
-output DP-1 bg #000000 solid_color
-output DP-1 subpixel none
-output DP-2 scale 2
-output DP-2 mode 3840x2160@59.997002Hz
-output DP-2 bg ~/Wallpapers/70785500_p1.png fill
-output DP-2 subpixel rgb
-output "Nreal nreal air 0x00008800" background #000000 solid_color
+input "76:613:Apple_Inc._Magic_Trackpad_2" {
+  accel_profile "adaptive"
+  scroll_factor 0.6
+  pointer_accel 0.55
+  natural_scroll enabled
+  tap enabled
+}
+
+input "1452:613:Apple_Inc._Magic_Trackpad" {
+  accel_profile "adaptive"
+  scroll_factor 0.6
+  pointer_accel 0.4
+  natural_scroll enabled
+  tap enabled
+}
+
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/sakeharasu_cropped.png fill
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none
+output "Dell Inc. DELL U2723QE 7S2KXN3" scale 2
+output "Dell Inc. DELL U2723QE 7S2KXN3" mode 3840x2160@59.997002Hz
+output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/Wallpapers/70785500_p1.png fill
+output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel rgb
+output "Nreal Air 0x00006600" background #000000 solid_color
 #output HEADLESS-1 mode 1404x1872
+
+blur enable
+blur_xray disable
+blur_passes 4
+blur_radius 2
+
+corner_radius 30
+
+shadows enable
+shadows_on_csd enable
+shadow_blur_radius 12
 
 # Colors
 # class                 border  backgr. text    indicator child_border
@@ -62,6 +102,10 @@ for_window {
     border pixel 0
   }
 
+  [title="(Save As|File Upload)" app_id="firefox-nightly"] {
+    resize set 1200 1000
+  }
+
   [title="ssh-askpass"] {
     floating enable
   }
@@ -70,9 +114,37 @@ for_window {
     opacity set 1.0
   }
 
+  [title=".*YouTube.*"] {
+    opacity set 1.0
+  }
+
   [app_id="Plexamp"] {
+    floating enable
     move container to scratchpad, scratchpad show
-    resize set 1000 800
+    resize set 1200 1000
+    move position center
+  }
+
+  [class="Plexamp"] {
+    floating enable
+    move container to scratchpad, scratchpad show
+    resize set 1200 1000
+    move position center
+  }
+
+  [app_id="chrome-diomlfcjikmegkfgnmbolnocfpjnfmon-Default"] {
+    floating enable
+    move container to scratchpad, scratchpad show
+    resize set 1400 1200
+    move position center
+  }
+
+  [app_id="discord"] {
+    move container to workspace 6
+  }
+
+  [class="steam"] {
+    move container to workspace 10
   }
 
   [shell="^((?!xdg_shell).)*$"] {
@@ -92,15 +164,24 @@ default_border none
 default_floating_border none
 
 gaps inner 5
-smart_gaps on
-smart_borders on
-hide_edge_borders smart_no_gaps
+gaps outer 3
+smart_gaps off
+hide_edge_borders both
 focus_follows_mouse yes
 
-bindsym $mod+Return exec "foot -D $HOME"
-bindsym $mod+q exec "google-chrome-stable"
+bindsym $mod+Shift+e exit
 
-bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
+bindsym $mod+Return exec "foot -D $HOME"
+bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
+bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
+bindsym $mod+shift+q exec "google-chrome-stable"
+bindsym $mod+g exec "thunar"
+
+bindsym $mod+Ctrl+s exec "grimshot copy area"
+bindsym $mod+Ctrl+Shift+s exec "grimshot save area ~/Screenshots"
+
+#bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/scratchpad_multi.sh; scratchpad show
+bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/home_assistant.sh; scratchpad show
 
 bindsym $mod+d kill
 
@@ -134,16 +215,16 @@ bindsym $mod+e layout toggle split
 bindsym $mod+a focus parent
 bindsym $mod+z focus child
 
-workspace 1 output DP-1
-workspace 2 output DP-1
-workspace 3 output DP-1
-workspace 4 output DP-1
-workspace 5 output DP-1
-workspace 6 output DP-2
-workspace 7 output DP-2
-workspace 8 output DP-2
-workspace 9 output DP-2
-workspace 0 output DP-2
+workspace 1 output DP-4
+workspace 2 output DP-4
+workspace 3 output DP-4
+workspace 4 output DP-4
+workspace 5 output DP-4
+workspace 6 output DP-1
+workspace 7 output DP-1
+workspace 8 output DP-1
+workspace 9 output DP-1
+workspace 0 output DP-1
 
 #set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
 #set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
@@ -233,14 +314,25 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym XF86AudioPlay exec playerctl play-pause
 
-bindsym --no-repeat Alt_L exec mumble rpc starttalking
-bindsym --release Alt_L exec mumble rpc stoptalking
+#bindsym --whole-window --no-repeat button9+button1 exec mumble rpc starttalking
+#bindsym --whole-window --release button9+button1 exec mumble rpc stoptalking
+#bindsym --no-repeat minus exec mumble rpc stoptalking
 
 bar swaybar_command waybar
 
+set $gnome-schema org.gnome.desktop.interface
+
+exec_always {
+  gsettings set $gnome-schema gtk-theme 'Catppuccin-Frappe-Standard-Blue-dark'
+  gsettings set $gnome-schema font-name 'Sys'
+}
+
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 exec wl-paste -t text --watch clipman store --no-persist
-exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
+exec blueman-applet
+exec udiskie --tray
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+#exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
 exec_always "pkill wl-gammarelay; wl-gammarelay"
 exec_always "pkill sway-opacity; sway-opacity --opacity 0.95"
 exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
