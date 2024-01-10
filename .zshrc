@@ -235,6 +235,37 @@ bindkey -M emacs '^j' zoxide-fzf
 bindkey -M vicmd '^j' zoxide-fzf
 bindkey -M viins '^j' zoxide-fzf
 
+zoxide-fzf-curdir() {
+  local zoxide_prefix="zoxide query -l -s "
+  local dir=$(fzf --ansi --disabled \
+    --height '40%' \
+    --color prompt:green \
+    --prompt 'z (curdir)> ' \
+    --header "${2:2}" \
+    --preview "eza -G --color=always --icons --group-directories-first -s modified {2}" \
+    --preview-window 'top,50%' \
+    --bind "start:reload:$zoxide_prefix {q} | rg -w '${PWD}'" \
+    --bind "change:reload:sleep 0.02; $zoxide_prefix {q} | rg -w '${PWD}' || true" \
+    --bind 'pgup:preview-half-page-up' \
+    --bind 'pgdn:preview-half-page-down' \
+    --bind 'ctrl-delete:clear-query' \
+    --bind 'esc:become(echo "")' \
+    --bind 'enter:become(echo {2})')
+
+  if [[ -z "$dir" || $dir = "" ]]; then
+    zle reset-prompt
+    return 0
+  fi
+
+  echo "\n"
+  _z_cd ${dir}
+  zle reset-prompt
+}
+zle     -N            zoxide-fzf-curdir
+bindkey -M emacs '^k' zoxide-fzf-curdir
+bindkey -M vicmd '^k' zoxide-fzf-curdir
+bindkey -M viins '^k' zoxide-fzf-curdir
+
 # rg + fzf
 rg-fzf() {
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
