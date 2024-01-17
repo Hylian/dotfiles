@@ -88,6 +88,8 @@ shadows enable
 shadows_on_csd enable
 shadow_blur_radius 12
 
+layer_effects "notifications" blur enable; blur_ignore_transparent disable; shadows enable; corner_radius 20
+
 # Colors
 # class                 border  backgr. text    indicator child_border
 client.focused          #FACE48 #3b70ac #ffffff #2e9ef4   #4c7899 
