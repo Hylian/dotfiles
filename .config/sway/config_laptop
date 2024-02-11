@@ -1,11 +1,36 @@
 input type:keyboard {
-    repeat_delay 210
+    repeat_delay 240
     repeat_rate 50
     xkb_options ctrl:nocaps
 }
 
 input type:mouse {
   scroll_factor 0.5
+}
+
+input "1452:782:Michael_Solomon___s_Trackpad" {
+  scroll_factor 0.5
+  accel_profile "adaptive"
+  pointer_accel 0.3
+  natural_scroll "enabled"
+  tap "enabled"
+  drag "enabled"
+}
+
+input "76:613:Apple_Inc._Magic_Trackpad_2" {
+  scroll_factor 1.0
+  accel_profile "adaptive"
+  pointer_accel 0.44
+  natural_scroll "enabled"
+  tap "enabled"
+}
+
+input "1452:613:Apple_Inc._Magic_Trackpad" {
+  scroll_factor 1.0
+  accel_profile "adaptive"
+  pointer_accel 0.44
+  natural_scroll "enabled"
+  tap "enabled"
 }
 
 # Shuttlexpress
@@ -16,12 +41,22 @@ input "0:0:Shuttle_Emulated_Keyboard" {
 # Thinkpad Trackpoint
 input "2:10:TPPS/2_Elan_TrackPoint" {
   accel_profile "flat"
-  pointer_accel 0.3
+  pointer_accel 0.4
+  scroll_factor 0.5
+}
+
+input "1267:12695:ELAN067A:00_04F3:3197_Touchpad" {
+  accel_profile "adaptive"
+  pointer_accel 0.5
+  scroll_factor 0.56
+  accel_profile "adaptive"
+  natural_scroll "enabled"
+  tap "enabled"
 }
 
 input "21298:5120:Clearly_Superior_Technologies._CST_Laser_Trackball" {
   accel_profile "flat"
-  pointer_accel 0.4
+  pointer_accel 0.35
   scroll_factor 0.3
 }
 
@@ -38,8 +73,34 @@ input "19788:6:Neoknob_KN01_Mouse" {
   scroll_factor 0.7
 }
 
-output * background #783f2a solid_color
+blur enable
+blur_xray disable
+blur_passes 4
+blur_radius 2
+
+corner_radius 14
+
+shadows enable
+shadows_on_csd enable
+shadow_blur_radius 10
+
+layer_effects "notifications" blur enable; blur_ignore_transparent disable; shadows enable; corner_radius 20
+
+
+output * background #c1e0e3 solid_color
+#output eDP-1 background #a6b0a0 solid_color
+output eDP-1 bg ~/wallpapers/nasa.jpg fill
+#output "Dell Inc. DELL U2723QE 7S2KXN3" background #284544 solid_color
+#output "Dell Inc. DELL U2723QE 7S2KXN3" background #000000 solid_color
+output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/wallpapers/pier.jpg fill
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" background #000000 solid_color
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/wallpapers/nasa.jpg fill
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
+output "Lenovo Group Limited LEN T32p-20 VNA7645L" background #000000 solid_color
 output "Nreal nreal air 0x00008800" background #000000 solid_color
+output "XXX AAA" background #f3f5d9 solid_color
+output HDMI-A-1 background #efefff solid_color
+#output DP-1 background #ffffff solid_color
 
 # Colors
 # class                 border  backgr. text    indicator child_border
@@ -78,19 +139,21 @@ bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/open_plexamp.s
 default_border none
 default_floating_border none
 font pango:Atkinson Hyperlegible 12
-titlebar_padding 1
-titlebar_border_thickness 0
 
 gaps inner 5
-smart_gaps on
+gaps inner 3
+smart_gaps off
 smart_borders on
-hide_edge_borders smart_no_gaps
+hide_edge_borders both
 focus_follows_mouse yes
 
 bindsym $mod+Return exec "foot -D $HOME"
-bindsym $mod+space exec "foot zsh -c '~/dotfiles/scripts/ssh/cloudtop.sh'"
+#bindsym $mod+space exec "foot zsh -c '~/dotfiles/scripts/ssh/cloudtop.sh'"
+bindsym $mod+space exec "foot zsh -c '~/dotfiles/scripts/ssh/desktop.sh'"
 bindsym $mod+Control+space exec "foot zsh -c '~/dotfiles/scripts/ssh/desktop.sh'"
-bindsym $mod+q exec "google-chrome"
+bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-esr --allow-downgrade"
+bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
+bindsym $mod+g exec "nautilus -w"
 
 bindsym $mod+d kill
 
@@ -222,8 +285,9 @@ exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSO
 #exec /home/shined/scripts/inactive-windows-transparency.py --opacity 0.85
 exec wl-paste -t text --watch clipman store --no-persist
 #exec_always pkill sov && rm -f /tmp/sovpipe && mkfifo /tmp/sovpipe && tail -f /tmp/sovpipe | sov -t 0 -a b -r 6 -m 30 -c 4
-exec_always "pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.85"
+exec_always "pkill blueman-applet; blueman-applet"
+exec_always "pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.9"
 exec_always "pkill wl-gammarelay; wl-gammarelay"
 exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
-exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
+exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 7500"
 exec_always "systemctl --user restart kanshi.service"
