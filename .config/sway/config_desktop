@@ -54,7 +54,7 @@ input "76:613:Apple_Inc._Magic_Trackpad_2" {
   scroll_factor 0.6
   pointer_accel 0.55
   natural_scroll enabled
-  tap enabled
+  tap disabled
 }
 
 input "1452:613:Apple_Inc._Magic_Trackpad" {
@@ -62,13 +62,14 @@ input "1452:613:Apple_Inc._Magic_Trackpad" {
   scroll_factor 0.6
   pointer_accel 0.4
   natural_scroll enabled
-  tap enabled
+  tap disabled
 }
 
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
-output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/sakeharasu_cropped.png fill
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/sakeharasu_cropped.png fill
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/yama2x.png fill
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none
 output "Dell Inc. DELL U2723QE 7S2KXN3" scale 2
 output "Dell Inc. DELL U2723QE 7S2KXN3" mode 3840x2160@59.997002Hz
@@ -79,25 +80,28 @@ output "Nreal Air 0x00006600" background #000000 solid_color
 
 blur enable
 blur_xray disable
-blur_passes 4
-blur_radius 2
+blur_passes 2
+blur_radius 10
 
-corner_radius 30
+corner_radius 20
 
 shadows enable
 shadows_on_csd enable
-shadow_blur_radius 12
+shadow_blur_radius 15
+shadow_color #00001010
 
-layer_effects "notifications" blur enable; blur_ignore_transparent disable; shadows enable; corner_radius 20
+layer_effects 'notifications' 'blur enable; shadows enable; corner_radius 20'
+layer_effects 'launcher' 'blur enable; shadows enable; corner_radius 20'
 
 # Colors
-# class                 border  backgr. text    indicator child_border
-client.focused          #FACE48 #3b70ac #ffffff #2e9ef4   #4c7899 
-client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
-client.unfocused        #333333 #222222 #888888 #292d2e   #222222
-client.urgent           #2f343a #900000 #ffffff #900000   #900000
-client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
-client.background       #ffffff
+# class                  border  backgr. text    indicator child_border
+client.focused           #FACE48 #8da101 #fffbef #2e9ef4   #4c7899
+client.focused_inactive  #333333 #fffbef #5c6a72 #484e50   #5f676a
+client.focused_tab_title #333333 #fffbef #5c6a72 #484e50   #5f676a
+client.unfocused         #333333 #fffbef #5c6a72 #484e50   #5f676a
+client.urgent            #2f343a #900000 #ffffff #900000   #900000
+client.placeholder       #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.background        #ffffff
 
 for_window {
   [class=".*"] {
@@ -156,7 +160,7 @@ for_window {
 
 set $mod Mod4
 
-font pango:Atkinson Hyperlegible 10
+font pango:PragmataPro 12
 
 floating_modifier $mod
 
@@ -171,12 +175,16 @@ smart_gaps off
 hide_edge_borders both
 focus_follows_mouse yes
 
+titlebar_border_thickness 0
+titlebar_padding 40 8
+
 bindsym $mod+Shift+e exit
 
 bindsym $mod+Return exec "foot -D $HOME"
 bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
 bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
-bindsym $mod+shift+q exec "google-chrome-stable"
+bindsym $mod+p exec "1password --quick-access"
+bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
 bindsym $mod+g exec "thunar"
 
 bindsym $mod+Ctrl+s exec "grimshot copy area"
