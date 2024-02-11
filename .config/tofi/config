@@ -1,42 +1,43 @@
-font = "/usr/share/fonts/TTF/Atkinson-Hyperlegible-Bold.ttf"
+#font = "~/.local/share/fonts/Atkinson-Hyperlegible-Regular-102.otf"
+font = "~/.local/share/fonts/Sys400.ttf"
 
 font-size = 18
 
 hint-font = false
 
-text-color = #ADE8ED80
+text-color = #939F91
 
-prompt-color = #FFD36Bf0
+prompt-color = #8DA101
 prompt-background = #00000000
 prompt-background-padding = 0
 prompt-background-corner-radius = 0
 
-input-color = #FC8D95e0
-input-background = #00000000
-input-background-padding = 0
-input-background-corner-radius = 0
+input-color = #5C6A72a0
+#input-background = #3A94C500
+#input-background-padding = 0, 20, 0, 20
+#input-background-corner-radius = 10
 
-selection-color = #18848E
-selection-background = #FC8D95
-selection-background-padding = 2, 10
-selection-background-corner-radius = 4
-selection-match-color = #FFEABA
+selection-color = #E9F0E9
+selection-background = #8DA101
+selection-background-padding = 0, 8, 1, 8
+selection-background-corner-radius = 10
+selection-match-color = #F85552
 
-prompt-text = " >"
-prompt-padding = 18
+prompt-text = "  >"
+prompt-padding = 15
 
 result-spacing = 5
 
-width = 440
-height = 190
+width = 400
+height = 170
 
-background-color = #18848Ee0
+background-color = #FAEDCDF0
 
 outline-width = 5
-outline-color = #F94A5710
+outline-color = #F57D2610
 
 border-width = 1
-border-color = #FFD36Bc0
+border-color = #8DA101e0
 
 corner-radius = 0
 
