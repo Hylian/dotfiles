@@ -6,7 +6,6 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'tpope/vim-commentary'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
-  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'antoinemadec/coc-fzf'
   Plug 'chriskempson/base16-vim'
   Plug 'nvim-lualine/lualine.nvim'
@@ -14,6 +13,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Plug 'sainnhe/everforest'
   Plug 'neanias/everforest-nvim', { 'branch': 'main' }
   Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-sleuth'
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'bfrg/vim-cpp-modern'
   Plug 'feline-nvim/feline.nvim'
@@ -23,6 +23,11 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'akinsho/toggleterm.nvim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'axelf4/vim-strip-trailing-whitespace'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/nvim-treesitter-context'
+  Plug 'folke/noice.nvim'
+  Plug 'MunifTanjim/nui.nvim'
+  Plug 'rcarriga/nvim-notify'
 call plug#end()
 endif
 
@@ -88,15 +93,16 @@ set termguicolors
 set hidden
 set nobackup
 set nowritebackup
-set cmdheight=1
+set cmdheight=0
 set updatetime=300
 "set colorcolumn=80
-set shortmess=aostTA
+set shortmess=ostTAcCWFSI
 
 let mapleader = " "
 let localleader = "\\"
 
 highlight LineNr ctermfg=blue
+highlight MsgArea guibg=#edeada guifg=#5c6a72
 
 " search for visually hightlighted text
 vnoremap <c-f> y<ESC>/<c-r>"<CR>
@@ -179,6 +185,7 @@ if !exists('g:vscode')
   nmap ' :GitAllFiles<CR>
   nmap { :CocFzfList symbols<CR>
   nmap } :CocFzfList outline<CR>
+  nmap ] :CocCommand clangd.switchSourceHeader<CR>
 
 
   " Rust language completion
