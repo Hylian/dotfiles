@@ -1,3 +1,4 @@
+
 #TabsToolbar
 {
     visibility: collapse;
@@ -14,6 +15,8 @@
   margin-left: 1px;
   margin-right: 1px;
 }
+#statuspanel[inFullscreen] {display:none!important;}
+#full-screen-warning-container{display:none!important;}
 
 /* Auto-hide sidebar in fullscreen */
 #main-window[inFullscreen] #sidebar-box,
@@ -41,7 +44,7 @@
 
 /* Shrink sidebar until hovered */
 :root {
-  --thin-tab-width: 50px;
+  --thin-tab-width: 60px;
   --wide-tab-width: 300px;
 }
 #sidebar-box:not([sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"]) {
