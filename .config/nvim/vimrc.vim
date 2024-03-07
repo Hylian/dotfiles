@@ -28,6 +28,8 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'folke/noice.nvim'
   Plug 'MunifTanjim/nui.nvim'
   Plug 'rcarriga/nvim-notify'
+  " Plug 'akinsho/git-conflict.nvim', { 'tag': '*' }
+  Plug 'sindrets/diffview.nvim'
 call plug#end()
 endif
 

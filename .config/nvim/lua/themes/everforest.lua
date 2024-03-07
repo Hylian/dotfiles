@@ -5,6 +5,14 @@ if configuration.transparent_background == 2 then
   palette.bg1 = palette.none
 end
 
+vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = palette.bg_blue[0] })
+vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = palette.bg_blue[0] })
+
+vim.api.nvim_set_hl(0, 'DiffText', { bg = palette.bg_yellow[0] })
+vim.api.nvim_set_hl(0, 'DiffChange', { bg = palette.bg_blue[0] })
+vim.api.nvim_set_hl(0, 'DiffDelete', { bg = palette.bg_red[0] })
+vim.api.nvim_set_hl(0, 'DiffAdd', { bg = palette.bg_green[0] })
+
 local _M = {
     bg = palette.statusline1[0],
     fg = palette.bg0[0],
