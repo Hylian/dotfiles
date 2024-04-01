@@ -15,8 +15,8 @@
   margin-left: 1px;
   margin-right: 1px;
 }
-#statuspanel[inFullscreen] {display:none!important;}
-#full-screen-warning-container{display:none!important;}
+#full-screen-warning-container { display: none !important; }
+:root[inFullscreen="true"] #statuspanel { display: none !important; }
 
 /* Auto-hide sidebar in fullscreen */
 #main-window[inFullscreen] #sidebar-box,
