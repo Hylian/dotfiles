@@ -1,3 +1,5 @@
+include /etc/sway/config.d/*
+
 input pointer {
   accel_profile "flat"
   pointer_accel 0.6
@@ -5,21 +7,30 @@ input pointer {
 }
 
 input type:keyboard {
-    repeat_delay 240
-    repeat_rate 50
-    xkb_options ctrl:nocaps
+  repeat_delay 240
+  repeat_rate 50
+  xkb_options ctrl:nocaps
+}
+
+# resolution: 2560x1440
+# wacom area: 152x95mm
+# $ libinput list-devices
+# (1440 * 152 / 2560) / 95 -> 0.9
+input "1386:828:Wacom_Intuos_PT_S_2_Pen" {
+  map_to_output DP-3
+  map_from_region 0.0x0.0 1.0x0.9
 }
 
 input "1386:828:Wacom_Intuos_PT_S_2_Pad" {
-  map_to_output DP-4
-}
-
-input "1386:828:Wacom_Intuos_PT_S_2_Pen" {
-  map_to_output DP-4
+  map_to_output DP-3
 }
 
 input "1386:828:Wacom_Intuos_PT_S_2_Finger" {
-  events disabled
+  #events disabled
+  accel_profile "adaptive"
+  scroll_factor 0.8
+  pointer_accel 0.5
+  natural_scroll enabled
 }
 
 input "0:0:Shuttle_Emulated_Keyboard" {
@@ -49,32 +60,32 @@ input "1149:32793:ExpertBT5.0_Mouse" {
   scroll_factor 0.3
 }
 
-input "76:613:Apple_Inc._Magic_Trackpad_2" {
+input "1452:613:Apple_Inc._Magic_Trackpad_2" {
   accel_profile "adaptive"
-  scroll_factor 0.6
-  pointer_accel 0.55
+  scroll_factor 0.8
+  pointer_accel 0.6
   natural_scroll enabled
   tap disabled
 }
 
-input "1452:613:Apple_Inc._Magic_Trackpad" {
-  accel_profile "adaptive"
-  scroll_factor 0.6
-  pointer_accel 0.4
-  natural_scroll enabled
-  tap disabled
-}
 
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/sakeharasu_cropped.png fill
-output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/yama2x.png fill
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/bluevignette.png fill
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" max_render_time 4
+
 output "Dell Inc. DELL U2723QE 7S2KXN3" scale 2
 output "Dell Inc. DELL U2723QE 7S2KXN3" mode 3840x2160@59.997002Hz
-output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/Wallpapers/70785500_p1.png fill
-output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel rgb
+output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/Wallpapers/nijikafill.png fit
+output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb
+output "Dell Inc. DELL U2723QE 7S2KXN3" max_render_time 16
+
+output "LG Electronics LG Ultra HD 0x00001DB9" bg ~/Wallpapers/21_yanagi_kouji.jpg fill
+output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr
+output "LG Electronics LG Ultra HD 0x00001DB9" max_render_time 16
 output "Nreal Air 0x00006600" background #000000 solid_color
 #output HEADLESS-1 mode 1404x1872
 
@@ -83,7 +94,7 @@ blur_xray disable
 blur_passes 2
 blur_radius 10
 
-corner_radius 20
+corner_radius 18
 
 shadows enable
 shadows_on_csd enable
@@ -94,13 +105,13 @@ layer_effects 'notifications' 'blur enable; shadows enable; corner_radius 20'
 layer_effects 'launcher' 'blur enable; shadows enable; corner_radius 20'
 
 # Colors
-# class                  border  backgr. text    indicator child_border
-client.focused           #FACE48 #8da101 #fffbef #2e9ef4   #4c7899
-client.focused_inactive  #333333 #fffbef #5c6a72 #484e50   #5f676a
-client.focused_tab_title #333333 #fffbef #5c6a72 #484e50   #5f676a
-client.unfocused         #333333 #fffbef #5c6a72 #484e50   #5f676a
-client.urgent            #2f343a #900000 #ffffff #900000   #900000
-client.placeholder       #000000 #0c0c0c #ffffff #000000   #0c0c0c
+# class                  border  backgr.    text    indicator child_border
+client.focused           #FACE48 #8da101c0  #fffbef #2e9ef4   #4c7899
+client.focused_inactive  #333333 #fffbefc0  #5c6a72 #484e50   #5f676a
+client.focused_tab_title #333333 #fffbefc0  #5c6a72 #484e50   #5f676a
+client.unfocused         #333333 #fffbefc0  #5c6a72 #484e50   #5f676a
+client.urgent            #2f343a #900000c0  #ffffff #900000   #900000
+client.placeholder       #000000 #0c0c0cc0  #ffffff #000000   #0c0c0c
 client.background        #ffffff
 
 for_window {
@@ -145,14 +156,6 @@ for_window {
     move position center
   }
 
-  [app_id="discord"] {
-    move container to workspace 6
-  }
-
-  [class="steam"] {
-    move container to workspace 10
-  }
-
   [shell="^((?!xdg_shell).)*$"] {
     title_format "%shell :: %title"
   }
@@ -160,11 +163,15 @@ for_window {
 
 set $mod Mod4
 
-font pango:PragmataPro 12
+seat * hide_cursor when-typing enable
+seat * hide_cursor 8000
+
+font pango:PragmataPro 10
 
 floating_modifier $mod
 
-mouse_warping container
+#mouse_warping container
+mouse_warping output
 
 default_border none
 default_floating_border none
@@ -176,7 +183,19 @@ hide_edge_borders both
 focus_follows_mouse yes
 
 titlebar_border_thickness 0
-titlebar_padding 40 8
+titlebar_padding 20 8
+
+bindgesture swipe:3:left workspace prev_on_output
+bindgesture swipe:3:right workspace next_on_output
+
+bindgesture swipe:3:up fullscreen toggle
+
+#bindgesture swipe:4:left focus output left
+#bindgesture swipe:4:right focus output right
+bindgesture swipe:4:left move left
+bindgesture swipe:4:right move right
+bindgesture swipe:4:up move up
+bindgesture swipe:4:down move down
 
 bindsym $mod+Shift+e exit
 
@@ -185,7 +204,7 @@ bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
 bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
 bindsym $mod+p exec "1password --quick-access"
 bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
-bindsym $mod+g exec "thunar"
+bindsym $mod+g exec "nemo"
 
 bindsym $mod+Ctrl+s exec "grimshot copy area"
 bindsym $mod+Ctrl+Shift+s exec "grimshot save area ~/Screenshots"
@@ -203,15 +222,19 @@ bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
 
+bindsym $mod+n focus output "Dell Inc. DELL U2723QE 7S2KXN3"
+bindsym $mod+m focus output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926"
+bindsym $mod+comma focus output "LG Electronics LG Ultra HD 0x00001DB9"
+
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-bindsym $mod+mod1+h move workspace to output left
-bindsym $mod+mod1+j move workspace to output down
-bindsym $mod+mod1+k move workspace to output up
-bindsym $mod+mod1+l move workspace to output right
+bindsym $mod+Shift+Ctrl+h move container to output left
+bindsym $mod+Shift+Ctrl+j move container to output down
+bindsym $mod+Shift+Ctrl+k move container to output up
+bindsym $mod+Shift+Ctrl+l move container to output right
 
 bindsym $mod+b split h
 bindsym $mod+v split v
@@ -228,13 +251,13 @@ bindsym $mod+z focus child
 workspace 1 output DP-4
 workspace 2 output DP-4
 workspace 3 output DP-4
-workspace 4 output DP-4
-workspace 5 output DP-4
+workspace 4 output DP-1
+workspace 5 output DP-1
 workspace 6 output DP-1
-workspace 7 output DP-1
-workspace 8 output DP-1
-workspace 9 output DP-1
-workspace 0 output DP-1
+workspace 7 output DP-2
+workspace 8 output DP-2
+workspace 9 output DP-2
+workspace 0 output DP-2
 
 #set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
 #set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
@@ -324,8 +347,8 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym XF86AudioPlay exec playerctl play-pause
 
-#bindsym --whole-window --no-repeat button9+button1 exec mumble rpc starttalking
-#bindsym --whole-window --release button9+button1 exec mumble rpc stoptalking
+#bindsym --no-repeat equal exec mumble rpc starttalking
+#bindsym --release equal exec mumble rpc stoptalking
 #bindsym --no-repeat minus exec mumble rpc stoptalking
 
 bar swaybar_command waybar
@@ -342,8 +365,16 @@ exec wl-paste -t text --watch clipman store --no-persist
 exec blueman-applet
 exec udiskie --tray
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-#exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
+exec_always "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 exec_always "pkill wl-gammarelay; wl-gammarelay"
 exec_always "pkill sway-opacity; sway-opacity --opacity 0.95"
 exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
 exec_always "systemctl --user restart kanshi.service"
+
+set $gnome-schema org.gnome.desktop.interface
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Everforest-Dark-Borderless'
+    gsettings set $gnome-schema icon-theme 'Everforest-Dark'
+    gsettings set $gnome-schema cursor-theme 'Your cursor Theme'
+    #gsettings set $gnome-schema font-name 'Your font name'
+}
