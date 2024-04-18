@@ -127,6 +127,11 @@ for_window {
     floating enable
   }
 
+  [class="1Password"] {
+    floating enable
+    resize set 1200 1000
+  }
+
   [title=".*- YouTube - Google Chrome"] {
     opacity set 1.0
   }
