@@ -28,29 +28,25 @@ if [ "$has_antigen" = true ]; then
   antigen apply
 fi
 
-#source ~/fzf-dir-navigator/fzf-dir-navigator.zsh
-
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/t32/bin/pc_linux64:$PATH"
 #export PATH="/usr/lib/ccache/bin:$PATH"
 export KEYTIMEOUT=200
 export WINEARCH=win32
-export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+#export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
-alias fdfind=fd
 
-if [ -n "$TMUX" ]; then
-  function refresh {
+function refresh {
+  if [ -n "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -n "$WAYLAND_DISPLAY" ]; then
     export $(tmux show-env WAYLAND_DISPLAY 2> /dev/null)
-  }
-else
-  function refresh { }
-fi
+  fi
+}
 
 function preexec {
   refresh
@@ -71,7 +67,21 @@ function osc7 {
 }
 add-zsh-hook -Uz chpwd osc7
 
-source $HOME/dotfiles/.aliases
+if test -f "$HOME/dotfiles/.aliases"; then
+  source $HOME/dotfiles/.aliases
+fi
+
+if test -f "$HOME/dotfiles/.galiases"; then
+  source $HOME/dotfiles/.galiases
+fi
+
+if (( $+commands[fdfind] )); then
+  alias fd="fdfind"
+fi
+
+if (( $+commands[batcat] )); then
+  alias bat="batcat"
+fi
 
 if (( $+commands[nvim] )); then
   export VISUAL=nvim
@@ -84,13 +94,10 @@ fi
 
 if (( $+commands[eza] )); then
   function chpwd() {
-    emulate -L zsh
-    eza --icons
-  }
-elif (( $+commands[exa] )); then
-  function chpwd() {
-    emulate -L zsh
-    exa --icons
+    if [[ $(pwd) != /google* ]] then
+      emulate -L zsh
+      eza -s modified --reverse
+    fi
   }
 fi
 
@@ -226,8 +233,9 @@ zoxide-fzf() {
     return 0
   fi
 
-  echo "\n"
-  _z_cd ${dir}
+  zle push-input
+  BUFFER="cd ${dir}"
+  zle accept-line
   zle reset-prompt
 }
 zle     -N            zoxide-fzf
@@ -237,6 +245,7 @@ bindkey -M viins '^j' zoxide-fzf
 
 zoxide-fzf-curdir() {
   local zoxide_prefix="zoxide query -l -s "
+  local curdir="${PWD}\/"
   local dir=$(fzf --ansi --disabled \
     --height '40%' \
     --color prompt:green \
@@ -244,8 +253,8 @@ zoxide-fzf-curdir() {
     --header "${2:2}" \
     --preview "eza -G --color=always --icons --group-directories-first -s modified {2}" \
     --preview-window 'top,50%' \
-    --bind "start:reload:$zoxide_prefix {q} | rg -w '${PWD}'" \
-    --bind "change:reload:sleep 0.02; $zoxide_prefix {q} | rg -w '${PWD}' || true" \
+    --bind "start:reload:$zoxide_prefix {q} | rg '$curdir' --replace=''" \
+    --bind "change:reload:sleep 0.02; $zoxide_prefix {q} | rg '$curdir' --replace='' || true" \
     --bind 'pgup:preview-half-page-up' \
     --bind 'pgdn:preview-half-page-down' \
     --bind 'ctrl-delete:clear-query' \
@@ -257,8 +266,9 @@ zoxide-fzf-curdir() {
     return 0
   fi
 
-  echo "\n"
-  _z_cd ${dir}
+  zle push-input
+  BUFFER="cd ${dir}"
+  zle accept-line
   zle reset-prompt
 }
 zle     -N            zoxide-fzf-curdir
@@ -270,7 +280,7 @@ bindkey -M viins '^k' zoxide-fzf-curdir
 rg-fzf() {
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
 INITIAL_QUERY="${*:-}"
-: | fzf --ansi --disabled --query "$INITIAL_QUERY" \
+local path=$(: | fzf --ansi --disabled --query "$INITIAL_QUERY" \
     --color prompt:green \
     --prompt "rg> " \
     --header "" \
@@ -281,11 +291,21 @@ INITIAL_QUERY="${*:-}"
     --bind "alt-m:change-header([Makefile])+reload:$RG_PREFIX -tmake {q} || true" \
     --bind "alt-a:change-header([Android])+reload:$RG_PREFIX -tandroid {q} || true" \
     --delimiter : \
-    --preview 'bat --color=always {1} --highlight-line {2}' \
+    --preview 'batcat --color=always {1} --highlight-line {2}' \
     --preview-window 'up,40%,border-bottom,+{2}+3/3,~3' \
-    --bind 'enter:become(nvim {1} +{2})' \
+    --bind 'enter:become(echo {1} +{2})' \
     --bind 'ctrl-space:execute(nvim {1} +{2})' \
-    --bind 'tab:execute(bat --color=always {1} --highlight-line {2} | less)'
+    --bind 'tab:execute(batcat --color=always {1} --highlight-line {2} | less)')
+
+if [[ $path ]]; then
+  zle push-input
+  BUFFER="nvim $path"
+  zle accept-line
+fi
+
+local ret=$?
+zle reset-prompt
+return $ret
 }
 zle     -N            rg-fzf
 bindkey -M emacs '^f' rg-fzf
@@ -294,17 +314,27 @@ bindkey -M viins '^f' rg-fzf
 
 # vim + fzf
 vim-fzf() {
-fd --type f | fzf --ansi \
+local path=$(fd --type f | fzf --ansi \
     --color prompt:green \
     --prompt "nvim> " \
     --header "" \
     --height '40%' \
-    --preview 'bat --color=always {1}' \
+    --preview 'batcat --color=always {1}' \
     --preview-window 'right,50%' \
-    --bind 'enter:become(nvim {1})' \
+    --bind 'enter:become(echo {1})' \
     --bind 'pgup:preview-half-page-up' \
     --bind 'pgdn:preview-half-page-down' \
-    --bind 'ctrl-delete:clear-query' 
+    --bind 'ctrl-delete:clear-query')
+
+if [[ $path ]]; then
+  zle push-input
+  BUFFER="nvim $path"
+  zle accept-line
+fi
+
+local ret=$?
+zle reset-prompt
+return $ret
 }
 zle     -N            vim-fzf
 bindkey -M emacs '^v' vim-fzf
