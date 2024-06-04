@@ -147,6 +147,13 @@ keybinds clear-defaults=true {
 
         bind "Alt f" { ToggleFocusFullscreen; }
 
+        bind "Alt g" {
+            LaunchPlugin "filepicker" {
+                floating true
+                close_on_selection true
+            };
+        }
+
 
         bind "Alt d" { CloseFocus; }
         bind "Alt D" { CloseTab; }
@@ -287,7 +294,7 @@ theme "everforest"
 //   - true (default)
 //   - false
 //
-// mouse_mode false
+mouse_mode false
 
 // Configure the scroll back buffer size
 // This is the number of lines zellij stores for each pane in the scroll back
@@ -304,7 +311,7 @@ theme "everforest"
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11
-// copy_command "wl-copy"                    // wayland
+copy_command "wl-copy"                    // wayland
 // copy_command "pbcopy"                     // osx
 
 // Choose the destination for copied text
