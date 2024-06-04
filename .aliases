@@ -23,7 +23,14 @@ if (( $+commands[batcat] )); then
   alias bat='batcat'
 fi
 
+if (( $+commands[imv-wayland] )); then
+  alias imv='imv-wayland'
+fi
+
 alias cat='bat'
+
+alias cdg='cd $(git rev-parse --show-toplevel)'
+alias cdr='cd $(repo --show-toplevel)'
 
 # Git
 alias gc='git checkout'
