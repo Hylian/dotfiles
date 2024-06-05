@@ -122,7 +122,7 @@ keybinds clear-defaults=true {
         }
     }
     shared_except "locked" {
-        //bind "Ctrl g" { SwitchToMode "Locked"; }
+        bind "Alt l" { SwitchToMode "Locked"; }
         bind "Ctrl q" { Quit; }
 
         bind "Alt n" { NewTab; }
@@ -185,6 +185,13 @@ keybinds clear-defaults=true {
     }
     shared_except "move" "locked" {
         bind "Alt m" { SwitchToMode "Move"; }
+    }
+}
+
+ui {
+    pane_frames {
+        rounded_corners true
+        hide_session_name true
     }
 }
 

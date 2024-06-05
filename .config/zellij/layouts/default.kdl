@@ -1,0 +1,45 @@
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                format_left   "{mode}"
+                format_center "{tabs}"
+                format_right  ""
+                format_space  "#[fg=#93b259,bg=#f4f0d9]"
+
+                border_enabled  "false"
+
+                hide_frame_for_single_pane "true"
+
+                mode_normal        "#[bg=#93b259,fg=#f3f5d9] NORMAL #[fg=#93b259,bg=#f2efdf] "
+                mode_locked        "#[bg=#93b259,fg=#f3f5d9] LOCKED #[fg=#93b259,bg=#f2efdf] "
+                mode_resize        "#[bg=#93b259,fg=#f3f5d9] RESIZE #[fg=#93b259,bg=#f2efdf] "
+                mode_pane          "#[bg=#93b259,fg=#f3f5d9]  PANE  #[fg=#93b259,bg=#f2efdf] "
+                mode_tab           "#[bg=#93b259,fg=#f3f5d9]  TAB   #[fg=#93b259,bg=#f2efdf] "
+                mode_scroll        "#[bg=#93b259,fg=#f3f5d9] SCROLL #[fg=#93b259,bg=#f2efdf] "
+                mode_enter_search  "#[bg=#93b259,fg=#f3f5d9] SEARCH #[fg=#93b259,bg=#f2efdf] "
+                mode_search        "#[bg=#93b259,fg=#f3f5d9] SEARCH #[fg=#93b259,bg=#f2efdf] "
+                mode_rename_tab    "#[bg=#93b259,fg=#f3f5d9] RENAME #[fg=#93b259,bg=#f2efdf] "
+                mode_rename_pane   "#[bg=#93b259,fg=#f3f5d9] RENAME #[fg=#93b259,bg=#f2efdf] "
+                mode_session       "#[bg=#93b259,fg=#f3f5d9] SESSN  #[fg=#93b259,bg=#f2efdf] "
+                mode_move          "#[bg=#93b259,fg=#f3f5d9] MOVE   #[fg=#93b259,bg=#f2efdf] "
+                mode_prompt        "#[bg=#93b259,fg=#f3f5d9] PROMPT #[fg=#93b259,bg=#f2efdf] "
+
+                tab_normal   "#[fg=#e8e5d5,bg=#f2efdf]#[bg=#e8e5d5,fg=#bec5b2] {name} #[fg=#e8e5d5,bg=#f2efdf]#[fg=#e8e5d5,bg=#f2efdf] "
+                tab_active   "#[fg=#f2efdf]#[fg=#93b259,bold] {name} #[fg=#f2efdf]#[fg=#e8e5d5,bg=#f2efdf] "
+                //tab_normal   "#[bg=#e8e5d5,fg=#f2efdf]#[bg=#e8e5d5,fg=#bec5b2] {name} #[bg=#e8e5d5,fg=#f2efdf]#[fg=#e8e5d5,bg=#f2efdf] "
+                //tab_active   "#[fg=#f2efdf]#[fg=#93b259,bold] {name} #[fg=#f2efdf]#[fg=#e8e5d5,bg=#f2efdf] "
+
+                command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
+                command_git_branch_format      "#[fg=blue] {stdout} "
+                command_git_branch_interval    "10"
+                command_git_branch_rendermode  "static"
+
+                datetime        "#[fg=#6C7086,bold] {format} "
+                datetime_format "%A, %d %b %Y %H:%M"
+                datetime_timezone "America/New_York"
+            }
+        }
+    }
+}
