@@ -142,8 +142,8 @@ keybinds clear-defaults=true {
         bind "Alt K" { MovePane "Up"; }
         bind "Alt =" "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
-        bind "Alt [" { PreviousSwapLayout; }
-        bind "Alt ]" { NextSwapLayout; }
+        bind "Alt {" { PreviousSwapLayout; }
+        bind "Alt }" { NextSwapLayout; }
 
         bind "Alt f" { ToggleFocusFullscreen; }
 
