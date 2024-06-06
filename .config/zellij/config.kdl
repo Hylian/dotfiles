@@ -301,7 +301,7 @@ theme "everforest"
 //   - true (default)
 //   - false
 //
-mouse_mode false
+mouse_mode true
 
 // Configure the scroll back buffer size
 // This is the number of lines zellij stores for each pane in the scroll back
@@ -318,7 +318,7 @@ mouse_mode false
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11
-copy_command "wl-copy"                    // wayland
+//copy_command "wl-copy"                    // wayland
 // copy_command "pbcopy"                     // osx
 
 // Choose the destination for copied text
