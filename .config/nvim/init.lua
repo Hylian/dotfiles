@@ -11,7 +11,7 @@ end
 
 if os.getenv("TMUX") ~= nil then
   vim.cmd(
-  "let g:clipboard = {" ..
+    "let g:clipboard = {" ..
        "'name': 'Tmux Clipboard'," ..
        "'copy': {" ..
           "'+': ['tmux', 'load-buffer', '-w', '-']," ..
@@ -22,8 +22,30 @@ if os.getenv("TMUX") ~= nil then
           "'*': ['tmux', 'save-buffer', '-']," ..
        "}," ..
        "'cache_enabled': 1," ..
-     "}"
- )
+    "}")
+elseif os.getenv("ZELLIJ") ~= nil then
+  vim.cmd(
+    "let g:clipboard = {" ..
+       "'name': 'Zellij Clipboard'," ..
+       "'copy': {" ..
+          "'+': ['wl-copy', '--type', 'text/plain']," ..
+          "'*': ['wl-copy', '--primary', '--type', 'text/plain']," ..
+        "}," ..
+       "'paste': {" ..
+          "'+': ['wl-paste', '--no-newline']," ..
+          "'*': ['wl-paste', '--no-newline', '--primary']," ..
+       "}," ..
+       "'cache_enabled': 1," ..
+    "}")
+
+  vim.api.nvim_create_autocmd('TextYankPost', {
+    callback = function()
+        local copy_to_unnamedplus = require('vim.ui.clipboard.osc52').copy('+')
+        copy_to_unnamedplus(vim.v.event.regcontents)
+        local copy_to_unnamed = require('vim.ui.clipboard.osc52').copy('*')
+        copy_to_unnamed(vim.v.event.regcontents)
+    end
+  })
 else
   if pcall(require, 'vim.ui.clipboard.osc52') then
     vim.g.clipboard = {

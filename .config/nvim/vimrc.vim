@@ -132,6 +132,8 @@ function! UpdateWaylandDisplay()
   if !empty($TMUX)
     let wd = system("tmux show-env WAYLAND_DISPLAY 2> /dev/null")
     let $WAYLAND_DISPLAY = trim(split(wd, "=")[1])
+  #elseif !empty($ZELLIJ) && !empty($SSH_TTY)
+    #let $WAYLAND_DISPLAY = "wayland-waypipe"
   endif
 endfunction
 
@@ -160,7 +162,7 @@ if !exists('g:vscode')
 
   let g:python3_host_prog = '/usr/bin/python3'
 
-  nnoremap m :MaximizerToggle<CR>
+  "nnoremap m :MaximizerToggle<CR>
 
   " FZF / CocFzfList Configuration and Keybinds
   let g:fzf_preview_window = ['up:50%', 'ctrl-/']

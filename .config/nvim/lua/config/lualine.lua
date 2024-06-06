@@ -18,7 +18,7 @@ require('lualine').setup {
     }
   },
   sections = {
-    lualine_a = {'mode'},
+    lualine_a = {{ 'mode', separator = { left = '', right = '' } }},
     lualine_b = {
       {
         require("noice").api.statusline.mode.get,
@@ -48,7 +48,9 @@ require('lualine').setup {
     },
     lualine_x = {'branch', 'diff'},
     lualine_y = {'searchcount'},
-    lualine_z = {'progress', 'location'}
+    lualine_z = {'progress',
+      {'location', separator = { right = '' } }
+    }
   },
   inactive_sections = {
     lualine_a = {},
