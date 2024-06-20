@@ -9,7 +9,7 @@ layout {
 
                 border_enabled  "false"
 
-                hide_frame_for_single_pane "true"
+                hide_frame_for_single_pane "false"
 
                 mode_normal        "#[bg=#93b259,fg=#f3f5d9] NORMAL #[fg=#93b259,bg=#3a94c5]"
                 mode_locked        "#[bg=#93b259,fg=#f3f5d9] LOCKED #[fg=#93b259,bg=#3a94c5]"
