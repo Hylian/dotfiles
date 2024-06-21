@@ -1,4 +1,3 @@
-
 # Setup Antigen
 ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
 ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
@@ -20,7 +19,8 @@ if [ "$has_antigen" = true ]; then
   antigen bundle pip
   antigen bundle ripgrep
   #antigen bundle rust
-  antigen bundle vi-mode
+  #antigen bundle vi-mode
+  antigen bundle jeffreytse/zsh-vi-mode
   antigen bundle zsh-users/zsh-autosuggestions
   antigen bundle fzf
 
@@ -37,15 +37,21 @@ VI_MODE_SET_CURSOR=true
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/t32/bin/pc_linux64:$PATH"
 #export PATH="/usr/lib/ccache/bin:$PATH"
-export KEYTIMEOUT=200
+export KEYTIMEOUT=5
 export WINEARCH=win32
 #export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+#if [ -n "$SSH_TTY" ]; then
+  #echo "$WAYLAND_DISPLAY" > /tmp/wayland_display
+#fi
 
 
 function refresh {
   if [ -n "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -n "$WAYLAND_DISPLAY" ]; then
     export $(tmux show-env WAYLAND_DISPLAY 2> /dev/null)
+  elif [ -n "$ZELLIJ" ] && [ -n "$SSH_TTY" ] &&  [ -f  /tmp/wayland_display ]; then
+    export WAYLAND_DISPLAY=$(< /tmp/wayland_display)
   fi
 }
 
@@ -342,10 +348,20 @@ bindkey -M emacs '^v' vim-fzf
 bindkey -M vicmd '^v' vim-fzf
 bindkey -M viins '^v' vim-fzf
 
+# git pick commit
+git-pick-fzf() {
+  LBUFFER+="$(fzf-git-pick-commit) "
+}
+zle     -N            git-pick-fzf
+bindkey -M emacs '^i' git-pick-fzf
+bindkey -M vicmd '^i' git-pick-fzf
+bindkey -M viins '^i' git-pick-fzf
+
 eval "$(zoxide init zsh --cmd j)"
 eval "$(starship init zsh)"
 
 export FZF_DEFAULT_OPTS='--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 eval "$(zellij setup --generate-auto-start zsh)"

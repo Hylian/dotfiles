@@ -132,8 +132,8 @@ function! UpdateWaylandDisplay()
   if !empty($TMUX)
     let wd = system("tmux show-env WAYLAND_DISPLAY 2> /dev/null")
     let $WAYLAND_DISPLAY = trim(split(wd, "=")[1])
-  #elseif !empty($ZELLIJ) && !empty($SSH_TTY)
-    #let $WAYLAND_DISPLAY = "wayland-waypipe"
+  elseif !empty($ZELLIJ) && !empty($SSH_TTY)
+    let $WAYLAND_DISPLAY = readfile("/tmp/wayland_display", 1)[0]
   endif
 endfunction
 

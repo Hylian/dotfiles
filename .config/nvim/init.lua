@@ -28,16 +28,15 @@ elseif os.getenv("ZELLIJ") ~= nil then
     "let g:clipboard = {" ..
        "'name': 'Zellij Clipboard'," ..
        "'copy': {" ..
-          "'+': ['wl-copy', '--type', 'text/plain']," ..
-          "'*': ['wl-copy', '--primary', '--type', 'text/plain']," ..
+          "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
+          "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
         "}," ..
        "'paste': {" ..
-          "'+': ['wl-paste', '--no-newline']," ..
-          "'*': ['wl-paste', '--no-newline', '--primary']," ..
+          "'+': ['wl-paste']," ..
+          "'*': ['wl-paste']," ..
        "}," ..
        "'cache_enabled': 1," ..
     "}")
-
   vim.api.nvim_create_autocmd('TextYankPost', {
     callback = function()
         local copy_to_unnamedplus = require('vim.ui.clipboard.osc52').copy('+')
