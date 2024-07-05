@@ -105,18 +105,15 @@ layer_effects 'notifications' 'blur enable; shadows enable; corner_radius 20'
 layer_effects 'launcher' 'blur enable; shadows enable; corner_radius 20'
 
 # Colors
-# class                  border  backgr.    text    indicator child_border
-client.focused           #FACE48 #8da101c0  #fffbef #2e9ef4   #4c7899
-client.focused_inactive  #333333 #fffbefc0  #5c6a72 #484e50   #5f676a
-client.focused_tab_title #333333 #fffbefc0  #5c6a72 #484e50   #5f676a
-client.unfocused         #333333 #fffbefc0  #5c6a72 #484e50   #5f676a
-client.urgent            #2f343a #900000c0  #ffffff #900000   #900000
-client.placeholder       #000000 #0c0c0cc0  #ffffff #000000   #0c0c0c
+# class                  border    backgr.   text     indicator child_border
+client.focused           #93b259c0 #8da101c0 #fffbef  #93b259c0 #93b259c0
+client.focused_inactive  #93b259c0 #fffbefc0 #5c6a72  #5f676a00 #5f676a00
+client.unfocused         #00000000 #fffbefc0 #5c6a72  #484e5000 #5f676a00
 client.background        #ffffff
 
 for_window {
   [class=".*"] {
-    border pixel 0
+    border pixel 2
   }
 
   [title="(Save As|File Upload)" app_id="firefox-nightly"] {
@@ -132,12 +129,16 @@ for_window {
     resize set 1200 1000
   }
 
-  [title=".*- YouTube - Google Chrome"] {
+  [title=".*YouTube.*"] {
     opacity set 1.0
   }
 
-  [title=".*YouTube.*"] {
-    opacity set 1.0
+  [app_id="imv"] {
+    max_render_time 20
+  }
+
+  [app_id="pix"] {
+    max_render_time 20
   }
 
   [app_id="Plexamp"] {
@@ -178,13 +179,13 @@ floating_modifier $mod
 #mouse_warping container
 mouse_warping output
 
-default_border none
+default_border pixel
 default_floating_border none
 
 gaps inner 5
 gaps outer 3
 smart_gaps off
-hide_edge_borders both
+#hide_edge_borders both
 focus_follows_mouse yes
 
 titlebar_border_thickness 0
@@ -197,15 +198,15 @@ bindgesture swipe:3:up fullscreen toggle
 
 #bindgesture swipe:4:left focus output left
 #bindgesture swipe:4:right focus output right
-bindgesture swipe:4:left move left
-bindgesture swipe:4:right move right
-bindgesture swipe:4:up move up
-bindgesture swipe:4:down move down
+bindgesture swipe:4:left [con_id=__focused__] move left, focus
+bindgesture swipe:4:right [con_id=__focused__] move right, focus
+bindgesture swipe:4:up [con_id=__focused__] move up, focus
+bindgesture swipe:4:down [con_id=__focused__] move down, focus
 
 bindsym $mod+Shift+e exit
 
 bindsym $mod+Return exec "foot -D $HOME"
-bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
+#bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
 bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
 bindsym $mod+p exec "1password --quick-access"
 bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
@@ -236,10 +237,10 @@ bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-bindsym $mod+Shift+Ctrl+h move container to output left
-bindsym $mod+Shift+Ctrl+j move container to output down
-bindsym $mod+Shift+Ctrl+k move container to output up
-bindsym $mod+Shift+Ctrl+l move container to output right
+bindsym $mod+Shift+Ctrl+h [con_id=__focused__] move to output left, focus
+bindsym $mod+Shift+Ctrl+j [con_id=__focused__] move to output down, focus
+bindsym $mod+Shift+Ctrl+k [con_id=__focused__] move to output up, focus
+bindsym $mod+Shift+Ctrl+l [con_id=__focused__] move to output right, focus
 
 bindsym $mod+b split h
 bindsym $mod+v split v
@@ -264,61 +265,33 @@ workspace 8 output DP-2
 workspace 9 output DP-2
 workspace 0 output DP-2
 
-#set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
-#set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
+bindsym --no-repeat $mod+1 workspace 1
+bindsym --no-repeat $mod+2 workspace 2
+bindsym --no-repeat $mod+3 workspace 3
+bindsym --no-repeat $mod+4 workspace 4
+bindsym --no-repeat $mod+5 workspace 5
+bindsym --no-repeat $mod+6 workspace 6
+bindsym --no-repeat $mod+7 workspace 7
+bindsym --no-repeat $mod+8 workspace 8
+bindsym --no-repeat $mod+9 workspace 9
+bindsym --no-repeat $mod+0 workspace 10
 
-bindsym --no-repeat $mod+1 workspace 1; $sov-on 
-bindsym --no-repeat $mod+2 workspace 2; $sov-on  
-bindsym --no-repeat $mod+3 workspace 3; $sov-on  
-bindsym --no-repeat $mod+4 workspace 4; $sov-on  
-bindsym --no-repeat $mod+5 workspace 5; $sov-on  
-bindsym --no-repeat $mod+6 workspace 6; $sov-on  
-bindsym --no-repeat $mod+7 workspace 7; $sov-on  
-bindsym --no-repeat $mod+8 workspace 8; $sov-on  
-bindsym --no-repeat $mod+9 workspace 9; $sov-on  
-bindsym --no-repeat $mod+0 workspace 10; $sov-on
+bindsym --no-repeat $mod+Left workspace prev_on_output
+bindsym --no-repeat $mod+Right workspace next_on_output
 
-bindsym --release $mod+1 $sov-off 
-bindsym --release $mod+2 $sov-off 
-bindsym --release $mod+3 $sov-off 
-bindsym --release $mod+4 $sov-off 
-bindsym --release $mod+5 $sov-off 
-bindsym --release $mod+6 $sov-off 
-bindsym --release $mod+7 $sov-off 
-bindsym --release $mod+8 $sov-off 
-bindsym --release $mod+9 $sov-off 
-bindsym --release $mod+0 $sov-off 
+bindsym --no-repeat $mod+Tab workspace back_and_forth
+bindsym --no-repeat $mod+Shift+grave workspace back_and_forth
 
-bindsym --no-repeat $mod+Left workspace prev_on_output; $sov-on
-bindsym --release   $mod+Left $sov-off
-bindsym --no-repeat $mod+Right workspace next_on_output; $sov-on
-bindsym --release   $mod+Right $sov-off
-
-bindsym --no-repeat $mod+Tab workspace back_and_forth; $sov-on
-bindsym --release $mod+Tab $sov-off
-bindsym --no-repeat $mod+Shift+grave workspace back_and_forth; $sov-on
-bindsym --release $mod+Shift+grave $sov-off
-
-bindsym --no-repeat $mod+Shift+1 move container to workspace 1; $sov-on
-bindsym --release $mod+Shift+1 $sov-off
-bindsym --no-repeat $mod+Shift+2 move container to workspace 2; $sov-on
-bindsym --release $mod+Shift+2 $sov-off
-bindsym --no-repeat $mod+Shift+3 move container to workspace 3; $sov-on
-bindsym --release $mod+Shift+3 $sov-off
-bindsym --no-repeat $mod+Shift+4 move container to workspace 4; $sov-on
-bindsym --release $mod+Shift+4 $sov-off
-bindsym --no-repeat $mod+Shift+5 move container to workspace 5; $sov-on
-bindsym --release $mod+Shift+5 $sov-off
-bindsym --no-repeat $mod+Shift+6 move container to workspace 6; $sov-on
-bindsym --release $mod+Shift+6 $sov-off
-bindsym --no-repeat $mod+Shift+7 move container to workspace 7; $sov-on
-bindsym --release $mod+Shift+7 $sov-off
-bindsym --no-repeat $mod+Shift+8 move container to workspace 8; $sov-on
-bindsym --release $mod+Shift+8 $sov-off
-bindsym --no-repeat $mod+Shift+9 move container to workspace 9; $sov-on
-bindsym --release $mod+Shift+9 $sov-off
-bindsym --no-repeat $mod+Shift+0 move container to workspace 10; $sov-on
-bindsym --release $mod+Shift+0 $sov-off
+bindsym --no-repeat $mod+Shift+1 move container to workspace 1
+bindsym --no-repeat $mod+Shift+2 move container to workspace 2
+bindsym --no-repeat $mod+Shift+3 move container to workspace 3
+bindsym --no-repeat $mod+Shift+4 move container to workspace 4
+bindsym --no-repeat $mod+Shift+5 move container to workspace 5
+bindsym --no-repeat $mod+Shift+6 move container to workspace 6
+bindsym --no-repeat $mod+Shift+7 move container to workspace 7
+bindsym --no-repeat $mod+Shift+8 move container to workspace 8
+bindsym --no-repeat $mod+Shift+9 move container to workspace 9
+bindsym --no-repeat $mod+Shift+0 move container to workspace 10
 
 bindsym $mod+Shift+bracketleft move scratchpad
 bindsym $mod+bracketleft scratchpad show
@@ -371,15 +344,15 @@ exec blueman-applet
 exec udiskie --tray
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec_always "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-exec_always "pkill wl-gammarelay; wl-gammarelay"
-exec_always "pkill sway-opacity; sway-opacity --opacity 0.95"
-exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
+#exec_always "pkill wl-gammarelay; wl-gammarelay"
+exec_always "pkill sway-opacity; sway-opacity --opacity 0.94"
+#exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
 exec_always "systemctl --user restart kanshi.service"
 
 set $gnome-schema org.gnome.desktop.interface
 exec_always {
     gsettings set $gnome-schema gtk-theme 'Everforest-Dark-Borderless'
     gsettings set $gnome-schema icon-theme 'Everforest-Dark'
-    gsettings set $gnome-schema cursor-theme 'Your cursor Theme'
+    #gsettings set $gnome-schema cursor-theme 'Your cursor Theme'
     #gsettings set $gnome-schema font-name 'Your font name'
 }
