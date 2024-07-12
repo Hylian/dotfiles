@@ -126,6 +126,11 @@ keybinds clear-defaults=true {
         bind "Ctrl q" { Quit; }
 
         bind "Alt n" { NewTab; }
+        bind "Alt S" {
+            Run "zsh" {
+                cwd "~"
+            }
+        }
         bind "Alt s" { NewPane; }
 
         bind "Alt Left" { GoToPreviousTab; }
@@ -144,6 +149,10 @@ keybinds clear-defaults=true {
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt {" { PreviousSwapLayout; }
         bind "Alt }" { NextSwapLayout; }
+        bind "PageDown" { HalfPageScrollDown; }
+        bind "PageUp" { HalfPageScrollUp; }
+        bind "Alt ]" { BreakPaneRight; SwitchToMode "Normal"; }
+        bind "Alt [" { BreakPaneLeft; SwitchToMode "Normal"; }
 
         bind "Alt f" { ToggleFocusFullscreen; }
 
@@ -290,7 +299,7 @@ theme "everforest"
 //   - true (default)
 //   - false
 //
-mouse_mode true
+//mouse_mode false
 
 // Configure the scroll back buffer size
 // This is the number of lines zellij stores for each pane in the scroll back
@@ -334,7 +343,7 @@ scrollback_editor "nvim"
 // or should each user have their own cursor (false)
 // Default: false
 //
-mirror_session false
+mirror_session true
 
 // The folder in which Zellij will look for layouts
 //
@@ -354,4 +363,4 @@ mirror_session false
 // metadata info on this session)
 // Default: false
 //
-// disable_session_metadata true
+//disable_session_metadata true
