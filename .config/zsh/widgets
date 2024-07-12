@@ -127,11 +127,11 @@ local path=$(: | fzf --ansi --disabled --query "$INITIAL_QUERY" \
     --bind "alt-m:change-header([Makefile])+reload:$RG_PREFIX -tmake {q} || true" \
     --bind "alt-a:change-header([Android])+reload:$RG_PREFIX -tandroid {q} || true" \
     --delimiter : \
-    --preview 'batcat --color=always {1} --highlight-line {2}' \
+    --preview 'bat --color=always {1} --highlight-line {2}' \
     --preview-window 'up,40%,border-bottom,+{2}+3/3,~3' \
     --bind 'enter:become(echo {1} +{2})' \
     --bind 'ctrl-space:execute(nvim {1} +{2})' \
-    --bind 'tab:execute(batcat --color=always {1} --highlight-line {2} | less)')
+    --bind 'tab:execute(bat --color=always {1} --highlight-line {2} | less)')
 
 if [[ $path ]]; then
   zle push-input
@@ -155,7 +155,7 @@ local path=$(fd --type f | fzf --ansi \
     --prompt "nvim> " \
     --header "" \
     --height '40%' \
-    --preview 'batcat --color=always {1}' \
+    --preview 'bat --color=always {1}' \
     --preview-window 'right,50%' \
     --bind 'enter:become(echo {1})' \
     --bind 'pgup:preview-half-page-up' \
