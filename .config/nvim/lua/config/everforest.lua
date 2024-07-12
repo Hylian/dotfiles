@@ -15,11 +15,14 @@ require("everforest").setup({
   disable_italic_comments = true,
   ui_contrast = "medium",
   colours_override = function(palette)
-    if os.getenv("SSH_TTY") == nil then
-      palette.bg0 = "#ffffff"
-      palette.fg = "#677666"
-    else
-      palette.bg0 = "#fffbef"
-    end
+    palette.fg = "#4b575e"
+    palette.bg0 = "#fffbef"
+    --if os.getenv("SSH_TTY") == nil then
+      --palette.bg0 = "#ffffff"
+      --palette.fg = "#677666"
+    --else
+      --palette.bg0 = "#fffbef"
+      --pallete.fg = "#1a1e20"
+    --end
   end
 })

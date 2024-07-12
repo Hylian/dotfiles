@@ -1,5 +1,57 @@
-local vimrc = vim.fn.stdpath("config") .. "/vimrc.vim"
-vim.cmd.source(vimrc)
+--local vimrc = vim.fn.stdpath("config") .. "/vimrc.vim"
+--vim.cmd.source(vimrc)
+
+require("keybindings")
+
+require("config.lazy");
+require("lazy").setup("plugins")
+
+vim.opt.laststatus = 2
+vim.opt.showmode = false
+vim.opt.wrap = true
+vim.opt.number = true
+vim.opt.linebreak = true
+vim.opt.showbreak = '⤶'
+vim.opt.textwidth = 0
+vim.opt.wrapmargin = 0
+vim.opt.showmatch = true
+vim.opt.list = false
+vim.opt.hlsearch = true
+vim.opt.smartcase = true
+vim.opt.ignorecase = true
+vim.opt.incsearch = true
+vim.opt.autoindent = true
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.smartindent = true
+vim.opt.smarttab = true
+vim.opt.softtabstop = 2
+vim.opt.tabstop = 4
+vim.opt.previewheight = 20
+vim.opt.termguicolors = true
+vim.opt.ruler = true
+vim.opt.mouse = 'a'
+vim.opt.clipboard = 'unnamedplus'
+vim.opt.updatetime = 300
+vim.opt.undolevels = 1000
+vim.opt.backspace = 'indent,eol,start'
+vim.opt.termguicolors = true
+vim.opt.hidden = true
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.cmdheight = 0
+vim.opt.colorcolumn = '80'
+vim.opt.shortmess = 'ostTAcCWFSI'
+vim.opt.timeoutlen = 0
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+vim.opt.background = 'light'
+
+vim.g.bufferline_echo = 0
+vim.g.python3_host_prog = '/usr/bin/python3'
+
+vim.cmd('highlight LineNr ctermfg=blue')
+vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
 
 function tmux_copy(reg)
   local clipboard = reg == '+' and 'c' or 'p'
@@ -67,14 +119,15 @@ vim.api.nvim_create_autocmd({'BufWinEnter'}, {
   command = 'silent! normal! g`"zv',
 })
 
---require('config.bufferline')
+require('mason').setup()
+require('lspconfig').clangd.setup{}
+require('toggle_lsp_diagnostics').init({ start_on = false })
 require('config.lualine')
---require('config.gitsigns')
 require('config.toggleterm')
 require('config.nvim-web-devicons')
 require('config.everforest')
 require('everforest').load()
-require'treesitter-context'.setup{
+require('treesitter-context').setup{
   enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
   min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
@@ -88,13 +141,15 @@ require'treesitter-context'.setup{
   zindex = 20, -- The Z-index of the context window
   on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
 }
-require("notify").setup({
-    fps = 60,
+require('notify').setup({
+    fps = 24,
     render = "compact",
-    minimum_width = 30,
-    timeout = 1000,
+    max_width = 80,
+    minimum_width = 10,
+    stages = "fade",
+    timeout = 300,
 })
-require("noice").setup({
+require('noice').setup({
   lsp = {
     -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
     override = {
@@ -138,16 +193,18 @@ require("noice").setup({
     },
   },
 })
---require("git-conflict").setup({
---  default_mappings = {
---    ours = 'o',
---    theirs = 't',
---    none = '0',
---    both = 'b',
---    next = 'n',
---    prev = 'p',
---  },
---  default_commands = true, -- disable commands created by this plugin
---  disable_diagnostics = false, -- This will disable the diagnostics in a buffer whilst it is conflicted
---  list_opener = 'copen' -- command or function to open the conflicts list
---})
+require('trim').setup({
+  -- if you want to ignore markdown file.
+  -- you can specify filetypes.
+  ft_blocklist = {"markdown"},
+
+  patterns = {},
+
+  -- if you want to disable trim on write by default
+  trim_on_write = true,
+
+  -- highlight trailing spaces
+  highlight = true,
+  highlight_bg = '#ffe7de',
+  highlight_ctermbg = 'red',
+})

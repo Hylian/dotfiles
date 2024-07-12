@@ -1,38 +1,3 @@
-if !exists('g:vscode')
-call plug#begin('~/.local/share/nvim/plugged')
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-  "Plug 'junegunn/fzf.vim'
-  Plug '~/fzf.vim'
-  Plug 'tpope/vim-commentary'
-  Plug 'lukas-reineke/indent-blankline.nvim'
-  Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
-  Plug 'antoinemadec/coc-fzf'
-  Plug 'chriskempson/base16-vim'
-  Plug 'nvim-lualine/lualine.nvim'
-  Plug 'nvim-tree/nvim-web-devicons'
-  " Plug 'sainnhe/everforest'
-  Plug 'neanias/everforest-nvim', { 'branch': 'main' }
-  Plug 'tpope/vim-fugitive'
-  Plug 'tpope/vim-sleuth'
-  Plug 'lewis6991/gitsigns.nvim'
-  Plug 'bfrg/vim-cpp-modern'
-  Plug 'feline-nvim/feline.nvim'
-  Plug 'bfredl/nvim-miniyank'
-  Plug 'szw/vim-maximizer'
-  Plug 'Shougo/echodoc.vim'
-  Plug 'akinsho/toggleterm.nvim'
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'axelf4/vim-strip-trailing-whitespace'
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'nvim-treesitter/nvim-treesitter-context'
-  Plug 'folke/noice.nvim'
-  Plug 'MunifTanjim/nui.nvim'
-  Plug 'rcarriga/nvim-notify'
-  " Plug 'akinsho/git-conflict.nvim', { 'tag': '*' }
-  Plug 'sindrets/diffview.nvim'
-call plug#end()
-endif
-
 " VSCode-specific Configuration
 if exists('g:vscode')
   "nnoremap , :call VSCodeCall('workbench.action.toggleEditorWidths')<CR>
@@ -60,48 +25,6 @@ for f in argv()
   endif
 endfor
 
-" Global Configuration
-set t_Co=256
-set laststatus=2
-set noshowmode
-set wrap
-set number
-set linebreak
-set showbreak=+++
-set textwidth=0
-set wrapmargin=0
-set showmatch
-set nolist
-set hlsearch
-set smartcase
-set ignorecase
-set incsearch
-set autoindent
-set expandtab
-set shiftwidth=2
-set smartindent
-set smarttab
-set softtabstop=2
-set tabstop=4
-set previewheight=20
-set termguicolors
-set ruler
-set mouse=a
-set clipboard+=unnamedplus
-set updatetime=300
-set undolevels=1000
-set backspace=indent,eol,start
-set termguicolors
-set hidden
-set nobackup
-set nowritebackup
-set cmdheight=0
-set updatetime=300
-"set colorcolumn=80
-set shortmess=ostTAcCWFSI
-
-let mapleader = " "
-let localleader = "\\"
 
 highlight LineNr ctermfg=blue
 highlight MsgArea guibg=#edeada guifg=#5c6a72
@@ -187,9 +110,11 @@ if !exists('g:vscode')
 
   nmap <Bar> :RG!<CR>
   nmap ' :GitAllFiles<CR>
-  nmap { :CocFzfList symbols<CR>
-  nmap } :CocFzfList outline<CR>
-  nmap ] :CocCommand clangd.switchSourceHeader<CR>
+
+  function! CheckBackspace() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
 
 
   " Rust language completion
@@ -199,81 +124,90 @@ if !exists('g:vscode')
   let g:echodoc#enable_at_startup = 1
   let g:echodoc#type = 'virtual'
 
+  " LSP Configuration
+  "nmap <silent> gd <C-]>
+  nnoremap gd <cmd>lua require('fzf-lua').lsp_definitions()<CR>
+  nnoremap gr <cmd>lua require('fzf-lua').lsp_references()<CR>
+  nnoremap ] <cmd>lua require('fzf-lua').lsp_finder()<CR>
+  nnoremap { <cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>
+  nnoremap } <cmd>lua require('fzf-lua').lsp_document_symbols()<CR>
+  nnoremap [ <cmd>:ClangdSwitchSourceHeader<CR>
+  nnoremap <TAB> <cmd>:ToggleDiag<CR>
+
   " Coc Configuration
   let g:coc_node_path='/usr/bin/node'
 
-  function! CheckBackspace() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
+  "nmap { :CocFzfList symbols<CR>
+  "nmap } :CocFzfList outline<CR>
+  "nmap ] :CocCommand clangd.switchSourceHeader<CR>
 
-  inoremap <silent><expr> <TAB>
-        \ coc#pum#visible() ? coc#pum#next(1) :
-        \ CheckBackspace() ? "\<Tab>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+  "inoremap <silent><expr> <TAB>
+  "      \ coc#pum#visible() ? coc#pum#next(1) :
+  "      \ CheckBackspace() ? "\<Tab>" :
+  "      \ coc#refresh()
+  "inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
   " Make <CR> to accept selected completion item or notify coc.nvim to format
   " <C-g>u breaks current undo, please make your own choice.
-  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  "inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+  "                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 
   " Use <c-space> to trigger completion.
-  if has('nvim')
-    inoremap <silent><expr> <c-space> coc#refresh()
-  else
-    inoremap <silent><expr> <c-@> coc#refresh()
-  endif
+  "if has('nvim')
+  "  inoremap <silent><expr> <c-space> coc#refresh()
+  "else
+  "  inoremap <silent><expr> <c-@> coc#refresh()
+  "endif
 
-  " Make <CR> auto-select the first completion item and notify coc.nvim to
-  " format on enter, <cr> could be remapped by other vim plugin
-  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  "" Make <CR> auto-select the first completion item and notify coc.nvim to
+  "" format on enter, <cr> could be remapped by other vim plugin
+  "inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+  "                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-  " Use `[g` and `]g` to navigate diagnostics
-  " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-  nmap <silent> [g <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]g <Plug>(coc-diagnostic-next)
+  "" Use `[g` and `]g` to navigate diagnostics
+  "" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+  "nmap <silent> [g <Plug>(coc-diagnostic-prev)
+  "nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-  nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> Gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
-  nmap <silent> gi <Plug>(coc-implementation)
-  nmap <silent> Gi : call CocActionAsync('jumpImplementation', 'vsplit')<CR>
-  nmap <silent> gy <Plug>(coc-type-definition)
-  nmap <silent> Gy : call CocActionAsync('jumpTypeDefinition', 'vsplit')<CR>
-  nmap <silent> gr <Plug>(coc-references)
-  nmap <silent> Gr : call CocActionAsync('jumpReferences', 'vsplit')<CR>
-  nmap <silent> gn <Plug>(coc-rename)
+  "nmap <silent> gd <Plug>(coc-definition)
+  "nmap <silent> Gd :call CocActionAsync('jumpDefinition', 'vsplit')<CR>
+  "nmap <silent> gi <Plug>(coc-implementation)
+  "nmap <silent> Gi : call CocActionAsync('jumpImplementation', 'vsplit')<CR>
+  "nmap <silent> gy <Plug>(coc-type-definition)
+  "nmap <silent> Gy : call CocActionAsync('jumpTypeDefinition', 'vsplit')<CR>
+  "nmap <silent> gr <Plug>(coc-references)
+  "nmap <silent> Gr : call CocActionAsync('jumpReferences', 'vsplit')<CR>
+  "nmap <silent> gn <Plug>(coc-rename)
 
-  inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
-  inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
+  "inoremap <expr> <C-j> pumvisible() ? "\<C-N>" : "\<C-j>"
+  "inoremap <expr> <C-k> pumvisible() ? "\<C-P>" : "\<C-k>"
 
-  " Use K to show documentation in preview window
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-      call CocActionAsync('doHover')
-    else
-      execute '!' . &keywordprg . " " . expand('<cword>')
-    endif
-  endfunction
+  "" Use K to show documentation in preview window
+  "nnoremap <silent> K :call <SID>show_documentation()<CR>
+  "function! s:show_documentation()
+  "  if (index(['vim','help'], &filetype) >= 0)
+  "    execute 'h '.expand('<cword>')
+  "  elseif (coc#rpc#ready())
+  "    call CocActionAsync('doHover')
+  "  else
+  "    execute '!' . &keywordprg . " " . expand('<cword>')
+  "  endif
+  "endfunction
 
-  " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
+  "" Highlight the symbol and its references when holding the cursor.
+  "autocmd CursorHold * silent call CocActionAsync('highlight')
 
-  augroup mygroup
-    autocmd!
-    " Setup formatexpr specified filetype(s).
-    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-    " Update signature help on jump placeholder.
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-  augroup end
+  "augroup mygroup
+  "  autocmd!
+  "  " Setup formatexpr specified filetype(s).
+  "  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  "  " Update signature help on jump placeholder.
+  "  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  "augroup end
 
   " Coc Configuration End
-  
+
   nnoremap <C-n> :NvimTreeToggle<CR>
 
   " Bufferline Config
