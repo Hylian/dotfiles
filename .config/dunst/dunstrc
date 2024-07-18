@@ -1,5 +1,6 @@
 [global]
-monitor = 1
+monitor = 0
+origin = bottom-left
 follow = none
 width = 240
 offset = 4x4
@@ -17,6 +18,9 @@ text_icon_padding = 0
 format = "<b>%s</b>\n\n%b"
 vertical_alignment = top
 alignment = left
+sticky_history = no
+timeout = 10
+override_dbus_timeout = 10
 
 corner_radius = 0
 frame_width = 0
@@ -25,10 +29,10 @@ background = "#fffbefa0"
 foreground = "#5c6a72f0"
 
 [urgency_low]
-timeout = 1
+timeout = 5
 
 [urgency_normal]
-timeout = 2
+timeout = 10
 
 [urgency_critical]
-timeout = 10
+timeout = 20
