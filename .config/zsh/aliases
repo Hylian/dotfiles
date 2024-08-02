@@ -84,6 +84,7 @@ alias gitrootdir='git rev-parse --show-toplevel'
 alias stgs='stg status'
 alias stgss='stg series'
 alias stgr='stg refresh'
+alias stgri='stg refresh --index'
 alias stguc='stg uncommit'
 alias stgc='stg commit'
 
