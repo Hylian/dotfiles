@@ -11,7 +11,7 @@ vim.opt.showmode = false
 vim.opt.wrap = true
 vim.opt.number = true
 vim.opt.linebreak = true
-vim.opt.showbreak = '⤶'
+vim.opt.showbreak = ''
 vim.opt.textwidth = 0
 vim.opt.wrapmargin = 0
 vim.opt.showmatch = true
@@ -21,9 +21,12 @@ vim.opt.smartcase = true
 vim.opt.ignorecase = true
 vim.opt.incsearch = true
 vim.opt.autoindent = true
+vim.opt.smartindent = true
+vim.opt.cindent = true
+vim.opt.cinkeys = '0{,0},0),0],:,0#,!^F,o,O,e'
+vim.opt.cinoptions = 'g1,h1,N-s,>2'
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 2
-vim.opt.smartindent = true
 vim.opt.smarttab = true
 vim.opt.softtabstop = 2
 vim.opt.tabstop = 4
@@ -42,7 +45,7 @@ vim.opt.writebackup = false
 vim.opt.cmdheight = 0
 vim.opt.colorcolumn = '80'
 vim.opt.shortmess = 'ostTAcCWFSI'
-vim.opt.timeoutlen = 0
+vim.opt.timeoutlen = 20
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.background = 'light'
@@ -127,6 +130,7 @@ require('config.toggleterm')
 require('config.nvim-web-devicons')
 require('config.everforest')
 require('everforest').load()
+require("ibl").setup()
 require('treesitter-context').setup{
   enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
@@ -204,7 +208,131 @@ require('trim').setup({
   trim_on_write = true,
 
   -- highlight trailing spaces
-  highlight = true,
+  highlight = false,
   highlight_bg = '#ffe7de',
   highlight_ctermbg = 'red',
 })
+require('deadcolumn').setup({
+    scope = 'line', ---@type string|fun(): integer
+    ---@type string[]|fun(mode: string): boolean
+    modes = function(mode)
+        return mode:find('^[ictRss\x13]') ~= nil
+    end,
+    blending = {
+        threshold = 0.75,
+        colorcode = '#fffbef',
+        hlgroup = { 'Normal', 'bg' },
+    },
+    warning = {
+        alpha = 0.4,
+        offset = 0,
+        colorcode = '#bec5b2',
+        hlgroup = { 'Error', 'bg' },
+    },
+    extra = {
+        ---@type string?
+        follow_tw = nil,
+    },
+})
+
+local cmp = require('cmp')
+
+cmp.setup({
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  view = {
+    entries = {name = 'custom', selection_order = 'near_cursor' }
+  },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    -- documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-j>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.locally_jumpable(1) then
+        luasnip.jump(1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ['<C-k>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.locally_jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- To use git you need to install the plugin petertriho/cmp-git and uncomment lines below
+-- Set configuration for specific filetype.
+--[[ cmp.setup.filetype('gitcommit', {
+  sources = cmp.config.sources({
+    { name = 'git' },
+  }, {
+    { name = 'buffer' },
+  })
+})
+require("cmp_git").setup() ]]--
+
+-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  }),
+  matching = { disallow_symbol_nonprefix_matching = false }
+})
+
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+require('lspconfig')['clangd'].setup {
+  capabilities = capabilities
+}
+
+-- gray
+vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', { bg='NONE', strikethrough=true, fg='#808080' })
+-- blue
+vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', { bg='NONE', fg='#569CD6' })
+vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { link='CmpIntemAbbrMatch' })
+-- light blue
+vim.api.nvim_set_hl(0, 'CmpItemKindVariable', { bg='NONE', fg='#9CDCFE' })
+vim.api.nvim_set_hl(0, 'CmpItemKindInterface', { link='CmpItemKindVariable' })
+vim.api.nvim_set_hl(0, 'CmpItemKindText', { link='CmpItemKindVariable' })
+-- pink
+vim.api.nvim_set_hl(0, 'CmpItemKindFunction', { bg='NONE', fg='#C586C0' })
+vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { link='CmpItemKindFunction' })
+-- front
+vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', { bg='NONE', fg='#D4D4D4' })
+vim.api.nvim_set_hl(0, 'CmpItemKindProperty', { link='CmpItemKindKeyword' })
+vim.api.nvim_set_hl(0, 'CmpItemKindUnit', { link='CmpItemKindKeyword' })
