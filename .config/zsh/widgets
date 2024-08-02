@@ -114,6 +114,10 @@ bindkey -M viins '^k' zoxide-fzf-curdir
 
 # rg + fzf
 rg-fzf() {
+BAT_BIN="bat"
+if (( $+commands[batcat] )); then
+  BAT_BIN="batcat"
+fi
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
 INITIAL_QUERY="${*:-}"
 local path=$(: | fzf --ansi --disabled --query "$INITIAL_QUERY" \
@@ -127,11 +131,11 @@ local path=$(: | fzf --ansi --disabled --query "$INITIAL_QUERY" \
     --bind "alt-m:change-header([Makefile])+reload:$RG_PREFIX -tmake {q} || true" \
     --bind "alt-a:change-header([Android])+reload:$RG_PREFIX -tandroid {q} || true" \
     --delimiter : \
-    --preview 'bat --color=always {1} --highlight-line {2}' \
+    --preview "$BAT_BIN --color=always {1} --highlight-line {2}" \
     --preview-window 'up,40%,border-bottom,+{2}+3/3,~3' \
     --bind 'enter:become(echo {1} +{2})' \
     --bind 'ctrl-space:execute(nvim {1} +{2})' \
-    --bind 'tab:execute(bat --color=always {1} --highlight-line {2} | less)')
+    --bind "tab:execute($BAT_BIN --color=always {1} --highlight-line {2} | less)")
 
 if [[ $path ]]; then
   zle push-input
@@ -150,12 +154,16 @@ bindkey -M viins '^f' rg-fzf
 
 # vim + fzf
 vim-fzf() {
+BAT_BIN="bat"
+if (( $+commands[batcat] )); then
+  BAT_BIN="batcat"
+fi
 local path=$(fd --type f | fzf --ansi \
     --color prompt:green \
     --prompt "nvim> " \
     --header "" \
     --height '40%' \
-    --preview 'bat --color=always {1}' \
+    --preview "$BAT_BIN --color=always {1}" \
     --preview-window 'right,50%' \
     --bind 'enter:become(echo {1})' \
     --bind 'pgup:preview-half-page-up' \
