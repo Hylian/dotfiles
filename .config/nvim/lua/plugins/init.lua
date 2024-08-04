@@ -31,6 +31,7 @@ return {
   { 'L3MON4D3/LuaSnip' },
   {
       "chrisgrieser/nvim-spider",
+      lazy = true,
       keys = {
           {
               "e",
