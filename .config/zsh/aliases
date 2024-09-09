@@ -63,6 +63,8 @@ fi
 alias cdg='cd $(git rev-parse --show-toplevel)'
 alias cdr='cd $(repo --show-toplevel)'
 
+alias zellij-kill='zellij ls -s | grep -v persist | xargs -L1 zellij k'
+
 # Git
 alias gc='git checkout'
 alias gau='git add -u'
