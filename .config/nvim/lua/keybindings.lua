@@ -34,4 +34,26 @@ map('n', '<C-A-7>',   "<Cmd>BufferLineGoToBuffer 7<CR>")
 map('n', '<C-A-8>',   "<Cmd>BufferLineGoToBuffer 8<CR>")
 map('n', '<C-A-9>',   "<Cmd>BufferLineGoToBuffer 9<CR>")
 
+map('n', '<',      "<<", {noremap = true})
+map('n', '>',      ">>", {noremap = true})
+
 map('i', '',  "<C-W>")
+
+vim.keymap.set(
+	{ "n", "o", "x" },
+	"W",
+	"<cmd>lua require('spider').motion('w')<CR>",
+	{ desc = "Spider-w" }
+)
+vim.keymap.set(
+	{ "n", "o", "x" },
+	"E",
+	"<cmd>lua require('spider').motion('e')<CR>",
+	{ desc = "Spider-e" }
+)
+vim.keymap.set(
+	{ "n", "o", "x" },
+	"B",
+	"<cmd>lua require('spider').motion('b')<CR>",
+	{ desc = "Spider-b" }
+)

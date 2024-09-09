@@ -28,26 +28,9 @@ return {
   { 'hrsh7th/nvim-cmp' },
   { 'hrsh7th/cmp-nvim-lsp' },
   { 'saadparwaiz1/cmp_luasnip' },
+  { 'lukas-reineke/cmp-rg' },
+  { 'hrsh7th/cmp-buffer' },
+  { 'onsails/lspkind.nvim' },
   { 'L3MON4D3/LuaSnip' },
-  {
-      "chrisgrieser/nvim-spider",
-      lazy = true,
-      keys = {
-          {
-              "e",
-              "<cmd>lua require('spider').motion('e')<CR>",
-              mode = { "n", "o", "x" },
-          },
-          {
-              "w",
-              "<cmd>lua require('spider').motion('w')<CR>",
-              mode = { "n", "o", "x" },
-          },
-          {
-              "b",
-              "<cmd>lua require('spider').motion('b')<CR>",
-              mode = { "n", "o", "x" },
-          },
-      },
-  },
+  { 'chrisgrieser/nvim-spider' },
 }
