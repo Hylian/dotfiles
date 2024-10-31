@@ -1,6 +1,7 @@
 # Setup Antigen
 ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
 ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
+ANTIGEN_PATH_MAC=/opt/homebrew/share/antigen/antigen.zsh
 has_antigen=false
 
 if test -f "$ANTIGEN_PATH_ARCH"; then
@@ -8,6 +9,9 @@ if test -f "$ANTIGEN_PATH_ARCH"; then
   has_antigen=true
 elif test -f "$ANTIGEN_PATH_DEBIAN"; then
   source $ANTIGEN_PATH_DEBIAN
+  has_antigen=true
+elif test -f "$ANTIGEN_PATH_MAC"; then
+  source $ANTIGEN_PATH_MAC
   has_antigen=true
 fi
 
