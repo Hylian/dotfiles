@@ -1,16 +1,18 @@
 {
   "height": 24,
   "spacing": 4,
+  "margin-top": 2,
+  "margin-left": 5,
+  "margin-right": 5,
+  "margin-bottom": 0,
   "output": ["DP-2"],
   "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
   "modules-center": [],
-  "modules-right": ["custom/wl-gammarelay-temperature", "wireplumber", "disk", "cpu", "memory", "temperature", "clock", "tray"],
+  "modules-right": ["wireplumber", "disk", "cpu", "memory", "temperature", "clock#date", "clock#time", "tray"],
 
   "sway/workspaces": {
     "all-outputs": true,
-    "persistent_workspaces": {
-      "1": [],
-      "6": []
+    "persistent-workspaces": {
     }
   },
 
@@ -31,12 +33,17 @@
   },
 
   "tray": {
-    "spacing": 10
+    "spacing": 6
   },
 
-  "clock": {
+  "clock#time": {
     "timezone": "America/New_York",
-    "format": "{:%a %b %d   %I:%M %p} "
+    "format": "{:%I:%M %p} "
+  },
+
+  "clock#date": {
+    "timezone": "America/New_York",
+    "format": "{:%a %b %d} "
   },
 
   "battery": {
@@ -66,6 +73,7 @@
   },
 
   "memory": {
+    "interval": 1,
     "format": "{}% [{used:.2f}GiB] "
   },
 
@@ -88,12 +96,14 @@
   "wireplumber": {
     "format": "{node_name} {volume}% ",
     "format-muted": "",
-    "format-icons": ["", "", ""]
+    "format-icons": ["", "", ""],
+    "on-click": "~/dotfiles/scripts/wp_toggle.sh",
+    "on-click-middle": "pavucontrol"
   },
 
   "pulseaudio": {
     "scroll-step": 1,
-    "format": "{desc:.10} {volume}% {icon} {format_source}",
+    "format": "{volume}% {icon} {format_source}",
     "format-bluetooth": "{volume}% {icon} {format_source}",
     "format-bluetooth-muted": " {icon} {format_source}",
     "format-muted": " {format_source}",
@@ -111,13 +121,6 @@
     "on-click": "pavucontrol"
   },
 
-  "wireplumber": {
-    "format": "{node_name} {volume}% {icon}",
-    "format-muted": "",
-    "on-click": "pavucontrol",
-    "format-icons": ["", "", ""]
-  },
-
   "backlight": {
     "device": "intel_backlight",
     "format": "{percent}% {icon}",
@@ -129,5 +132,11 @@
     "exec": "wl-gammarelay --subscribe Temperature",
     "on-scroll-up": "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n +100",
     "on-scroll-down": "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n -100"
+  },
+
+  "custom/disp-rotate": {
+    "format": "⟳",
+    "on-click": "swaymsg \"output 'Dell Inc. DELL U2723QE 7S2KXN3' transform 0\"",
+    "on-click-right": "swaymsg \"output 'Dell Inc. DELL U2723QE 7S2KXN3' transform 270\""
   }
 }
