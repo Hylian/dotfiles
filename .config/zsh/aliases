@@ -18,13 +18,13 @@ if (( $+commands[eza] )); then
       eza -s modified --reverse
     fi
   }
-elif (( $+commands[exa] )); then
-  alias ls='exa --icons'
-  alias ll='exa -l -a'
+elif (( $+commands[eza] )); then
+  alias ls='eza --icons'
+  alias ll='eza -l -a'
   function chpwd() {
     if [[ $(pwd) != /google* ]] then
       emulate -L zsh
-      exa -s modified --reverse
+      eza -s modified --reverse
     fi
   }
 fi
