@@ -30,7 +30,9 @@ return {
   { 'saadparwaiz1/cmp_luasnip' },
   { 'lukas-reineke/cmp-rg' },
   { 'hrsh7th/cmp-buffer' },
+  { 'hrsh7th/cmp-nvim-lsp-document-symbol' },
   { 'onsails/lspkind.nvim' },
   { 'L3MON4D3/LuaSnip' },
   { 'chrisgrieser/nvim-spider' },
+  { 'declancm/maximize.nvim', lazy = true, config = true }
 }

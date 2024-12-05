@@ -1,3 +1,7 @@
+local function maximize_status()
+  return vim.t.maximized and '   ' or ''
+end
+
 require('lualine').setup {
   options = {
     icons_enabled = true,
@@ -12,7 +16,7 @@ require('lualine').setup {
     always_divide_middle = true,
     globalstatus = false,
     refresh = {
-      statusline = 1000,
+      statusline = 200,
       tabline = 1000,
       winbar = 1000,
     }
@@ -26,6 +30,11 @@ require('lualine').setup {
       }
     },
     lualine_c = {
+      {
+        maximize_status,
+        color = { fg = '#f3f5d9', bg = '#3a94c5', gui ='bold' },
+        separator = { right = '' }
+      },
       {
         'filename',
         file_status = true,      -- Displays file status (readonly status, modified status)

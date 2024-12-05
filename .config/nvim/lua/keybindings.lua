@@ -45,6 +45,13 @@ map('v', '>',      ">gv", {noremap = true})
 map('i', '',  "<C-W>")
 
 vim.keymap.set(
+	{ "n" },
+	"M",
+	"<cmd>lua require('maximize').toggle()<CR>",
+	{ desc = "MaximizekToggle" }
+)
+
+vim.keymap.set(
 	{ "n", "o", "x" },
 	"W",
 	"<cmd>lua require('spider').motion('w')<CR>",
