@@ -84,8 +84,8 @@ elseif os.getenv("ZELLIJ") ~= nil then
           "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
         "}," ..
        "'paste': {" ..
-          "'+': ['wl-paste']," ..
-          "'*': ['wl-paste']," ..
+          "'+': ['wl-paste', '-n']," ..
+          "'*': ['wl-paste', '-n']," ..
        "}," ..
        "'cache_enabled': 1," ..
     "}")
