@@ -136,12 +136,13 @@ vim.api.nvim_create_autocmd({'BufWinEnter'}, {
   pattern = '*',
   command = 'silent! normal! g`"zv',
 })
+
+require('config.everforest')
+require('everforest').load()
 require('toggle_lsp_diagnostics').init({ start_on = false })
 require('config.lualine')
 require('config.toggleterm')
 require('config.nvim-web-devicons')
-require('config.everforest')
-require('everforest').load()
 require("ibl").setup()
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the listed parsers MUST always be installed)
@@ -486,7 +487,7 @@ require('mini.diff').setup()
 require("codecompanion").setup({
   strategies = {
     chat = {
-      adapter = "anthropic",
+      adapter = "gemini",
     },
     inline = {
       adapter = "anthropic",
@@ -513,6 +514,13 @@ require("codecompanion").setup({
         },
         env = {
           api_key = "cmd:cat ~/.anthropic",
+        },
+      })
+    end,
+    gemini = function()
+      return require("codecompanion.adapters").extend("gemini", {
+        env = {
+          api_key = "cmd:cat ~/.gemini",
         },
       })
     end,

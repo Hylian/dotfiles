@@ -1,3 +1,46 @@
+local palettes = require("everforest.colours")
+local config = require("everforest").config
+
+local palette = palettes.generate_palette(config, vim.o.background)
+
+local everforest_theme = {
+  normal = {
+    a = { bg = palette.statusline1, fg = palette.bg0, gui = "bold" },
+    b = { bg = palette.bg3, fg = palette.grey2 },
+    c = { bg = palette.bg1, fg = palette.grey1 },
+  },
+  insert = {
+    a = { bg = palette.statusline2, fg = palette.bg0, gui = "bold" },
+    b = { bg = palette.bg3, fg = palette.fg },
+    c = { bg = palette.bg1, fg = palette.fg },
+  },
+  visual = {
+    a = { bg = palette.statusline3, fg = palette.bg0, gui = "bold" },
+    b = { bg = palette.bg3, fg = palette.fg },
+    c = { bg = palette.bg1, fg = palette.fg },
+  },
+  replace = {
+    a = { bg = palette.orange, fg = palette.bg0, gui = "bold" },
+    b = { bg = palette.bg3, fg = palette.fg },
+    c = { bg = palette.bg1, fg = palette.fg },
+  },
+  command = {
+    a = { bg = palette.aqua, fg = palette.bg0, gui = "bold" },
+    b = { bg = palette.bg3, fg = palette.fg },
+    c = { bg = palette.bg1, fg = palette.fg },
+  },
+  terminal = {
+    a = { bg = palette.purple, fg = palette.bg0, gui = "bold" },
+    b = { bg = palette.bg3, fg = palette.fg },
+    c = { bg = palette.bg1, fg = palette.fg },
+  },
+  inactive = {
+    a = { bg = palette.bg1, fg = palette.grey1 },
+    b = { bg = palette.bg1, fg = palette.grey1 },
+    c = { bg = palette.bg1, fg = palette.grey1 },
+  },
+}
+
 local function maximize_status()
   return vim.t.maximized and '   ' or ''
 end
@@ -6,10 +49,58 @@ local function blank()
   return ''
 end
 
+local M = require("lualine.component"):extend()
+
+M.processing = false
+M.spinner_index = 1
+
+local spinner_symbols = {
+  "⠋",
+  "⠙",
+  "⠹",
+  "⠸",
+  "⠼",
+  "⠴",
+  "⠦",
+  "⠧",
+  "⠇",
+  "⠏",
+}
+local spinner_symbols_len = 10
+
+-- Initializer
+function M:init(options)
+  M.super.init(self, options)
+
+  local group = vim.api.nvim_create_augroup("CodeCompanionHooks", {})
+
+  vim.api.nvim_create_autocmd({ "User" }, {
+    pattern = "CodeCompanionRequest*",
+    group = group,
+    callback = function(request)
+      if request.match == "CodeCompanionRequestStarted" then
+        self.processing = true
+      elseif request.match == "CodeCompanionRequestFinished" then
+        self.processing = false
+      end
+    end,
+  })
+end
+
+-- Function that runs every time statusline is updated
+function M:update_status()
+  if self.processing then
+    self.spinner_index = (self.spinner_index % spinner_symbols_len) + 1
+    return spinner_symbols[self.spinner_index]
+  else
+    return nil
+  end
+end
+
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = 'everforest',
+    theme = everforest_theme,
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {
@@ -56,12 +147,20 @@ require('lualine').setup {
           readonly = '[-]',      -- Text to show when the file is non-modifiable or readonly.
           unnamed = '[No Name]', -- Text to show for unnamed buffers.
           newfile
-        }
-      }
+        },
+        color = { bg = '#f3f5d9' }
+      },
     },
-    lualine_x = {'branch', 'diff'},
-    lualine_y = {'searchcount'},
-    lualine_z = {'progress',
+    lualine_x = {
+      {M, function() return M.update_status() end},
+      'branch',
+      'diff',
+    },
+    lualine_y = {
+      'searchcount',
+    },
+    lualine_z = {
+      'progress',
       {'location', separator = { right = '' } }
     }
   },
@@ -110,14 +209,5 @@ require('lualine').setup {
   tabline = {},
   winbar = {},
   inactive_winbar = {},
-  extensions = {
-    'fugitive',
-    'fzf',
-    'lazy',
-    'man',
-    'mason',
-    'quickfix',
-    'toggleterm',
-    'nvim-tree'
-  }
+  extensions = { }
 }
