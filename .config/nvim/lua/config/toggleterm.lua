@@ -1,5 +1,5 @@
 require("toggleterm").setup {
-  size = 20 | function(term)
+  size = function(term)
     if term.direction == "horizontal" then
       return 15
     elseif term.direction == "vertical" then
