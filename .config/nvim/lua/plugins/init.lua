@@ -80,13 +80,16 @@ return {
     lazy = true,
     event = "VeryLazy",
     keys = {
-      { "<A-h>", "<cmd>ZellijNavigateLeftTab<cr>",  { silent = true, desc = "navigate left or tab"  } },
+      { "<A-h>", "<cmd>ZellijNavigateLeft<cr>",  { silent = true, desc = "navigate left"  } },
       { "<A-j>", "<cmd>ZellijNavigateDown<cr>",  { silent = true, desc = "navigate down"  } },
       { "<A-k>", "<cmd>ZellijNavigateUp<cr>",    { silent = true, desc = "navigate up"    } },
-      { "<A-l>", "<cmd>ZellijNavigateRightTab<cr>", { silent = true, desc = "navigate right or tab" } },
+      { "<A-l>", "<cmd>ZellijNavigateRight<cr>", { silent = true, desc = "navigate right" } },
     },
     opts = {},
   },
   { 'nvim-focus/focus.nvim', version = false },
-  {'akinsho/toggleterm.nvim', version = "*", config = true}
+  {'akinsho/toggleterm.nvim', version = "*", config = true},
+  { 'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' } },
+  { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
+  { 'echasnovski/mini.nvim', version = '*' },
 }

@@ -350,8 +350,6 @@ cmp.setup({
     ['<C-j>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
-      elseif luasnip.locally_jumpable(1) then
-        luasnip.jump(1)
       else
         fallback()
       end
@@ -359,8 +357,6 @@ cmp.setup({
     ['<C-k>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
       else
         fallback()
       end
@@ -485,6 +481,8 @@ require('tabby').setup({
   -- option = {}, -- setup modules' option,
 })
 
+require('mini.diff').setup()
+
 require("codecompanion").setup({
   strategies = {
     chat = {
@@ -495,6 +493,9 @@ require("codecompanion").setup({
     },
   },
   display = {
+    action_palette = {
+      provider = "telescope"
+    },
     diff = {
       provider = "mini_diff",
     },
@@ -511,12 +512,14 @@ require("codecompanion").setup({
           },
         },
         env = {
-          api_key = "cmd:op read op://personal/Anthropic/credential --no-newline",
+          api_key = "cmd:cat ~/.anthropic",
         },
       })
     end,
   },
 })
+
+vim.cmd([[cab cc CodeCompanion]])
 
 require("focus").setup({
     enable = true, -- Enable module
@@ -580,3 +583,27 @@ vim.api.nvim_create_autocmd('FileType', {
     end,
     desc = 'Disable focus autoresize for FileType',
 })
+
+require('telescope').setup {
+  defaults = {
+    mappings = {
+      n = {
+        ["<C-j>"] = "move_selection_next",
+        ["<C-k>"] = "move_selection_previous",
+      },
+      i = {
+        ["<C-j>"] = "move_selection_next",
+        ["<C-k>"] = "move_selection_previous",
+      }
+    },
+  },
+  pickers = {
+    find_files = {
+      theme = "dropdown",
+    },
+    codecompanion = {
+      theme = "ivy",
+    },
+  },
+}
+require('telescope').load_extension('fzf')
