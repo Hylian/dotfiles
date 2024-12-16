@@ -1,8 +1,11 @@
 require("keybindings")
 
-require("config.lazy");
+require("config.lazy")
 require("lazy").setup("plugins")
 
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.g.python3_host_prog = '/usr/bin/python3'
 vim.opt.laststatus = 2
 vim.opt.showmode = false
 vim.opt.wrap = true
@@ -35,23 +38,38 @@ vim.opt.clipboard = 'unnamedplus'
 vim.opt.updatetime = 300
 vim.opt.undolevels = 1000
 vim.opt.backspace = 'indent,eol,start'
-vim.opt.termguicolors = true
 vim.opt.hidden = true
 vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.cmdheight = 0
 vim.opt.colorcolumn = '80'
 vim.opt.shortmess = 'ostTAcCWFSI'
-vim.opt.timeoutlen = 0
+vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.background = 'light'
-
-vim.g.bufferline_echo = 0
-vim.g.python3_host_prog = '/usr/bin/python3'
+vim.opt.scrolloff = 2
+vim.o.showtabline = 2
 
 vim.cmd('highlight LineNr ctermfg=blue')
 vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
+
+-- gray
+vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', { bg='NONE', strikethrough=true, fg='#808080' })
+-- blue
+vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', { bg='NONE', fg='#569CD6' })
+vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { link='CmpIntemAbbrMatch' })
+-- light blue
+vim.api.nvim_set_hl(0, 'CmpItemKindVariable', { bg='NONE', fg='#9CDCFE' })
+vim.api.nvim_set_hl(0, 'CmpItemKindInterface', { link='CmpItemKindVariable' })
+vim.api.nvim_set_hl(0, 'CmpItemKindText', { link='CmpItemKindVariable' })
+-- pink
+vim.api.nvim_set_hl(0, 'CmpItemKindFunction', { bg='NONE', fg='#C586C0' })
+vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { link='CmpItemKindFunction' })
+-- front
+vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', { bg='NONE', fg='#D4D4D4' })
+vim.api.nvim_set_hl(0, 'CmpItemKindProperty', { link='CmpItemKindKeyword' })
+vim.api.nvim_set_hl(0, 'CmpItemKindUnit', { link='CmpItemKindKeyword' })
 
 function tmux_copy(reg)
   local clipboard = reg == '+' and 'c' or 'p'
@@ -320,6 +338,15 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.locally_jumpable(1) then
+        luasnip.jump(1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
     ['<C-j>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -349,7 +376,7 @@ cmp.setup({
 })
 
 -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-require'cmp'.setup.cmdline({'/', '?'}, {
+cmp.setup.cmdline({'/', '?'}, {
   mapping = cmp.mapping.preset.cmdline({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
@@ -376,17 +403,6 @@ require'cmp'.setup.cmdline({'/', '?'}, {
   })
 })
 
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
-  }),
-  matching = { disallow_symbol_nonprefix_matching = false }
-})
-
 require('mason').setup({
   PATH = "append"
 })
@@ -399,19 +415,168 @@ require('lspconfig').clangd.setup{
   cmd = { "/usr/local/google/home/shined/pigweed/environment/cipd/packages/pigweed/bin/clangd", "--compile-commands-dir=/usr/local/google/home/shined/pigweed/.pw_ide/.stable", "--background-index", "--clang-tidy", "--query-driver=/usr/local/google/home/shined/pigweed/environment/cipd/packages/pigweed/bin/*,/usr/local/google/home/shined/pigweed/environment/cipd/packages/arm/bin/*"}
 }
 
--- gray
-vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', { bg='NONE', strikethrough=true, fg='#808080' })
--- blue
-vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', { bg='NONE', fg='#569CD6' })
-vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { link='CmpIntemAbbrMatch' })
--- light blue
-vim.api.nvim_set_hl(0, 'CmpItemKindVariable', { bg='NONE', fg='#9CDCFE' })
-vim.api.nvim_set_hl(0, 'CmpItemKindInterface', { link='CmpItemKindVariable' })
-vim.api.nvim_set_hl(0, 'CmpItemKindText', { link='CmpItemKindVariable' })
--- pink
-vim.api.nvim_set_hl(0, 'CmpItemKindFunction', { bg='NONE', fg='#C586C0' })
-vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { link='CmpItemKindFunction' })
--- front
-vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', { bg='NONE', fg='#D4D4D4' })
-vim.api.nvim_set_hl(0, 'CmpItemKindProperty', { link='CmpItemKindKeyword' })
-vim.api.nvim_set_hl(0, 'CmpItemKindUnit', { link='CmpItemKindKeyword' })
+local theme = {
+  fill = 'TabLineFill',
+  head = 'TabLineSep',
+  sep = 'TabLineSep',
+  tabsep = 'TabLineTabSep',
+  current_tab = 'TabLineCurrent',
+  inactive_tab = 'TabLineInactive',
+  inactive_tab_sep = 'TabLineInactiveSep',
+  tab = 'TabLine',
+  win = 'TabLine',
+  tail = 'TabLineSep',
+}
+require('tabby').setup({
+  line = function(line)
+    return {
+      {
+        { '', hl = theme.head },
+        { ' ', hl = theme.fill },
+      },
+      line.tabs().foreach(function(tab)
+        if tab.is_current() then
+          return {
+            line.sep('', theme.tabsep, theme.current_tab),
+            tab.in_jump_mode() and tab.jump_key() or tab.number(),
+            tab.name(),
+            line.sep('', theme.tabsep, theme.current_tab),
+            hl = theme.current_tab,
+            margin = ' ',
+          }
+        else
+          return {
+            line.sep('', theme.inactive_tab, theme.inactive_tab_sep),
+            tab.in_jump_mode() and tab.jump_key() or tab.number(),
+            tab.name(),
+            line.sep('', theme.inactive_tab, theme.inactive_tab_sep),
+            hl = theme.inactive_tab,
+            margin = ' ',
+          }
+        end
+      end),
+      line.spacer(),
+      line.wins_in_tab(line.api.get_current_tab()).foreach(function(win)
+        if win.is_current() then
+          return {
+            line.sep('', theme.tabsep, theme.current_tab),
+            win.buf_name(),
+            line.sep('', theme.tabsep, theme.current_tab),
+            hl = theme.current_tab,
+            margin = ' ',
+          }
+        else
+          return {
+            line.sep('', theme.inactive_tab, theme.inactive_tab_sep),
+            win.buf_name(),
+            line.sep('', theme.inactive_tab, theme.inactive_tab_sep),
+            hl = theme.inactive_tab,
+            margin = ' ',
+          }
+        end
+      end),
+      {
+        { ' ', hl = theme.fill },
+        { '', hl = theme.head },
+      },
+      hl = theme.fill,
+    }
+  end,
+  -- option = {}, -- setup modules' option,
+})
+
+require("codecompanion").setup({
+  strategies = {
+    chat = {
+      adapter = "anthropic",
+    },
+    inline = {
+      adapter = "anthropic",
+    },
+  },
+  display = {
+    diff = {
+      provider = "mini_diff",
+    },
+  },
+  opts = {
+    log_level = "DEBUG",
+  },
+  adapters = {
+    anthropic = function()
+      return require("codecompanion.adapters").extend("anthropic", {
+        schema = {
+          model = {
+            default = "claude-3-opus-latest",
+          },
+        },
+        env = {
+          api_key = "cmd:op read op://personal/Anthropic/credential --no-newline",
+        },
+      })
+    end,
+  },
+})
+
+require("focus").setup({
+    enable = true, -- Enable module
+    commands = false, -- Create Focus commands
+    autoresize = {
+        enable = true, -- Enable or disable auto-resizing of splits
+        width = 0, -- Force width for the focused window
+        height = 0, -- Force height for the focused window
+        minwidth = 20, -- Force minimum width for the unfocused window
+        minheight = 0, -- Force minimum height for the unfocused window
+        height_quickfix = 10, -- Set the height of quickfix panel
+    },
+    split = {
+        bufnew = false, -- Create blank buffer for new split windows
+        tmux = false, -- Create tmux splits instead of neovim splits
+    },
+    ui = {
+        number = false, -- Display line numbers in the focussed window only
+        relativenumber = false, -- Display relative line numbers in the focussed window only
+        hybridnumber = false, -- Display hybrid line numbers in the focussed window only
+        absolutenumber_unfocussed = false, -- Preserve absolute numbers in the unfocussed windows
+
+        cursorline = false, -- Display a cursorline in the focussed window only
+        cursorcolumn = false, -- Display cursorcolumn in the focussed window only
+        colorcolumn = {
+            enable = false, -- Display colorcolumn in the foccused window only
+            list = '+1', -- Set the comma-saperated list for the colorcolumn
+        },
+        signcolumn = true, -- Display signcolumn in the focussed window only
+        winhighlight = false, -- Auto highlighting for focussed/unfocussed windows
+    }
+})
+
+local ignore_filetypes = { 'NvimTree' }
+local ignore_buftypes = { 'nofile', 'prompt', 'popup' }
+
+local augroup =
+    vim.api.nvim_create_augroup('FocusDisable', { clear = true })
+
+vim.api.nvim_create_autocmd('WinEnter', {
+    group = augroup,
+    callback = function(_)
+        if vim.tbl_contains(ignore_buftypes, vim.bo.buftype)
+        then
+            vim.w.focus_disable = true
+        else
+            vim.w.focus_disable = false
+        end
+    end,
+    desc = 'Disable focus autoresize for BufType',
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+    group = augroup,
+    callback = function(_)
+        if vim.tbl_contains(ignore_filetypes, vim.bo.filetype) then
+            vim.b.focus_disable = true
+        else
+            vim.b.focus_disable = false
+        end
+    end,
+    desc = 'Disable focus autoresize for FileType',
+})

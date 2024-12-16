@@ -1,5 +1,5 @@
 require("toggleterm").setup {
-  size = function(term)
+  size = 20 | function(term)
     if term.direction == "horizontal" then
       return 15
     elseif term.direction == "vertical" then
@@ -12,7 +12,7 @@ require("toggleterm").setup {
   shade_terminals = true,
   shading_factor = '1',
   start_in_insert = true,
-  insert_mappings = true, 
+  insert_mappings = true,
   terminal_mappings = true,
   persist_size = true,
   direction = 'float',

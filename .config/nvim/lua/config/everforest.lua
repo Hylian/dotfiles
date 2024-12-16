@@ -17,6 +17,7 @@ require("everforest").setup({
   colours_override = function(palette)
     palette.fg = "#4b575e"
     palette.bg0 = "#fffbef"
+    palette.bg1_medium = "#f4f0d9"
     --if os.getenv("SSH_TTY") == nil then
       --palette.bg0 = "#ffffff"
       --palette.fg = "#677666"
@@ -24,5 +25,13 @@ require("everforest").setup({
       --palette.bg0 = "#fffbef"
       --pallete.fg = "#1a1e20"
     --end
-  end
+  end,
+  on_highlights = function(hl, palette)
+    hl.TabLineFill = { fg = palette.none, bg = palette.bg1_medium, sp = palette.red }
+    hl.TabLineSep = { fg = palette.bg1_medium, bg = palette.none, sp = palette.red }
+    hl.TabLineTabSep = { fg = palette.bg1_medium, bg = palette.bg1_medium, sp = palette.red }
+    hl.TabLineInactiveSep = { fg = palette.blue, bg = palette.bg1_medium, sp = palette.red }
+    hl.TabLineInactive = { fg = palette.bg5, bg = palette.bg4, sp = palette.red }
+    hl.TabLineCurrent = { fg = palette.green, bg = palette.none, sp = palette.red }
+  end,
 })
