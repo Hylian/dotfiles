@@ -6,7 +6,6 @@ keybinds clear-defaults=true {
     }
     locked {
         bind "Alt z" {
-            MessagePlugin "autolock" {payload "disable";};
             SwitchToMode "Normal";
         }
     }
@@ -125,13 +124,12 @@ keybinds clear-defaults=true {
         }
     }
     shared {
-        bind "Alt Shift z" {
-            MessagePlugin "autolock" {payload "enable";};
+        bind "Alt x" {
+            MessagePlugin "autolock" {payload "toggle";};
         }
     }
     shared_except "locked" {
         bind "Alt z" {
-            MessagePlugin "autolock" {payload "disable";};
             SwitchToMode "Locked";
         }
         bind "Ctrl q" { Quit; }
@@ -146,8 +144,10 @@ keybinds clear-defaults=true {
 
         bind "Alt Left" { GoToPreviousTab; }
         bind "Alt Right" { GoToNextTab; }
-        //bind "Alt Ctrl Left" { MoveTab "Left"; }
-        //bind "Alt Ctrl Right" { MoveTab "Right"; }
+        bind "Alt Ctrl Left" { MoveTab "Left"; }
+        bind "Alt Ctrl Right" { MoveTab "Right"; }
+        //bind "Alt h" { MoveFocusOrTab "Left"; }
+        //bind "Alt l" { MoveFocusOrTab "Right"; }
         bind "Alt h" { MoveFocus "Left"; }
         bind "Alt l" { MoveFocus "Right"; }
         bind "Alt j" { MoveFocus "Down"; }
@@ -216,7 +216,7 @@ ui {
 }
 
 plugins {
-    autolock location="https://github.com/fresh2dev/zellij-autolock/releases/download/0.2.1/zellij-autolock.wasm" {
+    autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
         is_enabled true
         triggers "nvim"
         reaction_seconds "0.2"
@@ -234,7 +234,7 @@ load_plugins {
 //   - detach (Default)
 //   - quit
 //
-on_force_close "quit"
+on_force_close "detach"
 
 //  Send a request for a simplified ui (without arrow fonts) to plugins
 //  Options:

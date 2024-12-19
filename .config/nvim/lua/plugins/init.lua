@@ -67,7 +67,8 @@ return {
   { 'chrisgrieser/nvim-spider' },
   { 'declancm/maximize.nvim', lazy = true, config = true },
   {
-    "olimorris/codecompanion.nvim",
+  --  "olimorris/codecompanion.nvim",
+    dir = "~/software/codecompanion.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -76,16 +77,12 @@ return {
   },
   { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } },
   {
-    "https://git.sr.ht/~swaits/zellij-nav.nvim",
-    lazy = true,
-    event = "VeryLazy",
-    keys = {
-      { "<A-h>", "<cmd>ZellijNavigateLeft<cr>",  { silent = true, desc = "navigate left"  } },
-      { "<A-j>", "<cmd>ZellijNavigateDown<cr>",  { silent = true, desc = "navigate down"  } },
-      { "<A-k>", "<cmd>ZellijNavigateUp<cr>",    { silent = true, desc = "navigate up"    } },
-      { "<A-l>", "<cmd>ZellijNavigateRight<cr>", { silent = true, desc = "navigate right" } },
-    },
-    opts = {},
+    'https://github.com/fresh2dev/zellij.vim',
+    -- tag = '0.3.*',
+    lazy = false,
+    init = function()
+      vim.g.zellij_navigator_no_default_mappings = 1
+    end,
   },
   { 'nvim-focus/focus.nvim', version = false },
   {'akinsho/toggleterm.nvim', version = "*", config = true},

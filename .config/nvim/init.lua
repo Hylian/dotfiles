@@ -488,9 +488,20 @@ require("codecompanion").setup({
   strategies = {
     chat = {
       adapter = "gemini",
+      keymaps = {
+        hide = {
+          modes = {
+            n = "}"
+          },
+          callback = function(chat)
+            chat.ui:hide()
+          end,
+          description = "Hide the chat buffer",
+        }
+      },
     },
     inline = {
-      adapter = "anthropic",
+      adapter = "gemini",
     },
   },
   display = {
@@ -502,7 +513,7 @@ require("codecompanion").setup({
     },
   },
   opts = {
-    log_level = "DEBUG",
+    --log_level = "TRACE",
   },
   adapters = {
     anthropic = function()
@@ -519,9 +530,21 @@ require("codecompanion").setup({
     end,
     gemini = function()
       return require("codecompanion.adapters").extend("gemini", {
+        schema = {
+          model = {
+            default = "gemini-2.0-flash-exp",
+          },
+        },
         env = {
           api_key = "cmd:cat ~/.gemini",
         },
+        handlers = {
+          form_parameters = function(self, params, messages)
+            return {
+              tools = {google_search = {}}
+            }
+          end,
+        }
       })
     end,
   },
@@ -615,3 +638,8 @@ require('telescope').setup {
   },
 }
 require('telescope').load_extension('fzf')
+
+vim.api.nvim_create_autocmd("VimLeave", {
+    pattern = "*",
+    command = "silent !zellij action switch-mode normal"
+})
