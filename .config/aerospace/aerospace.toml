@@ -17,6 +17,19 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 # Mouse follows focus when focused monitor changes
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
+# All possible keys:
+# - Letters.        a, b, c, ..., z
+# - Numbers.        0, 1, 2, ..., 9
+# - Keypad numbers. keypad0, keypad1, keypad2, ..., keypad9
+# - F-keys.         f1, f2, ..., f20
+# - Special keys.   minus, equal, period, comma, slash, backslash, quote, semicolon, backtick,
+#                   leftSquareBracket, rightSquareBracket, space, enter, esc, backspace, tab
+# - Keypad special. keypadClear, keypadDecimalMark, keypadDivide, keypadEnter, keypadEqual,
+#                   keypadMinus, keypadMultiply, keypadPlus
+# - Arrows.         left, down, up, right
+
+# All possible modifiers: cmd, alt, ctrl, shift
+
 [mode.main.binding]
 cmd-enter = 'exec-and-forget open -n /Applications/kitty.app --args -1'
 cmd-shift-q = 'exec-and-forget open -n /Applications/Firefox\ Nightly.app'
@@ -37,9 +50,9 @@ cmd-right = 'exec-and-forget /bin/bash -c "aerospace list-workspaces --monitor f
 
 cmd-shift-f = 'fullscreen'
 
-cmd-n = 'layout v_accordion' # 'layout stacking' in i3
-cmd-m = 'layout h_accordion' # 'layout tabbed' in i3
-cmd-comma = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
+cmd-leftSquareBracket = 'layout v_accordion' # 'layout stacking' in i3
+cmd-rightSquareBracket = 'layout h_accordion' # 'layout tabbed' in i3
+cmd-backslash = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
 
 cmd-alt-space = 'layout floating tiling' # 'floating toggle' in i3
 
