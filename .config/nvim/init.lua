@@ -131,6 +131,39 @@ else
   end
 end
 
+--function UpdateWaylandDisplay()
+--  if !empty($ZELLIJ) && !empty($SSH_TTY)
+--    let $WAYLAND_DISPLAY = readfile("/tmp/wayland_display", 1)[0]
+--    print($WAYLAND_DISPLAY)
+--  endif
+--endfunction
+
+local function update_wayland_display()
+  print('hi')
+  --if os.getenv("ZELLIJ") ~= nil and os.getenv("SSH_TTY") ~= nil then
+  if vim.env.ZELLIJ ~= nil then
+    local file = io.open("/tmp/wayland_display", "r")
+    if file then
+      local wayland_display = file:read("*l")
+      file:close()
+      if wayland_display then
+        vim.env.WAYLAND_DISPLAY = wayland_display
+        print(wayland_display)
+      end
+    else
+      -- Handle the case where the file can't be opened.
+      -- For example, you might print an error message or do nothing.
+      print("Error: Could not open /tmp/wayland_display")
+    end
+  end
+end
+
+vim.api.nvim_create_autocmd({'BufEnter', 'FocusGained'}, {
+  desc = 'update wayland display envvar',
+  pattern = '*',
+  callback = update_wayland_display,
+})
+
 vim.api.nvim_create_autocmd({'BufWinEnter'}, {
   desc = 'return cursor to where it was last time closing the file',
   pattern = '*',
@@ -532,19 +565,19 @@ require("codecompanion").setup({
       return require("codecompanion.adapters").extend("gemini", {
         schema = {
           model = {
-            default = "gemini-2.0-flash-exp",
+            default = "gemini-exp-1206",
           },
         },
         env = {
           api_key = "cmd:cat ~/.gemini",
         },
-        handlers = {
-          form_parameters = function(self, params, messages)
-            return {
-              tools = {google_search = {}}
-            }
-          end,
-        }
+        --handlers = {
+        --  form_parameters = function(self, params, messages)
+        --    return {
+        --      tools = {google_search = {}}
+        --    }
+        --  end,
+        --}
       })
     end,
   },
