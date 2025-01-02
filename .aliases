@@ -1,0 +1,220 @@
+if (( $+commands[nvim] )); then
+  alias vim='nvim'
+  alias v='vim'
+fi
+
+if (( $+commands[rg] )); then
+  alias rgc='rg -tc'
+fi
+
+if (( $+commands[eza] )); then
+  alias ls='eza --icons'
+  alias ll='eza -l -a'
+elif (( $+commands[exa] )); then
+  alias ls='exa --icons'
+  alias ll='exa -l -a'
+fi
+
+if (( $+commands[fdfind] )); then
+  alias fd='fdfind'
+fi
+
+if (( $+commands[batcat] )); then
+  alias bat='batcat'
+fi
+
+if (( $+commands[imv-wayland] )); then
+  alias imv='imv-wayland'
+fi
+
+alias cat='bat'
+
+alias cdg='cd $(git rev-parse --show-toplevel)'
+alias cdr='cd $(repo --show-toplevel)'
+
+# Git
+alias gc='git checkout'
+alias gau='git add -u'
+alias gcm='git commit -m'
+alias gs='git status'
+alias gl='git log --pretty --oneline --graph'
+alias gll='git log --pretty --graph'
+alias gri='git rebase -i'
+alias grid='git rebase -i develop'
+alias grim='git rebase -i origin/main'
+alias grih='git rebase -i HEAD~2'
+alias grhh='git reset --hard HEAD'
+alias gsu='git submodule update --init --recursive'
+alias gp='git pull'
+alias gb='git checkout -b'
+alias gd='git diff'
+alias gcp='git cherry-pick'
+alias gitrootdir='git rev-parse --show-toplevel'
+alias stgs='stg status'
+alias stgss='stg series'
+alias stgr='stg refresh'
+alias stguc='stg uncommit'
+alias stgc='stg commit'
+
+gpush() {
+  git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main
+}
+
+gpushwip() {
+  git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main%wip --no-verify
+}
+
+gamendto() {
+  local target_commit=$(git log --pretty=oneline | fzf | cut -d ' ' -f1)
+  SHA=`git rev-parse "$target_commit"`; git stash -k && git commit --fixup "$SHA" && GIT_SEQUENCE_EDITOR=true git rebase --interactive --autosquash "$SHA^" && git stash pop;
+}
+
+gsync() {
+  git fetch origin main && \
+  git stash -k && \
+  stg rebase --merged origin/main && \
+  git submodule --quiet sync && \
+  git submodule update --init -j 20
+}
+
+fzf-git-branch() {
+  git rev-parse HEAD > /dev/null 2>&1 || return
+
+  git branch --color=always --all --sort=-committerdate |
+    rg -v HEAD |
+    fzf --height 50% --ansi --no-multi --preview-window right:65% \
+        --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
+    sed "s/.* //"
+}
+
+fzf-git-checkout() {
+  git rev-parse HEAD > /dev/null 2>&1 || return
+
+  local branch
+
+  branch=$(fzf-git-branch)
+  if [[ "$branch" = "" ]]; then
+    echo "No branch selected."
+    return
+  fi
+
+  # If branch name starts with 'remotes/' then it is a remote branch. By
+  # using --track and a remote branch name, it is the same as:
+  # git checkout -b branchName --sort=-committerdate --track origin/branchName
+  if [[ "$branch" = 'remotes/'* ]]; then
+    git checkout --track $branch
+  else
+    git checkout $branch;
+  fi
+}
+
+fzf-git-pick-commit() {
+  git rev-parse HEAD > /dev/null 2>&1 || return
+
+  local filter
+  if [ -n $@ ] && [ -f $@ ]; then
+    filter="-- $@"
+  fi
+
+  local gitlog=(
+    git log
+    --color=always
+    --abbrev=7
+    --format='%C(auto)%h %an %C(blue)%s %C(yellow)%cr'
+    $@
+  )
+
+  local fzf=(
+    fzf
+    --ansi --no-sort --reverse --tiebreak=index
+    --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always \$1 --pretty=full $filter | delta --light --true-color always -n --no-gitconfig; }; f {}"
+    --bind "pgup:preview-half-page-up"
+    --bind "pgdn:preview-half-page-down"
+    --bind "ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down"
+    --bind "ctrl-q:abort"
+    --bind "enter:accept"
+    --preview-window=right:65%
+  )
+
+  echo $($gitlog | $fzf | rg -o '[a-f0-9]{7}')
+}
+
+fzf-git-difftool() {
+  local commit
+  commit=$(fzf-git-pick-commit)
+  if [[ ! -z "$commit" ]] && git difftool $commit~1 $commit
+}
+
+fzf-git-difftool-to() {
+  local commit
+  commit=$(fzf-git-pick-commit)
+  if [[ ! -z "$commit" ]] && git difftool $commit
+}
+
+fzf-git-show() {
+  local commit
+  commit=$(fzf-git-pick-commit)
+  if [[ ! -z "$commit" ]] && git show $commit --pretty
+}
+
+fzf-git-unstage() {
+  git restore --staged $(git diff --cached --name-only | fzf -m)
+  git status
+}
+
+fzf-git-add() {
+  git add $(git diff --name-only | fzf -m)
+  git status
+}
+
+alias gbranch='fzf-git-branch'
+alias gcheckout='fzf-git-checkout'
+alias gdiff='fzf-git-difftool'
+alias gdiffto='fzf-git-difftool-to'
+alias gshow='fzf-git-show'
+alias gunstage='fzf-git-unstage'
+alias gadd='fzf-git-add'
+
+stg-squashpush() {
+  local origbranch && \
+  origbranch=$(stg branch) && \
+  echo "Deleting branch: stg-temp" && \
+  stg branch --delete --force stg-temp
+  echo "Switching branch: stg-temp" && \
+  stg branch --clone stg-temp && \
+  local patches && \
+  patches=( $(stg series --no-description --no-prefix | \
+            fzf -m --preview-window right:65% --preview 'stg show --color=always -p {}') ) && \
+  echo "Squashing patches: $patches" && \
+  stg squash $patches && \
+  echo "Committing squashed patch" && \
+  stg commit ${patches[0]} && \
+  echo "Deleting all remaining patches" && \
+  stg branch --cleanup --force && \
+  echo "Pushing to Gerrit..." && \
+  git push origin HEAD:refs/for/main
+
+  echo "Switching branch: $origbranch" && \
+  stg branch $origbranch && \
+  echo "Deleting branch: stg-temp" && \
+  stg branch --delete --force stg-temp
+}
+
+# Helpers
+
+h2d(){
+  echo "ibase=16; $(echo $@ | tr a-f A-F)"|bc
+}
+
+d2h(){
+  echo "obase=16; $@"|bc
+}
+
+h2b(){
+  echo "ibase=16; obase=2; $(echo $@ | tr a-f A-F)" | bc
+}
+
+alias imv-date='exa -L 0 -f --oneline --reverse --sort=modified | imv'
+alias imv-random='fd -t f -d 1 | shuf | imv'
+alias disp-rotate='swaymsg output DP-4 transform 270'
+alias disp-normal='swaymsg output DP-4 transform 0'

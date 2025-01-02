@@ -1,0 +1,205 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: Cascadia Mono, FontAwesome sans-serif;
+  font-size: 14px;
+  min-height: 10px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-right: 1px;
+}
+
+window#waybar {
+  font-family: IBM Plex Mono SmBld, FontAwesome;
+  background-color: rgba(43, 48, 59, 0.6);
+  border-bottom: 0px solid rgba(0, 0, 0, 0.5);
+  color: #eddada;
+  transition-property: background-color;
+  transition-duration: .5s;
+  opacity: 0.8;
+}
+
+window#waybar.hidden {
+  opacity: 0.2;
+}
+
+button {
+  /* Use box-shadow instead of border so the text isn't offset */
+  box-shadow: inset 0 -3px transparent;
+  /* Avoid rounded borders under each button name */
+  border: none;
+  border-radius: 0;
+}
+
+label:focus {
+  background-color: #000000;
+}
+
+@keyframes blink {
+  to {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}
+
+#tray {
+  background-color: #2980b9;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  background-color: #eb4d4b;
+}
+
+#workspaces {
+  font-family: "IBM Plex Mono SmBld";
+  font-weight: bold;
+}
+
+#workspaces button {
+  padding: 3px 5px;
+  background-color: #18848e;
+  color: #ffd36b;
+  border-radius: 0px;
+  margin-left: 2px;
+}
+
+#workspaces button:hover {
+  padding: 3px 5px;
+  background-color: #18848e;
+  color: #ffd36b;
+  margin-left: 2px;
+}
+
+#workspaces button.focused {
+  color: #18848e;
+  background-color: #ffd36b;
+}
+
+#workspaces button.urgent {
+  background-color: #eb4d4b;
+}
+
+#mode {
+  background-color: #64727D;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#mpd,
+#custom-wl-gammarelay-temperature
+{
+  font-family: IBM Plex Mono SmBld, FontAwesome;
+  padding: 0 10px;
+  color: #160000;
+  border-radius: 30px;
+  opacity: 0.9;
+}
+
+#window,
+#workspaces {
+  margin: 0 2px;
+}
+
+#window {
+  font-family: IBM Plex Mono SmBld, FontAwesome;
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left > widget:first-child > #workspaces {
+  margin-left: 0;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right > widget:last-child > #workspaces {
+  margin-right: 0;
+}
+
+#clock {
+  background-color: #c3c3c3;
+}
+
+#battery {
+  background-color: #e86f43;
+}
+
+#battery.charging, #battery.plugged {
+  background-color: #ffa357;
+}
+
+#battery.critical:not(.charging) {
+  background-color: #f53c3c;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#temperature {
+  background-color: #FF9A9A;
+}
+
+#temperature.critical {
+  background-color: #eb4d4b;
+}
+
+#cpu {
+  background-color: #97FB56;
+}
+
+#memory {
+  background-color: #5EB2F2;
+}
+
+#disk {
+  background-color: #FFA357;
+}
+
+#network {
+  background-color: #BFFC57;
+}
+
+#network.disconnected {
+  background-color: #9FFC00;
+}
+
+#backlight {
+  background-color: #FB5688;
+}
+
+#custom-wl-gammarelay-temperature {
+  background-color: #FFB79A;
+}
+
+#pulseaudio {
+  background-color: #53F1F1;
+}
+
+#pulseaudio.muted {
+  background-color: #00EEEE;
+}
+
+#wireplumber {
+  background-color: #53F1F1;
+}
+
+#wireplumber.muted {
+  background-color: #00EEEE;
+}

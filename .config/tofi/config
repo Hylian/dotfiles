@@ -1,0 +1,73 @@
+#font = "~/.local/share/fonts/Atkinson-Hyperlegible-Regular-102.otf"
+font = "~/.local/share/fonts/Sys400.ttf"
+
+font-size = 18
+
+hint-font = false
+
+text-color = #939F95
+
+prompt-color = #8DA101
+prompt-background = #00000000
+prompt-background-padding = 0
+prompt-background-corner-radius = 0
+
+input-color = #5C6A72a0
+#input-background = #3A94C500
+#input-background-padding = 0, 20, 0, 20
+#input-background-corner-radius = 10
+
+selection-color = #E9F0E9
+selection-background = #8DA101
+selection-background-padding = 0, 8, 1, 8
+selection-background-corner-radius = 4
+selection-match-color = #F85552
+
+prompt-text = "  >"
+prompt-padding = 15
+
+result-spacing = 5
+
+width = 400
+height = 180
+
+background-color = #FAEDCDC0
+
+outline-width = 0
+outline-color = #F57D2610
+
+border-width = 0
+border-color = #8DA101e0
+
+corner-radius = 0
+
+padding-top = 6
+padding-bottom = 1
+padding-left = 4
+padding-right = 4
+
+clip-to-padding = true
+scale = true
+
+# Location on screen to anchor the window to.
+#
+# Supported values: top-left, top, top-right, right, bottom-right,
+# bottom, bottom-left, left, center.
+anchor = center
+
+exclusive-zone = -1
+
+
+history = true
+
+fuzzy-match = true
+
+require-match = true
+
+drun-launch = false
+
+late-keyboard-init = false
+
+multi-instance = false
+
+ascii-input = true

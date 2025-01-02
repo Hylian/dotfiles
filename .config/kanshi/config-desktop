@@ -1,0 +1,19 @@
+profile nreal {
+  output DP-1 disable
+  output DP-2 disable
+  output "Unknown nreal air 0x00008800" enable scale 1 mode 1920x1080@60Hz
+  exec $HOME/dotfiles/scripts/fc_nreal.sh
+  exec swaymsg 'output "Unknown nreal air 0x00008800" subpixel none'
+  exec $HOME/dotfiles/scripts/restart_waybar.sh "Unknown nreal air 0x00008800" style-nreal.css
+  exec $HOME/dotfiles/scripts/rearrange_workspaces.sh "Unknown nreal air 0x00008800" "layout splith" 1 2 3 4 5 6 7 8 9 10
+}
+
+profile home {
+  output DP-1 enable mode 2560x1440@143.991Hz position 0,0 scale 1
+  output DP-2 enable mode 3840x2160@59.997Hz position 2560,0 scale 2
+  exec $HOME/dotfiles/scripts/fc_lcd.sh
+  exec $HOME/dotfiles/scripts/restart_waybar.sh "DP-2" style-desktop.css
+  exec swaymsg 'output "DP-1" subpixel none'
+  exec swaymsg 'output "DP-2" subpixel rgb'
+  exec $HOME/dotfiles/scripts/rearrange_workspaces.sh "DP-1" "layout splith" 1 2 3 4 5; $HOME/dotfiles/scripts/rearrange_workspaces.sh "DP-2" "layout splith" 6 7 8 9 10
+}

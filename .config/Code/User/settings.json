@@ -1,0 +1,60 @@
+{
+    "workbench.colorTheme": "One Dark Pro Darker",
+    "vscode-neovim.neovimExecutablePaths.linux": "~/.local/bin/nvim",
+    "vscode-neovim.neovimInitVimPaths.linux": "~/.config/nvim/init.vim",
+    "editor.fontFamily": "'Atkinson Monolegible', 'Droid Sans Mono', 'UbuntuMono Nerd Font', 'monospace', monospace",
+    "editor.codeLensFontFamily": "'Atkinson Hyperlegible'",
+    "terminal.external.linuxExec": "foot",
+    "security.workspace.trust.untrustedFiles": "open",
+    "cmake.configureOnOpen": false,
+    "cmake.configureOnEdit": false,
+    "terminal.integrated.fontFamily": "'Atkinson Monolegible', 'UbuntuMono Nerd Font', 'Font Awesome 6 Free'",
+    "update.mode": "none",
+    "telemetry.telemetryLevel": "off",
+    "extensions.experimental.affinity": {
+      "asvetliakov.vscode-neovim": 1
+    },
+    "git.detectSubmodulesLimit": 100,
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "zenMode.hideTabs": false,
+    "editor.tabSize": 2,
+    "editor.minimap.showSlider": "always",
+    "editor.minimap.size": "fill",
+    "docsView.documentationView.updateMode": "sticky",
+    "editor.hover.delay": 100,
+    "terminal.integrated.gpuAcceleration": "on",
+    "workbench.startupEditor": "none",
+    "vscode_custom_css.imports": [
+      "file:///home/shined/scripts/code-custom.css"
+    ],
+    "extensions.ignoreRecommendations": true,
+    "clangd.checkUpdates": true,
+    "window.titleBarStyle": "custom",
+    "window.customMenuBarAltFocus": false,
+    "zenMode.hideLineNumbers": false,
+    "clangd.onConfigChanged": "restart",
+    "gitlens.views.commits.avatars": false,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.useWslProfiles": false,
+    "search.exclude": {
+      "/tmp/*": true
+    },
+    "files.exclude": {
+      "/tmp/**": true
+    },
+    "terminal.integrated.commandsToSkipShell": [
+      "workbench.action.toggleSidebarVisibility",
+      "workbench.action.focusSideBar"
+    ],
+    "rust-analyzer.linkedProjects": [
+      "Cargo.toml",
+    ],
+    "scm.diffDecorationsGutterPattern": {
+      "added": true
+    },
+    "oneDarkPro.editorTheme": "One Dark Pro Flat",
+    "editor.wordWrap": "on",
+    "window.zoomLevel": 1,
+    "editor.fontSize": 16,
+    "debug.console.fontSize": 16
+}

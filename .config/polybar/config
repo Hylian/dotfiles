@@ -1,0 +1,465 @@
+;=====================================================
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/jaagr/polybar
+;
+;   The README contains alot of information
+;
+;=====================================================
+
+[colors]
+;background = #222
+background = #000
+background-alt = #444
+foreground = #dfdfdf
+foreground-alt = #555
+primary = #ffb52a
+secondary = #e60053
+blue = #1793d0
+alert = #bd2c40
+a = #288de0
+b = #2795C5
+c = #259CAA
+d = #259CAA
+e = #88BF93
+f = #EBE17B
+g = #F9C530
+h = #F2D356
+i = #F3912A
+j = #EC5D24
+k = #f93b31
+
+[bar/bar1]
+;monitor = ${env:MONITOR:}
+;monitor = HDMI-1-0
+;monitor = eDP-1
+monitor = eDP-1
+width = 100%
+height = 30
+;offset-x = 1%
+;offset-y = 80%
+radius = 0.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 0
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 2
+module-margin-right = 2
+
+font-0 = eHyperlegible:pixelsize=18;1
+;font-0 = Atkinson Hyperlegible:pixelsize=12
+;font-0 = AtkinsonMonolegible:style=Regular:fontformat=truetype:size=8:antialias=false
+;font-1 = eHyperlegible:pixelsize=12;1
+font-1 = Unifont:style=Sans-Serif:fontformat=truetype:size=8:antialias=false;0
+;font-1 = Unifont:pixelsize=1
+font-2 = Siji:pixelsize=14;1
+;font-3 = Font Awesome 5 Free,Font Awesome 5 Free Regular:style=Regular
+;font-3 = Font Awesome 5 Free,Font Awesome 5 Free Solid:style=Solid
+;font-4 = Font Awesome 5 Brands,Font Awesome 5 Brands Regular:style=Regular
+
+modules-left = i3 title
+modules-right = filesystem backlight memory cpu system-cpu-frequency system-cpu-governor wlan battery0 pulseaudio temperature time-utc date
+
+tray = right
+tray-position = right
+tray-padding = 2
+tray-transparent = false
+tray-background = #0063ff
+wm-restack = i3
+override-redirect = false
+
+[module/i3]
+type = internal/i3
+index-sort = true
+wrapping-scroll = false
+
+; Available tags:
+;   <label-state> (default) - gets replaced with <label-(focused|unfocused|visible|urgent)>
+;   <label-mode> (default)
+format = <label-state> <label-mode>
+
+; Available tokens:
+;   %mode%
+; Default: %mode%
+label-mode = %mode%
+label-mode-padding = 2
+label-mode-background = #e60053
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-focused = %index%
+label-focused-foreground = #ffffff
+label-focused-background = #3f3f3f
+label-focused-underline = #fba922
+label-focused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-unfocused = %index%
+label-unfocused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-visible = %index%
+label-visible-underline = #555555
+label-visible-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-urgent = %index%
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-padding = 4
+
+; Separator in between workspaces
+;label-separator = |
+;label-separator-padding = 0
+;label-separator-foreground = #ffb52a
+
+[module/title]
+type = internal/xwindow
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+format-mounted-underline = ${colors.a}
+
+mount-0 = /
+
+;label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
+label-mounted = %{F#555}%{F-} %percentage_used%%
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.foreground-alt}
+ramp-0 = ▁
+ramp-1 = ▂
+ramp-2 = ▃
+ramp-3 = ▄
+ramp-4 = ▅
+ramp-5 = ▆
+ramp-6 = ▇
+ramp-7 = █
+ramp-foreground = ${colors.foreground}
+
+[module/backlight]
+type = internal/backlight
+card = intel_backlight
+use-actual-brightness = true
+enable-scroll = false
+format-underline = ${colors.b}
+format =  <ramp>
+format-foreground = ${colors.foreground-alt}
+label = %percentage%%
+label-foreground = ${colors.foreground}
+
+[module/xbacklight]
+type = internal/xbacklight
+format-underline = ${colors.b}
+output = eDP-1
+enable-scroll = false
+
+;   <label> (default)
+;   <ramp>
+;   <bar>
+format =  <ramp>
+format-foreground = ${colors.foreground-alt}
+
+; Available tokens:
+;   %percentage% (default)
+label = %percentage%%
+label-foreground = ${colors.foreground}
+
+; Only applies if <ramp> is used
+ramp-0 = ▁
+ramp-1 = ▂
+ramp-2 = ▃
+ramp-3 = ▄
+ramp-4 = ▅
+ramp-5 = ▆
+ramp-6 = ▇
+ramp-7 = █
+ramp-foreground = ${colors.foreground}
+
+; Only applies if <bar> is used
+bar-width = 10
+bar-indicator = |
+bar-fill = ─
+bar-empty = ─
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+;sink = alsa_output.usb-FiiO_FiiO_USB_DAC-E07K-01.analog-stereo
+
+use-ui-max = false
+format-underline = ${colors.h}
+
+format-volume-underline = ${colors.h}
+
+interval = 5
+; Available tags:
+;   <label-volume> (default)
+;   <ramp-volume>
+;   <bar-volume>
+format-volume = <ramp-volume> <label-volume>
+
+; Available tags:
+;   <label-muted> (default)
+;   <ramp-volume>
+;   <bar-volume>
+format-muted = <label-muted> M
+
+; Available tokens:
+;   %percentage% (default)
+;label-volume = %percentage%%
+
+; Available tokens:
+;   %percentage% (default)
+label-muted = 
+label-muted-foreground = #666
+format-muted-underline = ${colors.h}
+
+; Only applies if <ramp-volume> is used
+ramp-volume-0 = 
+ramp-volume-0-foreground = ${colors.foreground-alt}
+ramp-volume-1 = 
+ramp-volume-1-foreground = ${colors.foreground-alt}
+ramp-volume-2 = 
+ramp-volume-2-foreground = ${colors.foreground-alt}
+
+click-right = pavucontrol
+
+[module/memory]
+type = internal/memory
+interval = 2
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.d}
+;label = %percentage_used%%
+label = %mb_used%
+
+[module/cpu]
+type = internal/cpu
+interval = 1
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.e}
+;label = %percentage%%
+label = 
+format = <label> <ramp-coreload>
+
+ramp-coreload-spacing = 1
+ramp-coreload-0 = ▁
+ramp-coreload-1 = ▂
+ramp-coreload-2 = ▃
+ramp-coreload-3 = ▄
+ramp-coreload-4 = ▅
+ramp-coreload-5 = ▆
+ramp-coreload-6 = ▇
+ramp-coreload-7 = █
+
+[module/system-cpu-frequency]
+type = custom/script
+exec = ~/.config/polybar/system-cpu-frequency.sh
+format-underline = ${colors.e}
+interval = 1
+label = %output:8:8%
+
+[module/system-cpu-governor]
+type = custom/script
+exec = ~/.config/polybar/system-cpu-governor.sh
+format-underline = ${colors.e}
+interval = 3
+
+[module/battery0]
+type = internal/battery
+battery = BAT0
+adapter = AC
+full-at = 99
+
+format-charging = <animation-charging> <label-charging>
+format-charging-underline = ${colors.g}
+
+format-discharging = <ramp-capacity> <label-discharging>
+format-discharging-underline = ${self.format-charging-underline}
+
+format-full-prefix = " "
+format-full-prefix-foreground = ${colors.foreground-alt}
+format-full-underline = ${self.format-charging-underline}
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-foreground = ${colors.foreground-alt}
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-foreground = ${colors.foreground-alt}
+animation-charging-framerate = 750
+
+[module/wlan]
+type = internal/network
+interface = wlp9s0
+interval = 6.0
+
+format-connected = <ramp-signal> <label-connected>
+format-connected-underline = ${colors.h}
+label-connected = %essid%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+ramp-signal-foreground = ${colors.foreground-alt}
+
+[module/temperature]
+type = internal/temperature
+thermal-zone = 10
+warn-temperature = 60
+
+;hwmon-path = /sys/class/thermal/thermal_zone0
+
+format = <ramp> <label>
+format-underline = ${colors.i}
+format-warn = <ramp> <label-warn>
+format-warn-underline = ${self.format-underline}
+
+label = %temperature%
+label-warn = %temperature%
+label-warn-foreground = ${colors.secondary}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-foreground = ${colors.foreground-alt}
+
+[module/time-utc]
+type = custom/script
+exec = TZ=UTC date +"UTC: %m.%d %H:%M" 
+format-underline = ${colors.j}
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+interval = 10
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = " %m.%d"
+date-alt = " %m.%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.k}
+
+label = Local: %date% %time%
+
+[module/powermenu]
+type = custom/menu
+
+format-spacing = 1
+
+;label-open = 
+label-open = 
+label-open-foreground = ${colors.blue}
+label-close =  cancel
+label-close-foreground = ${colors.secondary}
+label-separator = |
+label-separator-foreground = ${colors.foreground-alt}
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+[module/vpn-f5-status]
+type = custom/script
+exec = ~/.config/polybar/vpn-f5-status.sh
+interval = 5
+click-left = ~/.config/polybar/vpn-f5-onclick.sh
+format-prefix = "  "
+format-underline = ${colors.a}
+format-prefix-foreground = ${colors.foreground-alt}
+
+[module/vpn]
+type = custom/script
+
+; Available tokens:
+;   %counter%
+; Command to be executed (using "/usr/bin/env sh -c [command]")
+exec = /home/eshin/.config/polybar/vpnstatus.sh
+
+; Conditional command that, if defined, needs to exit successfully
+; before the main exec command is invoked.
+; Default: ""
+;exec-if = pgrep -x myservice
+
+; Will the script output continous content?
+; Default: false
+tail = false
+
+; Seconds to sleep between updates
+; Default: 5 (0 if `tail = true`)
+interval = 5
+
+;format-prefix = "  "
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini

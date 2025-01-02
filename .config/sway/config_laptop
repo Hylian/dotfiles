@@ -1,0 +1,300 @@
+input type:keyboard {
+    repeat_delay 240
+    repeat_rate 50
+    xkb_options ctrl:nocaps
+}
+
+input type:mouse {
+  scroll_factor 0.5
+}
+
+input "1452:782:Michael_Solomon___s_Trackpad" {
+  scroll_factor 0.5
+  accel_profile "adaptive"
+  pointer_accel 0.3
+  natural_scroll "enabled"
+  tap "enabled"
+  drag "enabled"
+}
+
+input "76:613:Apple_Inc._Magic_Trackpad_2" {
+  scroll_factor 1.0
+  accel_profile "adaptive"
+  pointer_accel 0.44
+  natural_scroll "enabled"
+  tap "enabled"
+}
+
+input "1452:613:Apple_Inc._Magic_Trackpad" {
+  scroll_factor 1.0
+  accel_profile "adaptive"
+  pointer_accel 0.44
+  natural_scroll "enabled"
+  tap "enabled"
+}
+
+# Shuttlexpress
+input "0:0:Shuttle_Emulated_Keyboard" {
+  scroll_factor 0.1
+}
+
+# Thinkpad Trackpoint
+input "2:10:TPPS/2_Elan_TrackPoint" {
+  accel_profile "flat"
+  pointer_accel 0.4
+  scroll_factor 0.5
+}
+
+input "1267:12695:ELAN067A:00_04F3:3197_Touchpad" {
+  accel_profile "adaptive"
+  pointer_accel 0.5
+  scroll_factor 0.56
+  accel_profile "adaptive"
+  natural_scroll "enabled"
+  tap "enabled"
+}
+
+input "21298:5120:Clearly_Superior_Technologies._CST_Laser_Trackball" {
+  accel_profile "flat"
+  pointer_accel 0.35
+  scroll_factor 0.3
+}
+
+# Ergodox Infinity
+input "65261:24672:qmkbuilder_keyboard" {
+  scroll_factor 1
+}
+
+input "1149:32793:ExpertBT5.0_Mouse" {
+  scroll_factor 0.3
+}
+
+input "19788:6:Neoknob_KN01_Mouse" {
+  scroll_factor 0.7
+}
+
+blur enable
+blur_xray disable
+blur_passes 4
+blur_radius 2
+
+corner_radius 14
+
+shadows enable
+shadows_on_csd enable
+shadow_blur_radius 15
+shadow_color #00001010
+
+layer_effects "notifications" blur enable; blur_ignore_transparent disable; shadows enable; corner_radius 20
+
+
+output * background #c1e0e3 solid_color
+#output eDP-1 background #a6b0a0 solid_color
+output eDP-1 bg ~/wallpapers/nasa.jpg fill
+#output "Dell Inc. DELL U2723QE 7S2KXN3" background #284544 solid_color
+#output "Dell Inc. DELL U2723QE 7S2KXN3" background #000000 solid_color
+output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/wallpapers/pier.jpg fill
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" background #000000 solid_color
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/wallpapers/nasa.jpg fill
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
+output "Lenovo Group Limited LEN T32p-20 VNA7645L" background #000000 solid_color
+output "Nreal nreal air 0x00008800" background #000000 solid_color
+output "XXX AAA" background #f3f5d9 solid_color
+output HDMI-A-1 background #efefff solid_color
+#output DP-1 background #ffffff solid_color
+
+# Colors
+# class                 border  backgr. text    indicator child_border
+client.focused           #FACE48 #8da101 #fffbef #2e9ef4   #4c7899
+client.focused_inactive  #333333 #fffbef #5c6a72 #484e50   #5f676a
+client.focused_tab_title #333333 #fffbef #5c6a72 #484e50   #5f676a
+client.unfocused         #333333 #fffbef #5c6a72 #484e50   #5f676a
+client.urgent            #2f343a #900000 #ffffff #900000   #900000
+client.placeholder       #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.background        #ffffff
+
+for_window {
+  [class=".*"] {
+    border pixel 0
+  }
+
+  [title="ssh-askpass"] {
+    floating enable
+  }
+
+  [app_id="Plexamp"] {
+    move container to scratchpad, scratchpad show
+    resize set 1000 800
+  }
+
+  [shell="^((?!xdg_shell).)*$"] {
+    title_format "%shell :: %title"
+  }
+}
+
+set $mod Mod4
+
+floating_modifier $mod
+
+bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/open_plexamp.sh; [app_id="Plexamp"] scratchpad show, resize set 1000 800, move position center
+
+default_border none
+default_floating_border none
+font pango:Sys 10
+
+gaps inner 5
+gaps inner 3
+smart_gaps off
+smart_borders on
+hide_edge_borders both
+focus_follows_mouse yes
+
+titlebar_border_thickness 0
+titlebar_padding 20 8
+
+bindsym $mod+Return exec "foot -D $HOME"
+#bindsym $mod+space exec "foot zsh -c '~/dotfiles/scripts/ssh/cloudtop.sh'"
+bindsym $mod+space exec "foot zsh -c '~/dotfiles/scripts/ssh/desktop.sh'"
+bindsym $mod+Control+space exec "foot zsh -c '~/dotfiles/scripts/ssh/desktop.sh'"
+bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-esr --allow-downgrade"
+bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
+bindsym $mod+g exec "nautilus -w"
+bindsym $mod+Control+s exec "grimshot copy area"
+bindsym $mod+Control+Shift+s exec "grimshot save area"
+
+bindsym $mod+d kill
+
+set $drun tofi-drun | xargs swaymsg exec --
+bindsym $mod+t exec $drun
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+Control+h focus output left
+bindsym $mod+Control+j focus output down
+bindsym $mod+Control+k focus output up
+bindsym $mod+Control+l focus output right
+
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+mod1+h move workspace to output left
+bindsym $mod+mod1+j move workspace to output down
+bindsym $mod+mod1+k move workspace to output up
+bindsym $mod+mod1+l move workspace to output right
+
+bindsym $mod+b split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+a focus parent
+bindsym $mod+z focus child
+
+#set $sov-on  exec "echo 1 > $XDG_RUNTIME_DIR/sov.sock"
+#set $sov-off exec "echo 0 > $XDG_RUNTIME_DIR/sov.sock"
+
+bindsym --no-repeat $mod+1 workspace 1; $sov-on 
+bindsym --no-repeat $mod+2 workspace 2; $sov-on  
+bindsym --no-repeat $mod+3 workspace 3; $sov-on  
+bindsym --no-repeat $mod+4 workspace 4; $sov-on  
+bindsym --no-repeat $mod+5 workspace 5; $sov-on  
+bindsym --no-repeat $mod+6 workspace 6; $sov-on  
+bindsym --no-repeat $mod+7 workspace 7; $sov-on  
+bindsym --no-repeat $mod+8 workspace 8; $sov-on  
+bindsym --no-repeat $mod+9 workspace 9; $sov-on  
+bindsym --no-repeat $mod+0 workspace 10; $sov-on
+
+bindsym --release $mod+1 $sov-off 
+bindsym --release $mod+2 $sov-off 
+bindsym --release $mod+3 $sov-off 
+bindsym --release $mod+4 $sov-off 
+bindsym --release $mod+5 $sov-off 
+bindsym --release $mod+6 $sov-off 
+bindsym --release $mod+7 $sov-off 
+bindsym --release $mod+8 $sov-off 
+bindsym --release $mod+9 $sov-off 
+bindsym --release $mod+0 $sov-off 
+
+bindsym --no-repeat $mod+Left workspace prev_on_output; $sov-on
+bindsym --release   $mod+Left $sov-off
+bindsym --no-repeat $mod+Right workspace next_on_output; $sov-on
+bindsym --release   $mod+Right $sov-off
+
+bindsym --no-repeat $mod+Tab workspace back_and_forth; $sov-on
+bindsym --release $mod+Tab $sov-off
+bindsym --no-repeat $mod+Shift+grave workspace back_and_forth; $sov-on
+bindsym --release $mod+Shift+grave $sov-off
+
+bindsym --no-repeat $mod+Shift+1 move container to workspace 1; $sov-on
+bindsym --release $mod+Shift+1 $sov-off
+bindsym --no-repeat $mod+Shift+2 move container to workspace 2; $sov-on
+bindsym --release $mod+Shift+2 $sov-off
+bindsym --no-repeat $mod+Shift+3 move container to workspace 3; $sov-on
+bindsym --release $mod+Shift+3 $sov-off
+bindsym --no-repeat $mod+Shift+4 move container to workspace 4; $sov-on
+bindsym --release $mod+Shift+4 $sov-off
+bindsym --no-repeat $mod+Shift+5 move container to workspace 5; $sov-on
+bindsym --release $mod+Shift+5 $sov-off
+bindsym --no-repeat $mod+Shift+6 move container to workspace 6; $sov-on
+bindsym --release $mod+Shift+6 $sov-off
+bindsym --no-repeat $mod+Shift+7 move container to workspace 7; $sov-on
+bindsym --release $mod+Shift+7 $sov-off
+bindsym --no-repeat $mod+Shift+8 move container to workspace 8; $sov-on
+bindsym --release $mod+Shift+8 $sov-off
+bindsym --no-repeat $mod+Shift+9 move container to workspace 9; $sov-on
+bindsym --release $mod+Shift+9 $sov-off
+bindsym --no-repeat $mod+Shift+0 move container to workspace 10; $sov-on
+bindsym --release $mod+Shift+0 $sov-off
+bindsym $mod+Shift+bracketleft move scratchpad
+bindsym $mod+bracketleft scratchpad show
+bindsym $mod+Shift+f floating toggle
+
+bindsym $mod+Control+Shift+l exec swaylock
+bindsym $mod+c exec pkill -SIGHUP kanshi
+bindsym $mod+Shift+c reload
+
+mode "resize" {
+  bindsym h resize shrink width 10 px or 10 ppt
+  bindsym j resize grow height 10 px or 10 ppt
+  bindsym k resize shrink height 10 px or 10 ppt
+  bindsym l resize grow width 10 px or 10 ppt
+
+  bindsym Left resize shrink width 10 px or 10 ppt
+  bindsym Down resize grow height 10 px or 10 ppt
+  bindsym Up resize shrink height 10 px or 10 ppt
+  bindsym Right resize grow width 10 px or 10 ppt
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+bindsym XF86AudioRaiseVolume exec $HOME/dotfiles/scripts/change_volume.sh 5%+
+bindsym XF86AudioLowerVolume exec $HOME/dotfiles/scripts/change_volume.sh 5%-
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86AudioPlay exec playerctl play-pause
+
+bar swaybar_command waybar
+
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway XDG_SESSION_DESKTOP=sway
+#exec /home/shined/scripts/inactive-windows-transparency.py --opacity 0.85
+exec wl-paste -t text --watch clipman store --no-persist
+#exec_always pkill sov && rm -f /tmp/sovpipe && mkfifo /tmp/sovpipe && tail -f /tmp/sovpipe | sov -t 0 -a b -r 6 -m 30 -c 4
+exec_always "pkill blueman-applet; blueman-applet"
+exec_always "pkill sway-opacity; $HOME/.cargo/bin/sway-opacity --opacity 0.9"
+exec_always "pkill wl-gammarelay; wl-gammarelay"
+exec_always "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK"
+exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 7500"
+exec_always "systemctl --user restart kanshi.service"

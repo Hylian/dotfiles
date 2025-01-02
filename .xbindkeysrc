@@ -1,0 +1,12 @@
+"xbacklight -dec 10" 
+    XF86MonBrightnessDown
+"xbacklight -inc 10" 
+    XF86MonBrightnessUp
+"pactl set-sink-mute @DEFAULT_SINK@ false; pactl set-sink-volume @DEFAULT_SINK@ +5%"
+    XF86AudioRaiseVolume
+"pactl set-sink-mute @DEFAULT_SINK@ false; pactl set-sink-volume @DEFAULT_SINK@ -5%"
+    XF86AudioLowerVolume
+"pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    XF86AudioMute
+"scrot -e 'mv $f ~/screenshots/'"
+    Shift + Print
