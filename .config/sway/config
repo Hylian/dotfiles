@@ -68,10 +68,18 @@ input "1452:613:Apple_Inc._Magic_Trackpad_2" {
   tap disabled
 }
 
+input "76:613:Apple_Inc._Magic_Trackpad_2" {
+  accel_profile "adaptive"
+  scroll_factor 0.8
+  pointer_accel 0.6
+  natural_scroll enabled
+  tap disabled
+}
+
 
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
-output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" background #000000 solid_color
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/sakeharasu_cropped.png fill
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/bluevignette.png fill
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none
@@ -83,10 +91,12 @@ output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/Wallpapers/nijikafill.png fit
 output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb
 output "Dell Inc. DELL U2723QE 7S2KXN3" max_render_time 16
 
-output "LG Electronics LG Ultra HD 0x00001DB9" bg ~/Wallpapers/21_yanagi_kouji.jpg fill
+#output "LG Electronics LG Ultra HD 0x00001DB9" bg ~/Wallpapers/21_yanagi_kouji.jpg fill
+output "LG Electronics LG Ultra HD 0x00001DB9" bg ~/Wallpapers/nijika_blue.png fill
 output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr
 output "LG Electronics LG Ultra HD 0x00001DB9" max_render_time 16
 output "Nreal Air 0x00006600" background #000000 solid_color
+output HDMI-A-1 background #000000 solid_color
 #output HEADLESS-1 mode 1404x1872
 
 blur enable
@@ -94,7 +104,7 @@ blur_xray disable
 blur_passes 2
 blur_radius 10
 
-corner_radius 18
+corner_radius 8
 
 shadows enable
 shadows_on_csd enable
@@ -106,14 +116,14 @@ layer_effects 'launcher' 'blur enable; shadows enable; corner_radius 20'
 
 # Colors
 # class                  border    backgr.   text     indicator child_border
-client.focused           #93b259c0 #8da101c0 #fffbef  #93b259c0 #93b259c0
+client.focused           #93b259c0 #8da101c0 #fffbef  #93b259c0 #93b25990
 client.focused_inactive  #93b259c0 #fffbefc0 #5c6a72  #5f676a00 #5f676a00
 client.unfocused         #00000000 #fffbefc0 #5c6a72  #484e5000 #5f676a00
 client.background        #ffffff
 
 for_window {
   [class=".*"] {
-    border pixel 2
+    border pixel 3
   }
 
   [title="(Save As|File Upload)" app_id="firefox-nightly"] {
@@ -129,6 +139,10 @@ for_window {
     resize set 1200 1000
   }
 
+  [app_id="kicad"] {
+    floating enable
+  }
+
   [title=".*YouTube.*"] {
     opacity set 1.0
   }
@@ -139,6 +153,16 @@ for_window {
 
   [app_id="pix"] {
     max_render_time 20
+  }
+
+  [app_id="discord"] {
+    move container to workspace 9
+    workspace 9
+  }
+
+  [class="Signal"] {
+    move container to workspace 9
+    workspace 9
   }
 
   [app_id="Plexamp"] {
@@ -203,14 +227,26 @@ bindgesture swipe:4:right [con_id=__focused__] move right, focus
 bindgesture swipe:4:up [con_id=__focused__] move up, focus
 bindgesture swipe:4:down [con_id=__focused__] move down, focus
 
+#bindgesture pinch:inward+upresize shrink
+bindgesture pinch:inward+up resize shrink height
+bindgesture pinch:outward+up resize grow height
+bindgesture pinch:inward+down resize shrink height
+bindgesture pinch:outward+down resize grow height
+bindgesture pinch:inward+left resize shrink width
+bindgesture pinch:outward+left resize grow width
+bindgesture pinch:inward+right resize shrink width
+bindgesture pinch:outward+right resize grow width
+
 bindsym $mod+Shift+e exit
 
-bindsym $mod+Return exec "foot -D $HOME"
+bindsym $mod+Return exec "ghostty"
+#bindsym $mod+Return exec "foot -D $HOME"
 #bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
-bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
+#bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
+bindsym $mod+q exec "gio launch ~/.local/share/applications/brave-browser.desktop"
 bindsym $mod+p exec "1password --quick-access"
 bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
-bindsym $mod+g exec "nemo"
+bindsym $mod+g exec "dolphin"
 
 bindsym $mod+Ctrl+s exec "grimshot copy area"
 bindsym $mod+Ctrl+Shift+s exec "grimshot save area ~/Screenshots"
@@ -263,7 +299,7 @@ workspace 6 output DP-1
 workspace 7 output DP-2
 workspace 8 output DP-2
 workspace 9 output DP-2
-workspace 0 output DP-2
+workspace 10 output DP-2
 
 bindsym --no-repeat $mod+1 workspace 1
 bindsym --no-repeat $mod+2 workspace 2
@@ -333,26 +369,27 @@ bar swaybar_command waybar
 
 set $gnome-schema org.gnome.desktop.interface
 
-exec_always {
-  gsettings set $gnome-schema gtk-theme 'Catppuccin-Frappe-Standard-Blue-dark'
-  gsettings set $gnome-schema font-name 'Sys'
-}
+#exec_always {
+#gsettings set $gnome-schema gtk-theme 'Catppuccin-Frappe-Standard-Blue-dark'
+#gsettings set $gnome-schema font-name 'Sys'
+#}
 
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 exec wl-paste -t text --watch clipman store --no-persist
 exec blueman-applet
 exec udiskie --tray
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec "swayidle"
 exec_always "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 #exec_always "pkill wl-gammarelay; wl-gammarelay"
 exec_always "pkill sway-opacity; sway-opacity --opacity 0.94"
 #exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
 exec_always "systemctl --user restart kanshi.service"
 
-set $gnome-schema org.gnome.desktop.interface
-exec_always {
-    gsettings set $gnome-schema gtk-theme 'Everforest-Dark-Borderless'
-    gsettings set $gnome-schema icon-theme 'Everforest-Dark'
+#set $gnome-schema org.gnome.desktop.interface
+#exec_always {
+#gsettings set $gnome-schema gtk-theme 'Everforest-Dark-Borderless'
+#gsettings set $gnome-schema icon-theme 'Everforest-Dark'
     #gsettings set $gnome-schema cursor-theme 'Your cursor Theme'
     #gsettings set $gnome-schema font-name 'Your font name'
-}
+#}
