@@ -67,8 +67,7 @@ return {
   { 'chrisgrieser/nvim-spider' },
   { 'declancm/maximize.nvim', lazy = true, config = true },
   {
-  --  "olimorris/codecompanion.nvim",
-    dir = "~/software/codecompanion.nvim",
+    "olimorris/codecompanion.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",

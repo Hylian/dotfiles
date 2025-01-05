@@ -1,0 +1,4 @@
+alias imv-date='exa -L 0 -f --oneline --reverse --sort=modified | imv'
+alias imv-random='fd -t f -d 1 | shuf | imv'
+alias disp-rotate='swaymsg output DP-2 transform 270'
+alias disp-normal='swaymsg output DP-2 transform 0'
