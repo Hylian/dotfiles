@@ -1,6 +1,6 @@
 [global]
-monitor = 0
-origin = bottom-left
+monitor = DP-2
+origin = bottom-right
 follow = none
 width = 240
 offset = 4x4
@@ -18,9 +18,6 @@ text_icon_padding = 0
 format = "<b>%s</b>\n\n%b"
 vertical_alignment = top
 alignment = left
-sticky_history = no
-timeout = 10
-override_dbus_timeout = 10
 
 corner_radius = 0
 frame_width = 0
@@ -29,10 +26,10 @@ background = "#fffbefa0"
 foreground = "#5c6a72f0"
 
 [urgency_low]
-timeout = 5
+timeout = 1
 
 [urgency_normal]
-timeout = 10
+timeout = 2
 
 [urgency_critical]
-timeout = 20
+timeout = 10
