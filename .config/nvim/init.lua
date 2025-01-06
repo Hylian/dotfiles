@@ -79,55 +79,57 @@ function tmux_copy(reg)
   end
 end
 
-if os.getenv("TMUX") ~= nil then
-  vim.cmd(
-    "let g:clipboard = {" ..
-       "'name': 'Tmux Clipboard'," ..
-       "'copy': {" ..
-          "'+': ['tmux', 'load-buffer', '-w', '-']," ..
-          "'*': ['tmux', 'load-buffer', '-']," ..
-        "}," ..
-       "'paste': {" ..
-          "'+': ['tmux', 'save-buffer', '-']," ..
-          "'*': ['tmux', 'save-buffer', '-']," ..
-       "}," ..
-       "'cache_enabled': 1," ..
-    "}")
-elseif os.getenv("ZELLIJ") ~= nil then
-  vim.cmd(
-    "let g:clipboard = {" ..
-       "'name': 'Zellij Clipboard'," ..
-       "'copy': {" ..
-          "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
-          "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
-        "}," ..
-       "'paste': {" ..
-          "'+': ['wl-paste', '-n']," ..
-          "'*': ['wl-paste', '-n']," ..
-       "}," ..
-       "'cache_enabled': 1," ..
-    "}")
-  vim.api.nvim_create_autocmd('TextYankPost', {
-    callback = function()
-        local copy_to_unnamedplus = require('vim.ui.clipboard.osc52').copy('+')
-        copy_to_unnamedplus(vim.v.event.regcontents)
-        local copy_to_unnamed = require('vim.ui.clipboard.osc52').copy('*')
-        copy_to_unnamed(vim.v.event.regcontents)
+if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
+  if os.getenv("TMUX") ~= nil then
+    vim.cmd(
+      "let g:clipboard = {" ..
+         "'name': 'Tmux Clipboard'," ..
+         "'copy': {" ..
+            "'+': ['tmux', 'load-buffer', '-w', '-']," ..
+            "'*': ['tmux', 'load-buffer', '-']," ..
+          "}," ..
+         "'paste': {" ..
+            "'+': ['tmux', 'save-buffer', '-']," ..
+            "'*': ['tmux', 'save-buffer', '-']," ..
+         "}," ..
+         "'cache_enabled': 1," ..
+      "}")
+  elseif os.getenv("ZELLIJ") ~= nil then
+    vim.cmd(
+      "let g:clipboard = {" ..
+         "'name': 'Zellij Clipboard'," ..
+         "'copy': {" ..
+            "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
+            "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
+          "}," ..
+         "'paste': {" ..
+            "'+': ['wl-paste', '-n']," ..
+            "'*': ['wl-paste', '-n']," ..
+         "}," ..
+         "'cache_enabled': 1," ..
+      "}")
+    vim.api.nvim_create_autocmd('TextYankPost', {
+      callback = function()
+          local copy_to_unnamedplus = require('vim.ui.clipboard.osc52').copy('+')
+          copy_to_unnamedplus(vim.v.event.regcontents)
+          local copy_to_unnamed = require('vim.ui.clipboard.osc52').copy('*')
+          copy_to_unnamed(vim.v.event.regcontents)
+      end
+    })
+  else
+    if pcall(require, 'vim.ui.clipboard.osc52') then
+      vim.g.clipboard = {
+        name = 'OSC 52',
+        copy = {
+          ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+          ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+        },
+        paste = {
+          ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+          ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+        },
+      }
     end
-  })
-else
-  if pcall(require, 'vim.ui.clipboard.osc52') then
-    vim.g.clipboard = {
-      name = 'OSC 52',
-      copy = {
-        ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-        ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-      },
-      paste = {
-        ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-        ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-      },
-    }
   end
 end
 
