@@ -30,8 +30,8 @@ palette = 14=#85e6c1
 palette = 16=#fdffe8
 
 # Layout
-window-padding-x = 6
-window-padding-y = 8
+window-padding-x = 8
+window-padding-y = 6
 window-padding-balance = true
 resize-overlay = never
 
