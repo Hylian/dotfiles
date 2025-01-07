@@ -344,11 +344,6 @@ cmp.setup({
         and not context.in_syntax_group("Comment")
     end
   end,
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
   view = {
     entries = {name = 'custom', selection_order = 'near_cursor' }
   },
@@ -377,8 +372,6 @@ cmp.setup({
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
-      elseif luasnip.locally_jumpable(1) then
-        luasnip.jump(1)
       else
         fallback()
       end
@@ -400,7 +393,6 @@ cmp.setup({
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
-    { name = 'luasnip' },
     --{ name = 'rg' },
   }, {
     { name = 'buffer' },
