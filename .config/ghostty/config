@@ -27,7 +27,8 @@ palette = 11=#f2cd6d
 palette = 12=#8fcff2
 palette = 13=#f7c1e6
 palette = 14=#85e6c1
-palette = 16=#fdffe8
+#palette = 16=#fdffe8
+palette = 16=#c9cd97
 
 # Layout
 window-padding-x = 8
@@ -37,7 +38,6 @@ resize-overlay = never
 
 # Cursor
 cursor-click-to-move = true
-mouse-hide-while-typing = true
 
 # Fancy
 background-opacity = 0.99
@@ -55,3 +55,15 @@ quit-after-last-window-closed = false
 quit-after-last-window-closed-delay = 10m
 window-save-state = never
 gtk-single-instance = true
+
+# Keybindings
+keybind = alt+1=unbind
+keybind = alt+2=unbind
+keybind = alt+3=unbind
+keybind = alt+4=unbind
+keybind = alt+5=unbind
+keybind = alt+6=unbind
+keybind = alt+7=unbind
+keybind = alt+8=unbind
+keybind = alt+9=unbind
+keybind = alt+0=unbind
