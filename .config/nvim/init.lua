@@ -1,7 +1,5 @@
 require("keybindings")
-
 require("config.lazy")
-require("lazy").setup("plugins")
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -48,7 +46,7 @@ vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.background = 'light'
-vim.opt.scrolloff = 2
+vim.opt.scrolloff = 4
 vim.o.showtabline = 2
 
 vim.cmd('highlight LineNr ctermfg=blue')
@@ -133,15 +131,7 @@ if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
   end
 end
 
---function UpdateWaylandDisplay()
---  if !empty($ZELLIJ) && !empty($SSH_TTY)
---    let $WAYLAND_DISPLAY = readfile("/tmp/wayland_display", 1)[0]
---    print($WAYLAND_DISPLAY)
---  endif
---endfunction
-
 local function update_wayland_display()
-  print('hi')
   --if os.getenv("ZELLIJ") ~= nil and os.getenv("SSH_TTY") ~= nil then
   if vim.env.ZELLIJ ~= nil then
     local file = io.open("/tmp/wayland_display", "r")
@@ -150,7 +140,7 @@ local function update_wayland_display()
       file:close()
       if wayland_display then
         vim.env.WAYLAND_DISPLAY = wayland_display
-        print(wayland_display)
+        --print(wayland_display)
       end
     else
       -- Handle the case where the file can't be opened.
@@ -223,7 +213,7 @@ require'nvim-treesitter.configs'.setup {
 require('treesitter-context').setup{
   enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
-  min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+  min_window_height = 20, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
   line_numbers = true,
   multiline_threshold = 20, -- Maximum number of lines to show for a single context
   trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
@@ -559,7 +549,8 @@ require("codecompanion").setup({
       return require("codecompanion.adapters").extend("gemini", {
         schema = {
           model = {
-            default = "gemini-exp-1206",
+            --default = "gemini-2.0-flash-exp",
+            default = "gemini-1.5-pro"
           },
         },
         env = {

@@ -27,6 +27,7 @@ map('n', '<A-8>',         "<cmd>lua vim.fn.system('zellij action go-to-tab 8')<C
 map('n', '<A-9>',         "<cmd>lua vim.fn.system('zellij action go-to-tab 9')<CR>")
 map('n', '<A-0>',         "<cmd>lua vim.fn.system('zellij action go-to-tab 10')<CR>")
 map('n', '<A-s>',         ":ZellijNewPaneVSplit<CR>")
+--map('n', '<A-s>',         "<cmd>lua vim.fn.system('zellij action new-pane --cwd '..vim.fn.getcwd())<CR>")
 map('n', '<A-n>',         ":ZellijNewTab<CR>")
 map('n', '<A-f>',         "<cmd>lua vim.fn.system('zellij action toggle-fullscreen')<CR>")
 map('n', '<A-S-s>',       "<cmd>lua require('focus').split_nicely()<CR>")
@@ -49,8 +50,8 @@ map('n', '}',             ":CodeCompanionChat Toggle<CR>")
 map('v', '}',             ":CodeCompanionChat Toggle<CR>")
 map('v', 'ga',            "<cmd>CodeCompanionChat Add<cr>")
 
-map('n', '<C-p>',     "o<ESC>p", {noremap = true, silent = true})
-map('n', '<C-S-p>',   "O<ESC>p", {noremap = true, silent = true})
+map('n', '<C-p>',     ":set paste<CR>o<ESC>p:set nopaste<CR>", {noremap = true, silent = true})
+map('n', '<C-S-p>',   ":set paste<>O<ESC>p:set nopaste<CR>", {noremap = true, silent = true})
 map('n', '<CR>',      ":noh<CR><CR>", {noremap = true})
 map('n', 'gd',        "<cmd>lua require('fzf-lua').lsp_definitions()<CR>")
 map('n', 'gr',        "<cmd>lua require('fzf-lua').lsp_references()<CR>")
@@ -73,7 +74,10 @@ map('n', '>',      ">>", {noremap = true})
 map('v', '<',      "<gv", {noremap = true})
 map('v', '>',      ">gv", {noremap = true})
 
-map('i', '',  "<C-W>")
+map('i', '', '<C-W>')
+map('i', '<C-Del>', '<C-o>dw')
+
+map('n', 'yp', '<cmd>lua vim.fn.setreg("\\\"", vim.fn.expand("%:p:h"))<CR>')
 
 vim.keymap.set(
 	{ "n" },
