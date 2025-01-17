@@ -6,8 +6,8 @@ local function map(mode, combo, mapping, opts)
   vim.api.nvim_set_keymap(mode, combo, mapping, options)
 end
 
-vim.g.mapleader = ';' -- change the <leader> key to be comma
-vim.g.maplocalleader = ";;"
+vim.g.mapleader = ';'
+vim.g.maplocalleader = ';;'
 
 -- Zellij-related Bindings
 map('n', '<A-h>',         ":ZellijNavigateLeft<CR>")
@@ -59,9 +59,20 @@ map('n', ']',         "<cmd>lua require('fzf-lua').lsp_finder()<CR>")
 map('n', '{',         "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>")
 map('n', '|',         "<cmd>lua require('fzf-lua').oldfiles()<CR>")
 map('n', '_',         "<cmd>lua require('fzf-lua').files()<CR>")
-map('n', '\'',        "<cmd>lua require('fzf-lua').grep_curbuf()<CR>")
-map('n', '\"',        "<cmd>lua require('fzf-lua').grep_project()<CR>")
-map('n', '<C-\'>',    "<cmd>lua require('fzf-lua').grep_cword()<CR>")
+--map('n', '\'',        "<cmd>lua require('fzf-lua').grep_curbuf()<CR>")
+--map('n', '\"',        "<cmd>lua require('fzf-lua').grep_project()<CR>")
+--map('n', '<C-\'>',    "<cmd>lua require('fzf-lua').grep_cword()<CR>")
+
+-- grug-far.nvim bindings
+-- current cursor word, current file
+map('n', '\'', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")
+-- current visual selection, current file
+map('v', '\'', "<cmd>lua require('grug-far').with_visual_selection({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")
+-- current cursor word
+map('n', '\"', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>') } })<CR>")
+-- current visual selection
+map('v', '\"', "<cmd>lua require('grug-far').with_visual_selection()<CR>")
+
 map('n', '[',         "<cmd>:ClangdSwitchSourceHeader<CR>")
 map('n', '<TAB>',     "<cmd>:ToggleDiag<CR>")
 map('n', '.',   "ms*")

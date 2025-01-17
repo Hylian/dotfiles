@@ -423,11 +423,11 @@ require('mason').setup({
 
 -- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
---require('lspconfig').clangd.setup{}
-require('lspconfig').clangd.setup{
-  capabilities = capabilities,
-  cmd = { "/usr/local/google/home/shined/pigweed/environment/cipd/packages/pigweed/bin/clangd", "--compile-commands-dir=/usr/local/google/home/shined/pigweed/.pw_ide/.stable", "--background-index", "--clang-tidy", "--query-driver=/usr/local/google/home/shined/pigweed/environment/cipd/packages/pigweed/bin/*,/usr/local/google/home/shined/pigweed/environment/cipd/packages/arm/bin/*"}
-}
+require('lspconfig').clangd.setup{}
+--require('lspconfig').clangd.setup{
+--  capabilities = capabilities,
+--  cmd = { "/usr/local/google/home/shined/pigweed/environment/cipd/packages/pigweed/bin/clangd", "--compile-commands-dir=/usr/local/google/home/shined/pigweed/.pw_ide/.stable", "--background-index", "--clang-tidy", "--query-driver=/usr/local/google/home/shined/pigweed/environment/cipd/packages/pigweed/bin/*,/usr/local/google/home/shined/pigweed/environment/cipd/packages/arm/bin/*"}
+--}
 
 local theme = {
   fill = 'TabLineFill',
@@ -556,13 +556,13 @@ require("codecompanion").setup({
         env = {
           api_key = "cmd:cat ~/.gemini",
         },
-        --handlers = {
-        --  form_parameters = function(self, params, messages)
-        --    return {
-        --      tools = {google_search = {}}
-        --    }
-        --  end,
-        --}
+        handlers = {
+          form_parameters = function(self, params, messages)
+            return {
+              tools = {google_search = {}}
+            }
+          end,
+        }
       })
     end,
   },
@@ -577,7 +577,7 @@ require("focus").setup({
         enable = true, -- Enable or disable auto-resizing of splits
         width = 0, -- Force width for the focused window
         height = 0, -- Force height for the focused window
-        minwidth = 20, -- Force minimum width for the unfocused window
+        minwidth = 40, -- Force minimum width for the unfocused window
         minheight = 0, -- Force minimum height for the unfocused window
         height_quickfix = 10, -- Set the height of quickfix panel
     },
@@ -591,7 +591,7 @@ require("focus").setup({
         hybridnumber = false, -- Display hybrid line numbers in the focussed window only
         absolutenumber_unfocussed = false, -- Preserve absolute numbers in the unfocussed windows
 
-        cursorline = false, -- Display a cursorline in the focussed window only
+        cursorline = true, -- Display a cursorline in the focussed window only
         cursorcolumn = false, -- Display cursorcolumn in the focussed window only
         colorcolumn = {
             enable = false, -- Display colorcolumn in the foccused window only
