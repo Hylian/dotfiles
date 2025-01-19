@@ -5,7 +5,7 @@ after-startup-command = [
   'exec-and-forget sketchybar'
 ]
 
-exec-on-workspace-change = ['/bin/bash', '-c',
+exec-on-workspace-change = ['/bin/dash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
 ]
 
@@ -31,7 +31,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # All possible modifiers: cmd, alt, ctrl, shift
 
 [mode.main.binding]
-cmd-enter = 'exec-and-forget open -n /Applications/kitty.app --args -1'
+cmd-enter = 'exec-and-forget open -n /Applications/Ghostty.app'
 cmd-shift-q = 'exec-and-forget open -n /Applications/Firefox\ Nightly.app'
 
 # i3 wraps focus by default
@@ -45,8 +45,8 @@ cmd-shift-j = 'move down'
 cmd-shift-k = 'move up'
 cmd-shift-l = 'move right'
 
-cmd-left = 'exec-and-forget /bin/bash -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev"'
-cmd-right = 'exec-and-forget /bin/bash -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace next"'
+cmd-left = 'exec-and-forget /bin/dash -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev"'
+cmd-right = 'exec-and-forget /bin/dash -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace next"'
 
 cmd-shift-f = 'fullscreen'
 
