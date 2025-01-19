@@ -32,7 +32,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 [mode.main.binding]
 cmd-enter = 'exec-and-forget open -n /Applications/Ghostty.app'
-cmd-shift-q = 'exec-and-forget open -n /Applications/Firefox\ Nightly.app'
+cmd-shift-q = 'exec-and-forget open -n /Applications/Brave\ Browser.app'
 
 # i3 wraps focus by default
 cmd-h = 'focus --boundaries-action wrap-around-the-workspace left'
