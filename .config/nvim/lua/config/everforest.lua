@@ -35,3 +35,5 @@ require("everforest").setup({
     hl.TabLineCurrent = { fg = palette.green, bg = palette.none, sp = palette.red }
   end,
 })
+
+require('everforest').load()
