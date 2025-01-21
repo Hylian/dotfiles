@@ -76,8 +76,8 @@ if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
             "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
           "}," ..
          "'paste': {" ..
-            "'+': ['wl-paste', '-n']," ..
-            "'*': ['wl-paste', '-n']," ..
+            "'+': ['wl-paste']," ..
+            "'*': ['wl-paste']," ..
          "}," ..
          "'cache_enabled': 1," ..
       "}")
