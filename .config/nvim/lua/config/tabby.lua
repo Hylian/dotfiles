@@ -11,6 +11,10 @@ local theme = {
   tail = 'TabLineSep',
 }
 
+local function no_nvimtree(win)
+  return not string.match(win.buf_name(), 'NvimTree')
+end
+
 require('tabby').setup({
   line = function(line)
     return {
@@ -40,7 +44,7 @@ require('tabby').setup({
         end
       end),
       line.spacer(),
-      line.wins_in_tab(line.api.get_current_tab()).foreach(function(win)
+      line.wins_in_tab(line.api.get_current_tab()).filter(no_nvimtree).foreach(function(win)
         if win.is_current() then
           return {
             line.sep('', theme.tabsep, theme.current_tab),

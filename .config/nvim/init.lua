@@ -45,12 +45,12 @@ vim.opt.shortmess = 'ostTAcCWFSI'
 vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
-vim.opt.background = 'light'
+vim.opt.background = 'dark'
 vim.opt.scrolloff = 4
 vim.o.showtabline = 2
 
 vim.cmd('highlight LineNr ctermfg=blue')
-vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
+--vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
 
 if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
   if os.getenv("TMUX") ~= nil then

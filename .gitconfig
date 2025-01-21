@@ -53,7 +53,9 @@
 
 [delta]
   navigate = true
-  features = everforest
+  dark = true
+  syntax-theme = Monokai Extended Bright
+  #features = everforest
   side-by-side = false
   line-numbers-left-format = "{nm} "
   line-numbers-right-format = " {np} "
@@ -64,6 +66,6 @@
 [diff]
   colorMoved = default
 [push]
-	autoSetupRemote = true
+  autoSetupRemote = true
 [color]
-	ui = auto
+  ui = auto

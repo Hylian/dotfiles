@@ -90,7 +90,7 @@ add-zsh-hook -Uz chpwd osc7
 # FZF
 export FZF_ALT_C_OPTS="--preview 'tree -L 1 -C {}'"
 export FZF_ALT_C_COMMAND="fd -t d -t l -d 3"
-export FZF_DEFAULT_OPTS='--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987'
+#export FZF_DEFAULT_OPTS='--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987'
 
 zvm_after_init_commands+=('source <(fzf --zsh)')
 

@@ -100,7 +100,8 @@ end
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = everforest_theme,
+    --theme = everforest_theme,
+    theme = "everforest",
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {
@@ -127,7 +128,7 @@ require('lualine').setup {
     lualine_c = {
       {
         maximize_status,
-        color = { fg = '#f3f5d9', bg = '#3a94c5', gui ='bold' },
+        --color = { fg = '#f3f5d9', bg = '#3a94c5', gui ='bold' },
         separator = { right = '' }
       },
       {
@@ -148,7 +149,7 @@ require('lualine').setup {
           unnamed = '[No Name]', -- Text to show for unnamed buffers.
           newfile
         },
-        color = { bg = '#f3f5d9' }
+        --color = { bg = '#f3f5d9' }
       },
     },
     lualine_x = {
@@ -169,8 +170,8 @@ require('lualine').setup {
       {
         blank,
         draw_empty = true,
-        separator = { left = '' },
-        color = { fg = '#f3f5d9', bg = nil }
+        --separator = { left = '' },
+        --color = { fg = '#f3f5d9', bg = nil }
       }
     },
     lualine_b = {},
@@ -201,8 +202,8 @@ require('lualine').setup {
       {
         blank,
         draw_empty = true,
-        separator = { right = '' },
-        color = { fg = '#f3f5d9', bg = nil }
+        --separator = { right = '' },
+        --color = { fg = '#f3f5d9', bg = nil }
       }
     }
   },
