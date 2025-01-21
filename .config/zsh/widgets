@@ -26,7 +26,7 @@ cd-fzf-helper() {
     --layout=reverse \
     --prompt 'cd> ' \
     --header "${2:2}" \
-    --preview "eza -G --color=always --icons --group-directories-first -s modified ./$2/{1}" \
+    --preview "eza -G --color=always --group-directories-first -s modified ./$2/{1}" \
     --preview-window 'right,50%' \
     --bind 'pgup:preview-half-page-up' \
     --bind 'pgdn:preview-half-page-down' \
@@ -94,7 +94,7 @@ bindkey -M viins '^g' cd-fzf
 # zoxide + fzf
 zoxide-fzf() {
   zle push-input
-  _ZO_FZF_OPTS="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down --cycle --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --preview 'eza -G --color=always --icons --group-directories-first -s modified {2..}' --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987" __zoxide_zi
+  _ZO_FZF_OPTS="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down --cycle --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --preview 'eza -G --color=always --group-directories-first -s modified {2..}' --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987" __zoxide_zi
   zle reset-prompt
 }
 zle     -N            zoxide-fzf
@@ -104,7 +104,7 @@ bindkey -M viins '^j' zoxide-fzf
 
 zoxide-fzf-curdir() {
   zle push-input
-  _ZO_FZF_OPTS="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down --cycle --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --preview 'eza -G --color=always --icons --group-directories-first -s modified {2..}' --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987" __zoxide_zi "${PWD}" "/"
+  _ZO_FZF_OPTS="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down --cycle --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --preview 'eza -G --color=always --group-directories-first -s modified {2..}' --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987" __zoxide_zi "${PWD}" "/"
   zle reset-prompt
 }
 zle     -N            zoxide-fzf-curdir

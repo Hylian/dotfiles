@@ -10,7 +10,7 @@ if (( $+commands[rg] )); then
 fi
 
 if (( $+commands[eza] )); then
-  alias ls='eza --icons'
+  alias ls='eza'
   alias ll='eza -l -a'
   function chpwd() {
     if [[ $(pwd) != /google* ]] then
@@ -19,7 +19,7 @@ if (( $+commands[eza] )); then
     fi
   }
 elif (( $+commands[exa] )); then
-  alias ls='exa --icons'
+  alias ls='exa'
   alias ll='exa -l -a'
   function chpwd() {
     if [[ $(pwd) != /google* ]] then
