@@ -47,7 +47,8 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.background = 'dark'
 vim.opt.scrolloff = 4
-vim.o.showtabline = 2
+vim.opt.showtabline = 2
+--vim.opt.lazyredraw = true
 
 vim.cmd('highlight LineNr ctermfg=blue')
 --vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
@@ -157,6 +158,7 @@ require('config.tabby')
 require('config.codecompanion')
 require('config.focus')
 require('config.telescope')
+require('config.fzf-lua')
 
 require('ibl').setup() --indent-blankline.nvim
 require('mini.diff').setup()
