@@ -63,7 +63,7 @@ cursor-click-to-move = true
 mouse-hide-while-typing = true
 
 # Fancy
-background-opacity = 0.99
+background-opacity = 0.9
 window-decoration = false
 
 # Settings
@@ -78,3 +78,21 @@ quit-after-last-window-closed = false
 quit-after-last-window-closed-delay = 10m
 window-save-state = never
 gtk-single-instance = true
+
+# Bindings
+keybind = alt+1=unbind
+keybind = alt+2=unbind
+keybind = alt+3=unbind
+keybind = alt+4=unbind
+keybind = alt+5=unbind
+keybind = alt+6=unbind
+keybind = alt+7=unbind
+keybind = alt+8=unbind
+keybind = alt+9=unbind
+keybind = alt+0=unbind
+keybind = alt+control+left=unbind
+keybind = alt+control+right=unbind
+keybind = alt+left_bracket=unbind
+keybind = alt+right_bracket=unbind
+keybind = alt+shift+left_bracket=unbind
+keybind = alt+shift+right_bracket=unbind

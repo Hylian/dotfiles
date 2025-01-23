@@ -159,7 +159,9 @@ keybinds clear-defaults=true {
         bind "Alt =" "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt {" { PreviousSwapLayout; }
+        bind "Alt Shift [" { PreviousSwapLayout; }
         bind "Alt }" { NextSwapLayout; }
+        bind "Alt Shift ]" { NextSwapLayout; }
         bind "PageDown" { HalfPageScrollDown; }
         bind "PageUp" { HalfPageScrollUp; }
         bind "Alt ]" { BreakPaneRight; SwitchToMode "Normal"; }
