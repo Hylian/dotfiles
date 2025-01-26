@@ -62,10 +62,6 @@ resize-overlay = never
 cursor-click-to-move = true
 mouse-hide-while-typing = true
 
-# Fancy
-background-opacity = 0.9
-window-decoration = false
-
 # Settings
 confirm-close-surface = false
 clipboard-read = allow
@@ -73,11 +69,26 @@ link-url = true
 grapheme-width-method = unicode
 clipboard-trim-trailing-spaces = true
 
+# Fancy
+background-opacity = 1.0
+window-decoration = false
+
 # Perf
+window-save-state = never
+
+# macOS-specific
+#macos-titlebar-style = hidden
+#macos-non-native-fullscreen = true
+#macos-option-as-alt = true
+#macos-window-shadow = false
+#quit-after-last-window-closed = true
+
+# Linux-specific
 quit-after-last-window-closed = false
 quit-after-last-window-closed-delay = 10m
-window-save-state = never
 gtk-single-instance = true
+quit-after-last-window-closed = false
+quit-after-last-window-closed-delay = 10m
 
 # Bindings
 keybind = alt+1=unbind
