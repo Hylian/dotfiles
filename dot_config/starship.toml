@@ -1,0 +1,125 @@
+add_newline = true
+
+format = """
+$directory\
+$username\
+$character"""
+
+right_format = """
+$localip\
+$shlvl\
+$git_metrics\
+$git_status\
+$hg_branch\
+$docker_context\
+$package\
+$c\
+$cmake\
+$golang\
+$nodejs\
+$perl\
+$php\
+$python\
+$rust\
+$buf\
+$nix_shell\
+$conda\
+$meson\
+$memory_usage\
+$env_var\
+$custom\
+$sudo\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$status\
+$os\
+$container\
+$shell\
+$git_branch\
+$git_commit\
+$git_state\
+$hostname"""
+
+[directory]
+format = '[$path]($style)[$read_only]($read_only_style) '
+
+[hostname]
+format = '[ $ssh_symbol $hostname]($style) '
+ssh_symbol = "🌐"
+
+[c]
+disabled = true
+format = '\[[$symbol($version(-$name))]($style)\]'
+
+[cmake]
+format = '\[[$symbol($version)]($style)\]'
+
+[cmd_duration]
+format = '[ ⏱  $duration]($style)'
+
+[conda]
+format = '[$symbol $environment]($style)'
+
+[docker_context]
+format = '\[[$symbol$context]($style)\]'
+
+[git_branch]
+disabled = false
+format = '[ $symbol$branch]($style)'
+style = 'fg:cyan'
+
+[git_status]
+disabled = true
+format = '([$all_status$ahead_behind]($style))'
+
+[git_state]
+disabled = false
+style = 'fg:blue'
+
+[git_commit]
+disabled = false
+style = 'fg:blue'
+
+[golang]
+format = '[$symbol($version)]($style)'
+
+[lua]
+format = '[$symbol($version)]($style)'
+
+[memory_usage]
+format = '\[$symbol[$ram( | $swap)]($style)\]'
+
+[nim]
+format = '\[[$symbol($version)]($style)\]'
+
+[nix_shell]
+format = '\[[$symbol$state( \($name\))]($style)\]'
+
+[nodejs]
+format = '\[[$symbol($version)]($style)\]'
+
+[package]
+format = '\[[$symbol$version]($style)\]'
+
+[perl]
+format = '\[[$symbol($version)]($style)\]'
+
+[python]
+disabled = true
+format = '\[[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)\]'
+
+[rust]
+format = '[$symbol ($version)]($style)'
+
+[sudo]
+format = '[as $symbol]'
+
+[time]
+format = '[$time]($style)'
+
+[username]
+disabled = true
+format = '\[[$user]($style)\]'

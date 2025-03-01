@@ -1,0 +1,99 @@
+# Fonts
+
+font-family = PragmataPro Mono
+font-family-bold = PragmataPro Mono
+font-family-italic = PragmataPro Mono
+font-family-bold-italic = PragmataPro Mono
+font-synthetic-style = true
+font-size = 16
+
+# Colors
+
+#background = fffbef
+#foreground = 5c6a72
+#
+#palette =  0=#829181
+#palette =  1=#f85552
+#palette =  2=#8da101
+#palette =  3=#dfa000
+#palette =  4=#3a94c5
+#palette =  5=#df69ba
+#palette =  6=#35a77c
+#palette =  7=#f3f5d9
+#palette =  8=#a6b0a0
+#palette =  9=#fa8987
+#palette = 10=#bbd411
+#palette = 11=#f2cd6d
+#palette = 12=#8fcff2
+#palette = 13=#f7c1e6
+#palette = 14=#85e6c1
+#palette = 16=#fdffe8
+
+#background = 1E2326
+background = 000000
+foreground = D3C6AA
+
+palette =  0=#272E33
+palette =  1=#E67E80
+palette =  2=#A7C080
+palette =  3=#DBBC7F
+palette =  4=#7FBBB3
+palette =  5=#D699B6
+palette =  6=#83C092
+palette =  7=#D3C6AA
+palette =  8=#374145
+palette =  9=#E69875
+palette = 10=#A7C080
+palette = 11=#DBBC7F
+palette = 12=#7FBBB3
+palette = 13=#D699B6
+palette = 14=#83C092
+palette = 15=#F3EACA
+
+selection-foreground = 1E2326
+selection-background = D3C6AA
+
+# Layout
+window-padding-x = 6
+window-padding-y = 8
+window-padding-balance = true
+resize-overlay = never
+
+# Cursor
+cursor-click-to-move = true
+mouse-hide-while-typing = true
+
+# Fancy
+background-opacity = 0.9
+window-decoration = false
+
+# Settings
+confirm-close-surface = false
+clipboard-read = allow
+link-url = true
+grapheme-width-method = unicode
+clipboard-trim-trailing-spaces = true
+
+# Perf
+quit-after-last-window-closed = false
+quit-after-last-window-closed-delay = 10m
+window-save-state = never
+gtk-single-instance = true
+
+# Bindings
+keybind = alt+1=unbind
+keybind = alt+2=unbind
+keybind = alt+3=unbind
+keybind = alt+4=unbind
+keybind = alt+5=unbind
+keybind = alt+6=unbind
+keybind = alt+7=unbind
+keybind = alt+8=unbind
+keybind = alt+9=unbind
+keybind = alt+0=unbind
+keybind = alt+control+left=unbind
+keybind = alt+control+right=unbind
+keybind = alt+left_bracket=unbind
+keybind = alt+right_bracket=unbind
+keybind = alt+shift+left_bracket=unbind
+keybind = alt+shift+right_bracket=unbind

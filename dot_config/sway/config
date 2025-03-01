@@ -1,0 +1,419 @@
+include /etc/sway/config.d/*
+
+input pointer {
+  accel_profile "flat"
+  pointer_accel 0.6
+  scroll_factor 2.0
+}
+
+input type:keyboard {
+  repeat_delay 240
+  repeat_rate 50
+  xkb_options ctrl:nocaps
+}
+
+# resolution: 2560x1440
+# wacom area: 152x95mm
+# $ libinput list-devices
+# (1440 * 152 / 2560) / 95 -> 0.9
+input "1386:828:Wacom_Intuos_PT_S_2_Pen" {
+  map_to_output DP-3
+  map_from_region 0.0x0.0 1.0x0.9
+}
+
+input "1386:828:Wacom_Intuos_PT_S_2_Pad" {
+  map_to_output DP-3
+}
+
+input "1386:828:Wacom_Intuos_PT_S_2_Finger" {
+  #events disabled
+  accel_profile "adaptive"
+  scroll_factor 0.8
+  pointer_accel 0.5
+  natural_scroll enabled
+}
+
+input "0:0:Shuttle_Emulated_Keyboard" {
+  scroll_factor 0.1
+}
+
+input "2:10:TPPS/2_Elan_TrackPoint" {
+  accel_profile "flat"
+  pointer_accel 0.3
+}
+
+input "19788:6:Neoknob_KN01_Mouse" {
+  scroll_factor 1.0
+}
+
+input "21298:5120:Clearly_Superior_Technologies._CST_Laser_Trackball" {
+  accel_profile "flat"
+  pointer_accel 0.4
+  scroll_factor 0.3
+}
+
+input "65261:24672:qmkbuilder_keyboard" {
+  scroll_factor 1
+}
+
+input "1149:32793:ExpertBT5.0_Mouse" {
+  scroll_factor 0.3
+}
+
+input "1452:613:Apple_Inc._Magic_Trackpad_2" {
+  accel_profile "adaptive"
+  scroll_factor 0.45
+  pointer_accel 0.6
+  natural_scroll enabled
+  tap disabled
+}
+
+input "76:613:Apple_Inc._Magic_Trackpad_2" {
+  accel_profile "adaptive"
+  scroll_factor 0.45
+  pointer_accel 0.6
+  natural_scroll enabled
+  tap disabled
+}
+
+
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg #000000 solid_color
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/sakeharasu_cropped.png fill
+#output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" bg ~/Wallpapers/bluevignette.png fill
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" max_render_time 1
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" render_bit_depth 10
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" adaptive_sync off
+output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale_filter smart
+
+output "Dell Inc. DELL U2723QE 7S2KXN3" scale 2
+output "Dell Inc. DELL U2723QE 7S2KXN3" mode 3840x2160@59.997002Hz
+output "Dell Inc. DELL U2723QE 7S2KXN3" bg ~/Wallpapers/nijikafill.png fit
+output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb
+output "Dell Inc. DELL U2723QE 7S2KXN3" max_render_time 1
+output "Dell Inc. DELL U2723QE 7S2KXN3" scale_filter smart
+
+#output "LG Electronics LG Ultra HD 0x00001DB9" bg ~/Wallpapers/21_yanagi_kouji.jpg fill
+output "LG Electronics LG Ultra HD 0x00001DB9" bg ~/Wallpapers/nijika_blue.png fill
+output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr
+output "LG Electronics LG Ultra HD 0x00001DB9" max_render_time 1
+output "LG Electronics LG Ultra HD 0x00001DB9" scale_filter smart
+output "LG Electronics LG Ultra HD 0x00001DB9" scale 2
+
+output "Nreal Air 0x00006600" background #000000 solid_color
+output HDMI-A-1 background #000000 solid_color
+#output HEADLESS-1 mode 1404x1872
+
+blur enable
+blur_xray disable
+blur_passes 2
+blur_radius 10
+
+corner_radius 8
+
+default_dim_inactive 0.2
+
+titlebar_separator disable
+
+shadows enable
+shadows_on_csd enable
+shadow_blur_radius 15
+shadow_color #00001010
+
+layer_effects 'notifications' 'blur enable; shadows enable; corner_radius 20'
+layer_effects 'launcher' 'blur enable; shadows enable; corner_radius 20'
+
+# Colors
+# class                  border    backgr.   text     indicator child_border
+client.focused           #93b259c0 #8da101c0 #fffbef  #93b259c0 #93b25990
+client.focused_inactive  #93b259c0 #fffbefc0 #5c6a72  #5f676a00 #5f676a00
+client.unfocused         #00000000 #fffbefc0 #5c6a72  #484e5000 #5f676a00
+client.background        #ffffff
+
+for_window {
+#[class=".*"] {
+#border pixel 1
+#}
+
+  [title="(Save As|File Upload)" app_id="firefox-nightly"] {
+    resize set 1200 1000
+  }
+
+  [title="ssh-askpass"] {
+    floating enable
+  }
+
+  [title="^Extension: \(Raindrop.io\)"] {
+    floating enable
+  }
+
+
+  [class="1Password"] {
+    floating enable
+    resize set 1200 1000
+  }
+
+  [app_id="kicad"] {
+    floating enable
+  }
+
+  [title=".*YouTube.*"] {
+    opacity set 1.0
+  }
+
+  [app_id="imv"] {
+    max_render_time 20
+  }
+
+  [app_id="pix"] {
+    max_render_time 20
+  }
+
+  [app_id="discord"] {
+    move container to workspace 9
+    workspace 9
+  }
+
+  [app_id="signal"] {
+    move container to workspace 9
+    workspace 9
+  }
+
+  [app_id="eu.betterbird.Betterbird"] {
+    move container to workspace 10
+    workspace 10
+  }
+
+  [app_id="Plexamp"] {
+    floating enable
+    move container to scratchpad, scratchpad show
+    resize set 1200 1000
+    move position center
+  }
+
+  [class="Plexamp"] {
+    floating enable
+    move container to scratchpad, scratchpad show
+    resize set 1200 1000
+    move position center
+  }
+
+  [app_id="chrome-diomlfcjikmegkfgnmbolnocfpjnfmon-Default"] {
+    floating enable
+    move container to scratchpad, scratchpad show
+    resize set 1400 1200
+    move position center
+  }
+
+  [shell="^((?!xdg_shell).)*$"] {
+    title_format "%shell :: %title"
+  }
+}
+
+set $mod Mod4
+
+seat * hide_cursor when-typing enable
+seat * hide_cursor 8000
+
+font pango:PragmataPro 10
+
+floating_modifier $mod
+
+#mouse_warping container
+mouse_warping output
+
+#default_border pixel
+default_border none
+default_floating_border none
+
+gaps inner 5
+gaps outer 1
+smart_gaps on
+#hide_edge_borders both
+focus_follows_mouse yes
+
+titlebar_border_thickness 0
+titlebar_padding 20 8
+
+bindgesture swipe:3:left workspace prev_on_output
+bindgesture swipe:3:right workspace next_on_output
+
+bindgesture swipe:3:up fullscreen toggle
+
+#bindgesture swipe:4:left [con_id=__focused__] move left, focus
+#bindgesture swipe:4:right [con_id=__focused__] move right, focus
+bindgesture swipe:4:left [con_id=__focused__] move container to output left, focus
+bindgesture swipe:4:right [con_id=__focused__] move container to output right, focus
+bindgesture swipe:4:up [con_id=__focused__] move up, focus
+bindgesture swipe:4:down [con_id=__focused__] move down, focus
+
+#bindgesture pinch:inward+upresize shrink
+bindgesture pinch:inward+up resize shrink height
+bindgesture pinch:outward+up resize grow height
+bindgesture pinch:inward+down resize shrink height
+bindgesture pinch:outward+down resize grow height
+bindgesture pinch:inward+left resize shrink width
+bindgesture pinch:outward+left resize grow width
+bindgesture pinch:inward+right resize shrink width
+bindgesture pinch:outward+right resize grow width
+
+bindsym $mod+Shift+e exit
+
+bindsym $mod+Return exec "ghostty"
+#bindsym $mod+Return exec "foot -D $HOME"
+#bindsym $mod+Space exec "foot -D $HOME tmux new-session -A -s persist"
+#bindsym $mod+q exec "MOZ_ENABLE_WAYLAND=1 firefox-nightly"
+#bindsym $mod+q exec "gio launch ~/.local/share/applications/brave-browser.desktop"
+bindsym $mod+q exec "zen-browser"
+bindsym $mod+p exec "1password --quick-access"
+bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
+bindsym $mod+g exec "dolphin"
+
+bindsym $mod+Ctrl+s exec "grimshot copy area"
+bindsym $mod+Ctrl+Shift+s exec "grimshot save area ~/Screenshots"
+
+#bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/scratchpad_multi.sh; scratchpad show
+bindsym --no-repeat $mod+bracketright exec $HOME/dotfiles/scripts/home_assistant.sh; scratchpad show
+
+bindsym $mod+d kill
+
+set $drun tofi-drun | xargs swaymsg exec --
+bindsym $mod+t exec $drun
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+n focus output "Dell Inc. DELL U2723QE 7S2KXN3"
+bindsym $mod+m focus output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926"
+bindsym $mod+comma focus output "LG Electronics LG Ultra HD 0x00001DB9"
+
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+Shift+Ctrl+h [con_id=__focused__] move to output left, focus
+bindsym $mod+Shift+Ctrl+j [con_id=__focused__] move to output down, focus
+bindsym $mod+Shift+Ctrl+k [con_id=__focused__] move to output up, focus
+bindsym $mod+Shift+Ctrl+l [con_id=__focused__] move to output right, focus
+
+bindsym $mod+b split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+a focus parent
+bindsym $mod+z focus child
+
+workspace 1 output DP-4
+workspace 2 output DP-4
+workspace 3 output DP-4
+workspace 4 output DP-1
+workspace 5 output DP-1
+workspace 6 output DP-1
+workspace 7 output DP-2
+workspace 8 output DP-2
+workspace 9 output DP-2
+workspace 10 output DP-2
+
+bindsym --no-repeat $mod+1 workspace 1
+bindsym --no-repeat $mod+2 workspace 2
+bindsym --no-repeat $mod+3 workspace 3
+bindsym --no-repeat $mod+4 workspace 4
+bindsym --no-repeat $mod+5 workspace 5
+bindsym --no-repeat $mod+6 workspace 6
+bindsym --no-repeat $mod+7 workspace 7
+bindsym --no-repeat $mod+8 workspace 8
+bindsym --no-repeat $mod+9 workspace 9
+bindsym --no-repeat $mod+0 workspace 10
+
+bindsym --no-repeat $mod+Left workspace prev_on_output
+bindsym --no-repeat $mod+Right workspace next_on_output
+
+bindsym --no-repeat $mod+Tab workspace back_and_forth
+bindsym --no-repeat $mod+Shift+grave workspace back_and_forth
+
+bindsym --no-repeat $mod+Shift+1 move container to workspace 1
+bindsym --no-repeat $mod+Shift+2 move container to workspace 2
+bindsym --no-repeat $mod+Shift+3 move container to workspace 3
+bindsym --no-repeat $mod+Shift+4 move container to workspace 4
+bindsym --no-repeat $mod+Shift+5 move container to workspace 5
+bindsym --no-repeat $mod+Shift+6 move container to workspace 6
+bindsym --no-repeat $mod+Shift+7 move container to workspace 7
+bindsym --no-repeat $mod+Shift+8 move container to workspace 8
+bindsym --no-repeat $mod+Shift+9 move container to workspace 9
+bindsym --no-repeat $mod+Shift+0 move container to workspace 10
+
+bindsym $mod+Shift+bracketleft move scratchpad
+bindsym $mod+bracketleft scratchpad show
+bindsym $mod+Control+f floating toggle
+
+bindsym $mod+Control+l exec swaylock
+bindsym $mod+c exec pkill -SIGHUP kanshi
+bindsym $mod+Shift+c reload
+
+mode "resize" {
+  bindsym h resize shrink width 10 px or 10 ppt
+  bindsym j resize grow height 10 px or 10 ppt
+  bindsym k resize shrink height 10 px or 10 ppt
+  bindsym l resize grow width 10 px or 10 ppt
+
+  bindsym Left resize shrink width 10 px or 10 ppt
+  bindsym Down resize grow height 10 px or 10 ppt
+  bindsym Up resize shrink height 10 px or 10 ppt
+  bindsym Right resize grow width 10 px or 10 ppt
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+bindsym XF86AudioRaiseVolume exec $HOME/dotfiles/scripts/change_volume.sh 5%+
+bindsym XF86AudioLowerVolume exec $HOME/dotfiles/scripts/change_volume.sh 5%-
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86AudioPlay exec playerctl play-pause
+
+#bindsym --no-repeat equal exec mumble rpc starttalking
+#bindsym --release equal exec mumble rpc stoptalking
+#bindsym --no-repeat minus exec mumble rpc stoptalking
+
+bar swaybar_command waybar
+
+set $gnome-schema org.gnome.desktop.interface
+
+#exec_always {
+#gsettings set $gnome-schema gtk-theme 'Catppuccin-Frappe-Standard-Blue-dark'
+#gsettings set $gnome-schema font-name 'Sys'
+#}
+
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec wl-paste -t text --watch clipman store --no-persist
+exec blueman-applet
+exec udiskie --tray
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec "swayidle"
+exec_always "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+#exec_always "pkill wl-gammarelay; wl-gammarelay"
+#exec_always "pkill sway-opacity; sway-opacity --opacity 0.98"
+#exec_always "busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 6500"
+exec_always "systemctl --user restart kanshi.service"
+
+#set $gnome-schema org.gnome.desktop.interface
+#exec_always {
+#gsettings set $gnome-schema gtk-theme 'Everforest-Dark-Borderless'
+#gsettings set $gnome-schema icon-theme 'Everforest-Dark'
+    #gsettings set $gnome-schema cursor-theme 'Your cursor Theme'
+    #gsettings set $gnome-schema font-name 'Your font name'
+#}
