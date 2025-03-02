@@ -38,21 +38,21 @@ VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
 export PATH="$HOME/.local/bin:$PATH"
-if test -f "$HOME/dotfiles/.config/zsh/paths"; then
-  source $HOME/dotfiles/.config/zsh/aliases
+if test -f "$HOME/.config/zsh/paths"; then
+  source $HOME/.config/zsh/aliases
 fi
 
 export KEYTIMEOUT=5
 export WINEARCH=win32
-export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 export BAT_THEME="ansi"
 
-if test -f "$HOME/dotfiles/.config/zsh/aliases"; then
-  source $HOME/dotfiles/.config/zsh/aliases
+if test -f "$HOME/.config/zsh/aliases"; then
+  source $HOME/.config/zsh/aliases
 fi
 
-if test -f "$HOME/dotfiles/.config/zsh/galiases"; then
-  source $HOME/dotfiles/.config/zsh/galiases
+if test -f "$HOME/.config/zsh/galiases"; then
+  source $HOME/.config/zsh/galiases
 fi
 
 eval "$(zellij setup --generate-auto-start zsh)"
@@ -104,6 +104,6 @@ export FZF_CTRL_R_OPTS="
 zvm_after_init_commands+=('source <(fzf --zsh)')
 
 # Widgets
-if test -f "$HOME/dotfiles/.config/zsh/widgets"; then
-  source $HOME/dotfiles/.config/zsh/widgets
+if test -f "$HOME/.config/zsh/widgets"; then
+  source $HOME/.config/zsh/widgets
 fi

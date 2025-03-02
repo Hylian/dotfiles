@@ -10,7 +10,7 @@ if (( $+commands[rg] )); then
 fi
 
 if (( $+commands[eza] )); then
-  alias ls='eza --icons'
+  alias ls='eza'
   alias ll='eza -l -a'
   function chpwd() {
     if [[ $(pwd) != /google* ]] then
@@ -19,7 +19,7 @@ if (( $+commands[eza] )); then
     fi
   }
 elif (( $+commands[exa] )); then
-  alias ls='exa --icons'
+  alias ls='exa'
   alias ll='exa -l -a'
   function chpwd() {
     if [[ $(pwd) != /google* ]] then
@@ -34,6 +34,10 @@ if (( $+commands[batcat] )); then
   alias cat='batcat'
 elif (( $+commands[bat] )); then
   alias cat='bat'
+fi
+
+if (( $+commands[chezmoi] )); then
+  alias cz='chezmoi'
 fi
 
 if (( $+commands[imv-wayland] )); then
@@ -60,8 +64,34 @@ if (( $+commands[fd] )); then
 fi
 
 
-alias cdg='cd $(git rev-parse --show-toplevel)'
-alias cdr='cd $(repo --show-toplevel)'
+alias cdg='cd $(git rev-parse --show-toplevel 2>/dev/null)'
+alias cdr='cd $(repo --show-toplevel 2>/dev/null)'
+uproot() {
+  cd ..
+
+  local git_top=$(git rev-parse --show-toplevel 2>/dev/null)
+  local repo_top=$(repo --show-toplevel 2>/dev/null)
+  local chosen_top
+
+  if [[ -n "$git_top" && -n "$repo_top" ]]; then
+    if (( ${#git_top} > ${#repo_top} )); then
+      chosen_top="$git_top"
+    else
+      chosen_top="$repo_top"
+    fi
+  elif [[ -n "$git_top" ]]; then
+    chosen_top="$git_top"
+  elif [[ -n "$repo_top" ]]; then
+    chosen_top="$repo_top"
+  fi
+
+  # cd to the chosen directory
+  if [[ -n "$chosen_top" ]]; then
+    cd "$chosen_top"
+  fi
+}
+
+alias zellij-kill='zellij ls -s | grep -v persist | xargs -L1 zellij k'
 
 # Git
 alias gc='git checkout'
@@ -79,6 +109,7 @@ alias gsu='git submodule update --init --recursive'
 alias gp='git pull'
 alias gb='git checkout -b'
 alias gd='git diff'
+alias gdh='git diff HEAD~'
 alias gcp='git cherry-pick'
 alias gitrootdir='git rev-parse --show-toplevel'
 alias stgs='stg status'
@@ -245,3 +276,5 @@ d2h(){
 h2b(){
   echo "ibase=16; obase=2; $(echo $@ | tr a-f A-F)" | bc
 }
+
+# vim: ft=zsh
