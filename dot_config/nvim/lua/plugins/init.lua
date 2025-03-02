@@ -46,9 +46,35 @@ return {
   { 'Shougo/echodoc.vim' },
   { 'nvim-treesitter/nvim-treesitter', build=':TSUpdate' },
   { 'nvim-treesitter/nvim-treesitter-context' },
-  { 'folke/noice.nvim' },
-  { 'MunifTanjim/nui.nvim' },
-  { 'rcarriga/nvim-notify' },
+  {
+    'rcarriga/nvim-notify',
+    opts = {
+      fps = 26,
+      render = "minimal",
+      max_width = 20,
+      minimum_width = 10,
+      stages = "fade",
+      timeout = 200,
+    }
+  },
+  {
+    'folke/noice.nvim',
+    event = "VeryLazy",
+    opts = {
+      lsp = {
+    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    override = {
+      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+      ["vim.lsp.util.stylize_markdown"] = true,
+      ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+    },
+  },
+    },
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'rcarriga/nvim-notify',
+    }
+  },
   { 'williamboman/mason.nvim' },
   { 'williamboman/mason-lspconfig.nvim' },
   { 'neovim/nvim-lspconfig' },

@@ -1,7 +1,7 @@
 require('notify').setup({
     fps = 30,
-    render = "compact",
-    max_width = 80,
+    render = "minimal",
+    max_width = 30,
     minimum_width = 10,
     stages = "fade",
     timeout = 300,
