@@ -1,0 +1,28 @@
+{{- if eq .chezmoi.hostname "shined3" }}
+profile laptop {
+  output eDP-1 enable scale 2
+  exec fc_set.sh lcd
+  exec restart_waybar.sh "eDP-1" style-laptop.css
+  exec rearrange_workspaces.sh eDP-1 "layout splith" 1 2 3 4 5 6 7 8 9 0
+}
+
+profile nreal {
+  output eDP-1 disable
+  output "Unknown nreal air 0x00008800" enable scale 1 mode 1920x1080@60Hz
+  exec swaymsg 'output "Unknown nreal air 0x00008800" subpixel none'
+  exec fc_set.sh oled
+  exec restart_waybar.sh "Unknown nreal air 0x00008800" style-nreal.css
+  exec rearrange_workspaces.sh "Unknown nreal air 0x00008800" "layout splith" 1 2 3 4 5 6 7 8 9 10
+}
+
+profile home-alt {
+  output eDP-1 disable
+  output DP-3 enable mode 2560x1440@143.991Hz position 0,0 scale 1
+  output DP-4 enable mode 3840x2160@59.997Hz position 2560,0 scale 2
+  exec swaymsg 'output "DP-3" subpixel none'
+  exec swaymsg 'output "DP-4" subpixel rgb'
+  exec fc_set.sh lcd
+  exec restart_waybar.sh "DP-4" style-home.css
+  exec rearrange_workspaces.sh "DP-3" "layout splith" 1 2 3 4 5; rearrange_workspaces.sh "DP-4" "layout splith" 6 7 8 9 10
+}
+{{- end }}
