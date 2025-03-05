@@ -10,4 +10,7 @@
 .config/sway
 .config/swaylock
 .config/swayidle
+{{ if ne .chezmoi.osRelease.id "arch" }}
+.config/electron-flags.conf
+{{ end }}
 {{ end }}
