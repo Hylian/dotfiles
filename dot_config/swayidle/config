@@ -1,3 +1,4 @@
+timeout 1800 'swaymsg "output \"LG Electronics LG ULTRAGEAR+ 302NTUW4D926\" power off"' resume 'swaymsg "output \"LG Electronics LG ULTRAGEAR+ 302NTUW4D926\" power on"'
 timeout 1800 'swaymsg "output * power off"' resume 'swaymsg "output * power on"'
 timeout 2000 'systemctl suspend'
 after-resume 'swaymsg "output * power on"'
