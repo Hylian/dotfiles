@@ -38,8 +38,8 @@ profile nreal {
   exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
   exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
   exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
-  exec $HOME/dotfiles/scripts/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; $HOME/dotfiles/scripts/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; $HOME/dotfiles/scripts/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9; $HOME/dotfiles/scripts/rearrange_workspaces.sh "Nreal Air 0x66666600" "layout splith" 10
-  exec $HOME/dotfiles/scripts/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
+  exec rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9; rearrange_workspaces.sh "Nreal Air 0x66666600" "layout splith" 10
+  exec restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
 }
 
 profile home {
@@ -50,7 +50,7 @@ profile home {
   exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
   exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
   exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
-  exec $HOME/dotfiles/scripts/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; $HOME/dotfiles/scripts/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; $HOME/dotfiles/scripts/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9
-  exec $HOME/dotfiles/scripts/restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
+  exec rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9
+  exec restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
 }
 {{- end }}
