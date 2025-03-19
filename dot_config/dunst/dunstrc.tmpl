@@ -1,5 +1,10 @@
 [global]
+{{ if eq .chezmoi.hostname "natura" }}
 monitor = DP-2
+{{ end }}
+{{ if eq .chezmoi.hostname "shined3" }}
+monitor = 1
+{{ end }}
 origin = bottom-right
 follow = none
 width = 240

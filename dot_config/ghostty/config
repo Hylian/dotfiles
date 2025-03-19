@@ -64,7 +64,7 @@ cursor-click-to-move = true
 mouse-hide-while-typing = true
 
 # Fancy
-background-opacity = 0.9
+background-opacity = 1.0
 window-decoration = false
 
 # Settings
