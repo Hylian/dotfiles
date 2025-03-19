@@ -10,7 +10,12 @@
 .config/sway
 .config/swaylock
 .config/swayidle
+{{ end }}
+
 {{ if ne .chezmoi.osRelease.id "arch" }}
 .config/electron-flags.conf
 {{ end }}
+
+{{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
+.zprofile
 {{ end }}

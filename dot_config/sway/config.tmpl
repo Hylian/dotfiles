@@ -14,6 +14,8 @@ output "Lenovo Group Limited LEN T32p-20 VNA7645L" background #000000 solid_colo
 output "Nreal nreal air 0x00008800" background #000000 solid_color
 output "XXX AAA" background #f3f5d9 solid_color
 output HDMI-A-1 background #efefff solid_color
+{{ else if eq .chezmoi.hostname "shined" }}
+output * background #000000 solid_color
 {{ else if eq .chezmoi.hostname "natura" }}
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
@@ -357,10 +359,11 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-{{ if eq .chezmoi.hostname "shined3" }}
+{{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
 bindsym $mod+space exec "ghostty -e zsh -c '~/dotfiles/scripts/ssh/desktop-waypipe.sh'"
 bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome-beta.desktop"
 bindsym $mod+g exec "nautilus -w"
+
 {{ else if eq .chezmoi.hostname "natura" }}
 bindsym $mod+q exec "zen-browser"
 bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"

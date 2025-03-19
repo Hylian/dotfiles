@@ -73,14 +73,16 @@ keybinds clear-defaults=true {
     scroll {
         bind "Alt v" { SwitchToMode "Normal"; }
         bind "e" { EditScrollback; SwitchToMode "Normal"; }
-        bind "s" "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+        bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
         bind "Ctrl c" "Esc" { ScrollToBottom; SwitchToMode "Normal"; }
+        bind "g" { ScrollToTop; }
+        bind "G" { ScrollToBottom; }
         bind "j" "Down" { ScrollDown; }
         bind "k" "Up" { ScrollUp; }
         bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; }
         bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; }
-        bind "d" { HalfPageScrollDown; }
-        bind "u" { HalfPageScrollUp; }
+        bind "Shift PageDown" "Ctrl d" "d" { HalfPageScrollDown; }
+        bind "Shift PageUp" "Ctrl u" "u" { HalfPageScrollUp; }
         // uncomment this and adjust key if using copy_on_select=false
         // bind "Alt c" { Copy; }
     }
@@ -236,7 +238,7 @@ load_plugins {
 //   - detach (Default)
 //   - quit
 //
-on_force_close "quit"
+on_force_close "detach"
 
 //  Send a request for a simplified ui (without arrow fonts) to plugins
 //  Options:

@@ -2,7 +2,7 @@
 {{ if eq .chezmoi.hostname "natura" }}
 monitor = DP-2
 {{ end }}
-{{ if eq .chezmoi.hostname "shined3" }}
+{{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
 monitor = 1
 {{ end }}
 origin = bottom-right
