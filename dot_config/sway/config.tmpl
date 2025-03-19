@@ -108,7 +108,6 @@ input "1149:32793:ExpertBT5.0_Mouse" {
   scroll_factor 0.3
 }
 
-{{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
 input "1452:613:Apple_Inc._Magic_Trackpad_2" {
   accel_profile "adaptive"
   scroll_factor 0.4
@@ -124,23 +123,14 @@ input "76:613:Apple_Inc._Magic_Trackpad_2" {
   natural_scroll enabled
   tap disabled
 }
-{{ else }}
-input "1452:613:Apple_Inc._Magic_Trackpad_2" {
-  accel_profile "adaptive"
-  scroll_factor 0.45
-  pointer_accel 0.6
-  natural_scroll enabled
-  tap disabled
-}
 
-input "76:613:Apple_Inc._Magic_Trackpad_2" {
+input "1452:613:Apple_Inc._Magic_Trackpad" {
   accel_profile "adaptive"
-  scroll_factor 0.45
-  pointer_accel 0.6
+  scroll_factor 0.4
+  pointer_accel 0.55
   natural_scroll enabled
   tap disabled
 }
-{{ end }}
 
 blur enable
 blur_xray disable
