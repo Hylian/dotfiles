@@ -296,7 +296,6 @@ bindgesture pinch:outward+right resize grow width
 set $mod Mod4
 floating_modifier $mod
 
-bindsym $mod+Return exec "ghostty"
 bindsym $mod+d kill
 
 bindsym $mod+Ctrl+s exec "grimshot copy area"
@@ -379,12 +378,20 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-{{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
+{{ if eq .chezmoi.hostname "shined" }}
+bindsym $mod+Return exec "echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty"
+bindsym $mod+space exec echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty -e zsh "-c 'zellij a persist || zellij -s persist'"
+bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome-beta.desktop"
+bindsym $mod+g exec "nautilus -w"
+
+{{ else if eq .chezmoi.hostname "shined3" }}
+bindsym $mod+Return exec "ghostty"
 bindsym $mod+space exec "ghostty -e zsh -c '~/dotfiles/scripts/ssh/desktop-waypipe.sh'"
 bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome-beta.desktop"
 bindsym $mod+g exec "nautilus -w"
 
 {{ else if eq .chezmoi.hostname "natura" }}
+bindsym $mod+Return exec "ghostty"
 bindsym $mod+q exec "zen-browser"
 bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
 bindsym $mod+p exec "1password --quick-access"
