@@ -54,8 +54,14 @@ selection-foreground = 1E2326
 selection-background = D3C6AA
 
 # Layout
+{{ if eq .chezmoi.hostname "shined" -}}
+window-padding-x = 2
+window-padding-y = 0
+{{ else -}}
 window-padding-x = 6
 window-padding-y = 8
+{{ end -}}
+
 window-padding-balance = true
 resize-overlay = never
 
