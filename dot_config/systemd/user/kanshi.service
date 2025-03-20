@@ -1,0 +1,9 @@
+[Unit]
+Description=kanshi
+
+[Service]
+ExecStart=/home/shined/.local/bin/kanshi
+Type=simple
+
+[Install]
+WantedBy=default.target
