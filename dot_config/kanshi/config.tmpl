@@ -60,7 +60,7 @@ profile home {
   output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
   output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@239.970Hz position 1080,0 scale 1
   output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 3640,0 transform 270 scale 2
-  exec ~/.local/bin/fc_set.sh lcd
+  exec ~/.local/bin/fc_set.sh oled
   exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
   exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
   exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
