@@ -391,8 +391,8 @@ bindsym $mod+m focus output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926"
 bindsym $mod+comma focus output "LG Electronics LG Ultra HD 0x00001DB9"
 {{ end }}
 
-bindsym XF86AudioRaiseVolume exec change_volume.sh 1%+
-bindsym XF86AudioLowerVolume exec change_volume.sh 1%-
+bindsym XF86AudioRaiseVolume exec $HOME/.local/bin/change_volume.sh 1%+
+bindsym XF86AudioLowerVolume exec $HOME/.local/bin/change_volume.sh 1%-
 bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
