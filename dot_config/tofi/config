@@ -1,0 +1,72 @@
+font = "~/.local/share/fonts/PragmataProR_liga_0829.otf"
+
+font-size = 18
+
+hint-font = false
+
+text-color = #d3c6aa
+
+prompt-color = #a7c080a0
+prompt-background = #00000000
+prompt-background-corner-radius = 0
+prompt-text = " 𝝀 "
+prompt-padding = 6
+
+input-color = #e69875
+
+input-background = #d3c6aa00
+input-background-padding = 2, 7, 4, 7
+input-background-corner-radius = 10
+
+selection-color = #7fbbb3
+selection-match-color = #e67e80
+selection-background = #4c374320
+selection-background-padding = 4, 9, 2, 9
+selection-background-corner-radius = 8
+
+result-spacing = 8
+
+width = 400
+height = 230
+
+background-color = #272e33c0
+
+outline-width = 0
+outline-color = #00000000
+
+border-width = 0
+border-color = #8DA101e0
+border-corner-radius = 20
+
+corner-radius = 18
+
+padding-top = 8
+padding-bottom = 4
+padding-left = 4
+padding-right = 4
+
+clip-to-padding = true
+scale = true
+
+# Location on screen to anchor the window to.
+#
+# Supported values: top-left, top, top-right, right, bottom-right,
+# bottom, bottom-left, left, center.
+anchor = center
+
+exclusive-zone = -1
+
+
+history = true
+
+fuzzy-match = true
+
+require-match = true
+
+drun-launch = false
+
+late-keyboard-init = false
+
+multi-instance = false
+
+ascii-input = true
