@@ -2,7 +2,7 @@ font = "~/.local/share/fonts/PragmataProR_liga_0829.otf"
 
 font-size = 18
 
-hint-font = false
+hint-font = true
 
 text-color = #d3c6aa
 

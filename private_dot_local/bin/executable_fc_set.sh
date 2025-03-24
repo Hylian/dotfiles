@@ -88,6 +88,7 @@ base_tail=$(cat <<EOF
   <alias>
     <family>serif</family>
     <prefer>
+      <family>Inter</family>
       <family>Sys</family>
       <family>Atkinson Hyperlegible</family>
       <family>Heuristica</family>
@@ -98,6 +99,7 @@ base_tail=$(cat <<EOF
   <alias>
     <family>sans-serif</family>
     <prefer>
+      <family>Inter</family>
       <family>Sys</family>
       <family>Atkinson Hyperlegible</family>
       <family>Noto Sans</family>
