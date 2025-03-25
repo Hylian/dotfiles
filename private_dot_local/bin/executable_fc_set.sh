@@ -38,7 +38,7 @@ rlcd_config=$(cat <<EOF
       <const>lcddefault</const>
     </edit>
     <edit name="hintstyle" mode="assign">
-      <const>hintnone</const>
+      <const>hintfull</const>
     </edit>
     <edit mode="assign" name="antialias">
       <bool>true</bool>
@@ -75,6 +75,7 @@ base_tail=$(cat <<EOF
   <alias>
   <family>monospace</family>
     <prefer>
+      <family>PragmataPro Monot</family>
       <family>PragmataPro</family>
       <family>Atkinson Monolegible</family>
       <family>Liberation Mono</family>
