@@ -190,7 +190,7 @@ fzf-git-pick-commit() {
   local fzf=(
     fzf
     --ansi --no-sort --reverse --tiebreak=index
-    --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always \$1 --pretty=full $filter | delta --light --true-color always -n --no-gitconfig; }; f {}"
+    --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always \$1 --pretty=full $filter | delta --true-color always -n --no-gitconfig; }; f {}"
     --bind "pgup:preview-half-page-up"
     --bind "pgdn:preview-half-page-down"
     --bind "ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down"
