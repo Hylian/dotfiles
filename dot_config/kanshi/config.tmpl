@@ -1,3 +1,56 @@
+{{- if eq .chezmoi.hostname "natura" }}
+profile nreal {
+  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 1.5
+  output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@239.970Hz position 1440,0 scale 1
+  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 4000,0 transform 270 scale 1.5
+  output "Nreal Air 0x66666600" enable mode 1920x1080@60Hz position 5440,0 scale 1
+  exec ~/.local/bin/fc_set.sh oled
+  exec swaymsg 'output "Nreal Air 0x66666600" subpixel none'
+  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
+  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
+  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
+  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9; rearrange_workspaces.sh "Nreal Air 0x66666600" "layout splith" 10
+  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
+}
+
+profile home-4k {
+  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
+  output "LG Electronics LG ULTRAGEAR+ 411NTHM29969" enable mode 3840x2160@240.084Hz position 1080,0 scale 2
+  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 3000,0 scale 2
+  exec ~/.local/bin/fc_set.sh oled
+  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
+  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
+  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
+  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 411NTHM29969" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splith" 7 8 9 10
+  exec ~/.local/bin/restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
+}
+
+
+profile home-1080 {
+  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
+  output "LG Electronics LG ULTRAGEAR+ 411NTHM29969" enable mode 1920x1080@480.170Hz position 1080,0 scale 1
+  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 3000,0 scale 2
+  exec ~/.local/bin/fc_set.sh oled
+  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 411NTHM29969" subpixel none'
+  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
+  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
+  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 411NTHM29969" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splith" 7 8 9 10
+  exec ~/.local/bin/restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
+}
+
+profile home-doublevert {
+  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
+  output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@239.970Hz position 1080,0 scale 1
+  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 3640,0 transform 270 scale 2
+  exec ~/.local/bin/fc_set.sh oled
+  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
+  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
+  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
+  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9
+  exec ~/.local/bin/restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
+}
+{{- end }}
+
 {{- if eq .chezmoi.hostname "shined3" }}
 profile laptop {
   output eDP-1 enable scale 2
@@ -38,45 +91,5 @@ profile worktriple-rotate {
   exec ~/.local/bin/fc_set.sh rlcd
   exec ~/.local/bin/restart_waybar.sh 'DP-3' style-re.css
   exec ~/.local/bin/rearrange_workspaces.sh "DP-2" "layout splitv" 8 9 10; rearrange_workspaces.sh "DP-4" "layout splith" 4 5 6 7; rearrange_workspaces.sh "DP-3" "layout splith" 1 2 3
-}
-{{- end }}
-
-{{- if eq .chezmoi.hostname "natura" }}
-profile nreal {
-  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 1.5
-  output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@239.970Hz position 1440,0 scale 1
-  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 4000,0 transform 270 scale 1.5
-  output "Nreal Air 0x66666600" enable mode 1920x1080@60Hz position 5440,0 scale 1
-  exec ~/.local/bin/fc_set.sh oled
-  exec swaymsg 'output "Nreal Air 0x66666600" subpixel none'
-  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
-  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
-  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
-  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9; rearrange_workspaces.sh "Nreal Air 0x66666600" "layout splith" 10
-  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
-}
-
-profile home {
-  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
-  output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@239.970Hz position 1080,0 scale 1
-  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 3640,0 scale 2
-  exec ~/.local/bin/fc_set.sh oled
-  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
-  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
-  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
-  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splith" 7 8 9 10
-  exec ~/.local/bin/restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
-}
-
-profile home-doublevert {
-  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
-  output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@239.970Hz position 1080,0 scale 1
-  output "LG Electronics LG Ultra HD 0x00001DB9" enable mode 3840x2160@59.997Hz position 3640,0 transform 270 scale 2
-  exec ~/.local/bin/fc_set.sh oled
-  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
-  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
-  exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
-  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9
-  exec ~/.local/bin/restart_waybar_dual.sh "Dell Inc. DELL U2723QE 7S2KXN3" "LG Electronics LG Ultra HD 0x00001DB9" style-desktop.css
 }
 {{- end }}
