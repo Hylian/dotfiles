@@ -68,6 +68,17 @@ profile nreal {
   exec ~/.local/bin/rearrange_workspaces.sh "Unknown nreal air 0x00008800" "layout splith" 1 2 3 4 5 6 7 8 9 10
 }
 
+profile home-4k {
+  output eDP-1 disable
+  output "Dell Inc. DELL U2723QE 7S2KXN3" enable mode 3840x2160@59.997Hz position 0,0 transform 90 scale 2
+  output "LG Electronics LG ULTRAGEAR+ 411NTHM29969" enable mode 3840x2160@95.033Hz position 1080,0 scale 2
+  exec ~/.local/bin/fc_set.sh oled
+  exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
+  exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
+  exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 411NTHM29969" "layout splith" 4 5 6 7 8 9 10; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3
+  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
+}
+
 profile home {
   output eDP-1 disable
   output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" enable mode 2560x1440@143.991Hz position 1080,200 scale 1
