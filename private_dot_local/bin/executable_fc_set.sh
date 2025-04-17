@@ -75,7 +75,7 @@ base_tail=$(cat <<EOF
   <alias>
   <family>monospace</family>
     <prefer>
-      <family>PragmataPro Monot</family>
+      <family>PragmataPro Mono</family>
       <family>PragmataPro</family>
       <family>Atkinson Monolegible</family>
       <family>Liberation Mono</family>
