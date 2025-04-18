@@ -31,7 +31,7 @@ require("everforest").setup({
     hl.TabLineSep = { fg = palette.bg1, bg = palette.none, sp = palette.red }
     hl.TabLineTabSep = { fg = palette.bg1, bg = palette.bg1, sp = palette.red }
     hl.TabLineInactiveSep = { fg = palette.blue, bg = palette.bg1, sp = palette.red }
-    hl.TabLineInactive = { fg = palette.bg5, bg = palette.bg4, sp = palette.red }
+    hl.TabLineInactive = { fg = palette.fg, bg = palette.bg4, sp = palette.red }
     hl.TabLineCurrent = { fg = palette.green, bg = palette.none, sp = palette.red }
   end,
 })
