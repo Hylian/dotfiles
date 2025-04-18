@@ -1,0 +1,10 @@
+[Unit]
+Description=Service managing the Shuttle devices
+
+[Service]
+Type=simple
+ExecStart=shuttleworker
+Restart=always
+
+[Install]
+WantedBy=default.target
