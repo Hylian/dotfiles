@@ -10,7 +10,7 @@ profile nreal {
   exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
   exec swaymsg 'output "LG Electronics LG Ultra HD 0x00001DB9" subpixel vbgr'
   exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3; ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG Ultra HD 0x00001DB9" "layout splitv" 7 8 9; rearrange_workspaces.sh "Nreal Air 0x66666600" "layout splith" 10
-  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
+  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" stylep.css
 }
 
 profile home-4k {
@@ -55,7 +55,7 @@ profile home-doublevert {
 profile laptop {
   output eDP-1 enable scale 2
   exec ~/.local/bin/fc_set.sh lcd
-  exec ~/.local/bin/restart_waybar.sh "eDP-1" style-laptop.css
+  exec ~/.local/bin/restart_waybar.sh "eDP-1" style.css
   exec ~/.local/bin/rearrange_workspaces.sh eDP-1 "layout splith" 1 2 3 4 5 6 7 8 9 0
 }
 
@@ -64,7 +64,7 @@ profile nreal {
   output "Unknown nreal air 0x00008800" enable scale 1 mode 1920x1080@60Hz
   exec swaymsg 'output "Unknown nreal air 0x00008800" subpixel none'
   exec ~/.local/bin/fc_set.sh oled
-  exec ~/.local/bin/restart_waybar.sh "Unknown nreal air 0x00008800" style-nreal.css
+  exec ~/.local/bin/restart_waybar.sh "Unknown nreal air 0x00008800" style.css
   exec ~/.local/bin/rearrange_workspaces.sh "Unknown nreal air 0x00008800" "layout splith" 1 2 3 4 5 6 7 8 9 10
 }
 
@@ -76,7 +76,7 @@ profile home-4k {
   exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
   exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
   exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 411NTHM29969" "layout splith" 4 5 6 7 8 9 10; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3
-  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-desktop.css
+  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style.css
 }
 
 profile home {
@@ -86,7 +86,7 @@ profile home {
   exec swaymsg 'output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" subpixel none'
   exec swaymsg 'output "Dell Inc. DELL U2723QE 7S2KXN3" subpixel vrgb'
   exec ~/.local/bin/fc_set.sh oled
-  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style-home.css
+  exec ~/.local/bin/restart_waybar.sh "Dell Inc. DELL U2723QE 7S2KXN3" style.css
   exec ~/.local/bin/rearrange_workspaces.sh "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" "layout splith" 4 5 6 7 8 9 10; ~/.local/bin/rearrange_workspaces.sh "Dell Inc. DELL U2723QE 7S2KXN3" "layout splitv" 1 2 3
 }
 {{- end }}
