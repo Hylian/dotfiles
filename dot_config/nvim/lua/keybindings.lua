@@ -74,18 +74,18 @@ map('n', 'gd',        "<cmd>lua require('fzf-lua').lsp_definitions()<CR>")
 map('n', 'gr',        "<cmd>lua require('fzf-lua').lsp_references()<CR>")
 map('n', ']',         "<cmd>lua require('fzf-lua').lsp_finder()<CR>")
 map('n', '{',         "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>")
-map('n', '|',         "<cmd>lua require('fzf-lua').oldfiles({ cwd_only = true })<CR>")
-map('n', '<C-S-\\>',  "<cmd>lua require('fzf-lua').oldfiles()<CR>")
-map('n', '_',         "<cmd>lua require('fzf-lua').files()<CR>")
+map('n', '\'',        "<cmd>lua require('fzf-lua').oldfiles({ cwd_only = true })<CR>")
+map('n', '\"',        "<cmd>lua require('fzf-lua').oldfiles()<CR>")
+map('n', '|',         "<cmd>lua require('fzf-lua').files()<CR>")
 --map('n', '\'',        "<cmd>lua require('fzf-lua').grep_curbuf()<CR>")
 --map('n', '\"',        "<cmd>lua require('fzf-lua').grep_project()<CR>")
 --map('n', '<C-\'>',    "<cmd>lua require('fzf-lua').grep_cword()<CR>")
 
 -- grug-far.nvim bindings
 -- current cursor word, current file
-map('n', '\'', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")
+map('n', '_', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")
 -- current visual selection, current file
-map('v', '\'', "<cmd>lua require('grug-far').with_visual_selection({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")
+map('v', '_', "<cmd>lua require('grug-far').with_visual_selection({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")
 -- current cursor word
 --map('n', '\"', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>') } })<CR>")
 -- current visual selection
