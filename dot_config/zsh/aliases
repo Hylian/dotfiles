@@ -119,6 +119,8 @@ alias stgri='stg refresh --index'
 alias stguc='stg uncommit'
 alias stgc='stg commit'
 
+alias rm='rm -i'
+
 gpush() {
   git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main
 }
