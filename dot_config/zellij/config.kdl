@@ -338,7 +338,11 @@ mirror_session true
 //   - detach (Default)
 //   - quit
 //
-on_force_close "quit"
+{{ if eq .chezmoi.hostname "shined" -}}
+on_force_close "detach"
+{{ else -}}
+on_force_close "quet"
+{{ end }}
 
 // Configure the scroll back buffer size
 // This is the number of lines zellij stores for each pane in the scroll back
@@ -390,7 +394,7 @@ scrollback_editor "nvim"
 // if it is already running or creates it otherwise.
 // Default: false
 //
-// attach_to_session true
+attach_to_session true
 
 // Toggle between having Zellij lay out panes according to a predefined set of layouts whenever possible
 // Options:

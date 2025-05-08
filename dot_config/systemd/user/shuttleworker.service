@@ -3,7 +3,7 @@ Description=Service managing the Shuttle devices
 
 [Service]
 Type=simple
-ExecStart=shuttleworker
+ExecStart=/usr/local/bin/shuttleworker
 Restart=always
 
 [Install]
