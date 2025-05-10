@@ -107,3 +107,5 @@ zvm_after_init_commands+=('source <(fzf --zsh)')
 if test -f "$HOME/.config/zsh/widgets"; then
   source $HOME/.config/zsh/widgets
 fi
+
+export LLM_MODEL=o4-mini
