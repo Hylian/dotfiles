@@ -1,6 +1,6 @@
 include /etc/sway/config.d/*
 
-{{ if eq .chezmoi.hostname "shined3" -}}
+{{- if eq .chezmoi.hostname "shined3" -}}
 output * render_bit_depth 10
 output * background #000000 solid_color
 #output eDP-1 bg ~/wallpapers/nasa.jpg fill
@@ -14,9 +14,7 @@ output "Lenovo Group Limited LEN T32p-20 VNA7645L" background #000000 solid_colo
 output "Nreal nreal air 0x00008800" background #000000 solid_color
 output "XXX AAA" background #f3f5d9 solid_color
 output HDMI-A-1 background #efefff solid_color
-{{ else if eq .chezmoi.hostname "shined" -}}
-output * background #000000 solid_color
-{{ else if eq .chezmoi.hostname "natura" -}}
+{{- else if eq .chezmoi.hostname "natura" -}}
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" scale 1
 #output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440@239.970Hz
 output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926" mode 2560x1440
@@ -43,6 +41,8 @@ output "LG Electronics LG Ultra HD 0x00001DB9" scale 2
 output "Nreal Air 0x00006600" background #000000 solid_color
 output HDMI-A-1 background #000000 solid_color
 #output HEADLESS-1 mode 1404x1872
+{{- else -}}
+output * background #000000 solid_color
 {{- end }}
 
 input pointer {
@@ -386,6 +386,12 @@ bindsym $mod+g exec "dolphin"
 bindsym $mod+n focus output "Dell Inc. DELL U2723QE 7S2KXN3"
 bindsym $mod+m focus output "LG Electronics LG ULTRAGEAR+ 302NTUW4D926"
 bindsym $mod+comma focus output "LG Electronics LG Ultra HD 0x00001DB9"
+{{ else }}
+bindsym $mod+Return exec "ghostty"
+bindsym $mod+q exec "zen-browser"
+bindsym $mod+shift+q exec "gio launch ~/.local/share/applications/google-chrome.desktop"
+bindsym $mod+p exec "gio launch ~/.local/share/applications/1password.desktop"
+bindsym $mod+g exec "dolphin"
 {{ end }}
 
 bindsym XF86AudioRaiseVolume exec $HOME/.local/bin/change_volume.sh 1%+
