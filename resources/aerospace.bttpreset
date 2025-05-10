@@ -1,0 +1,263 @@
+[
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.61007,
+    "BTTTriggerType" : 112,
+    "BTTTriggerTypeDescriptionReadOnly" : "3 Finger Click",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+    "BTTUUID" : "20CA145D-6336-4111-81DD-4AED12B0679B",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 0,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.6100941,
+        "BTTTriggerParentUUID" : "20CA145D-6336-4111-81DD-4AED12B0679B",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "E9BC941D-3277-4ADA-88BA-C06644EB830F",
+        "BTTPredefinedActionType" : 1,
+        "BTTPredefinedActionName" : "Middle Click (At Current Mouse Position)",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 2
+      }
+    ]
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.610086,
+    "BTTTriggerType" : 102,
+    "BTTTriggerTypeDescriptionReadOnly" : "3 Finger Swipe Up",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+    "BTTUUID" : "9C1EBAA8-03D0-4534-B5D3-EE8C1616B589",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 1,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.6100168,
+        "BTTTriggerParentUUID" : "9C1EBAA8-03D0-4534-B5D3-EE8C1616B589",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "B98E4CAC-6F3B-442D-B82E-5CAF5D013BA8",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/opt\/homebrew\/bin\/aerospace fullscreen ",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 2
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTGestureForceFeedbackPattern" : 4
+    }
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.6100779,
+    "BTTTriggerType" : 108,
+    "BTTTriggerTypeDescriptionReadOnly" : "4 Finger Swipe Up",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+    "BTTUUID" : "C93FF70D-D5BE-4340-9A48-17EC892D63B2",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 2,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.609997,
+        "BTTTriggerParentUUID" : "C93FF70D-D5BE-4340-9A48-17EC892D63B2",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "9DF0529E-3D35-4EC4-98DF-37890BBF8C30",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/opt\/homebrew\/bin\/aerospace move up",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 2
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTGestureForceFeedbackPattern" : 1
+    }
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.610131,
+    "BTTTriggerType" : 107,
+    "BTTTriggerTypeDescriptionReadOnly" : "4 Finger Swipe Down",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+    "BTTUUID" : "E308522D-A328-4C37-AC9D-85E066074E19",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 3,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.6100531,
+        "BTTTriggerParentUUID" : "E308522D-A328-4C37-AC9D-85E066074E19",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "8C1BB694-C916-485B-8BA8-CE892B4F3A30",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/opt\/homebrew\/bin\/aerospace move down",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 3
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTGestureForceFeedbackPattern" : 1
+    }
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.6100612,
+    "BTTTriggerType" : 105,
+    "BTTTriggerTypeDescriptionReadOnly" : "4 Finger Swipe Left",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+    "BTTUUID" : "D6AD523B-757A-4318-80FA-ECF1A67B3459",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 4,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.6101241,
+        "BTTTriggerParentUUID" : "D6AD523B-757A-4318-80FA-ECF1A67B3459",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "74B3FCF3-058B-46B3-AC75-9DA6BC7AF3B4",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/opt\/homebrew\/bin\/aerospace move left",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 4
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTGestureForceFeedbackPattern" : 1
+    }
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.610045,
+    "BTTTriggerType" : 106,
+    "BTTTriggerTypeDescriptionReadOnly" : "4 Finger Swipe Right",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+    "BTTUUID" : "3AED5405-6B6C-41AD-92D6-D9028494A5BC",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 5,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.610117,
+        "BTTTriggerParentUUID" : "3AED5405-6B6C-41AD-92D6-D9028494A5BC",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "4E4F3DE0-5BD5-4EE3-A7D1-42118F5A1BE4",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/opt\/homebrew\/bin\/aerospace move right",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 5
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTGestureForceFeedbackPattern" : 1
+    }
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.6100249,
+    "BTTTriggerType" : 100,
+    "BTTTriggerTypeDescriptionReadOnly" : "Built In: 3 Finger Swipe Left",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadBuiltIn",
+    "BTTUUID" : "3AFCA473-EEB1-4C8B-9B75-6E58CDDF847C",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 7,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.61011,
+        "BTTTriggerParentUUID" : "3AFCA473-EEB1-4C8B-9B75-6E58CDDF847C",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "F156063A-69ED-4B5C-8F6A-CEB65F0BDE81",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/bin\/sh -c \"\/opt\/homebrew\/bin\/aerospace list-workspaces --monitor focused --empty no | \/opt\/homebrew\/bin\/aerospace workspace prev\"",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 1
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTTriggerRestrictions" : "0",
+      "BTTGestureForceFeedbackPattern" : 15
+    }
+  },
+  {
+    "BTTActionCategory" : 0,
+    "BTTLastUpdatedAt" : 1746879161.610101,
+    "BTTTriggerType" : 101,
+    "BTTTriggerTypeDescriptionReadOnly" : "Built In: 3 Finger Swipe Right",
+    "BTTTriggerClass" : "BTTTriggerTypeTouchpadBuiltIn",
+    "BTTUUID" : "5A5D3349-484A-4B6E-9E10-97F5FF197F78",
+    "BTTPredefinedActionType" : 366,
+    "BTTPredefinedActionName" : "Empty Placeholder",
+    "BTTEnabled" : 1,
+    "BTTEnabled2" : 1,
+    "BTTOrder" : 8,
+    "BTTAdditionalActions" : [
+      {
+        "BTTActionCategory" : 0,
+        "BTTLastUpdatedAt" : 1746879161.6100359,
+        "BTTTriggerParentUUID" : "5A5D3349-484A-4B6E-9E10-97F5FF197F78",
+        "BTTIsPureAction" : true,
+        "BTTTriggerClass" : "BTTTriggerTypeTouchpadAll",
+        "BTTUUID" : "9757B2F4-372A-407D-B9CC-66F30EA8A8A7",
+        "BTTPredefinedActionType" : 137,
+        "BTTPredefinedActionName" : "Execute Terminal Command (Async, non-blocking)",
+        "BTTTerminalCommand" : "\/bin\/sh -c \"\/opt\/homebrew\/bin\/aerospace list-workspaces --monitor focused --empty no | \/opt\/homebrew\/bin\/aerospace workspace next\"",
+        "BTTEnabled" : 1,
+        "BTTEnabled2" : 1,
+        "BTTOrder" : 1
+      }
+    ],
+    "BTTTriggerConfig" : {
+      "BTTNoTouchTimeout" : 0,
+      "BTTTriggerRestrictions" : "0",
+      "BTTGestureForceFeedbackPattern" : 15
+    }
+  }
+]

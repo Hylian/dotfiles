@@ -13,6 +13,7 @@ resources/
 .config/swaylock
 .config/swayidle
 {{ end }}
+<<<<<<< Updated upstream
 
 {{ if ne .chezmoi.osRelease.id "arch" }}
 .config/electron-flags.conf
@@ -21,3 +22,6 @@ resources/
 {{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
 .zprofile
 {{ end }}
+=======
+resources/
+>>>>>>> Stashed changes
