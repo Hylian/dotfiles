@@ -7,13 +7,17 @@ resources/
 {{ if ne .chezmoi.os "linux" }}
 .zprofile
 .config/dunst
+.config/electron-flags.conf
 .config/fontconfig
 .config/kanshi
+.config/systemd
 .config/sway
-.config/swaylock
 .config/swayidle
+.config/swaylock
+.config/waybar
+.local/bin
+.local/share/applications
 {{ end }}
-<<<<<<< Updated upstream
 
 {{ if eq .chezmoi.os "linux" }}
 {{ if ne .chezmoi.osRelease.id "arch" }}
@@ -24,6 +28,5 @@ resources/
 {{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
 .zprofile
 {{ end }}
-=======
+
 resources/
->>>>>>> Stashed changes
