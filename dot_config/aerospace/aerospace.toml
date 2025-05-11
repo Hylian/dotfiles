@@ -31,7 +31,9 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # All possible modifiers: cmd, alt, ctrl, shift
 
 [mode.main.binding]
-cmd-enter = 'exec-and-forget open -n /Applications/Ghostty.app'
+cmd-enter = "exec-and-forget open -n /Applications/Ghostty.app"
+cmd-semicolon = "exec-and-forget open -n /Applications/Ghostty.app --args -e zsh -c ~/dotfiles/scripts/ssh/desktop.sh"
+
 cmd-shift-q = 'exec-and-forget open -n /Applications/Zen\ Browser.app'
 
 # i3 wraps focus by default

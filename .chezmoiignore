@@ -15,8 +15,10 @@ resources/
 {{ end }}
 <<<<<<< Updated upstream
 
+{{ if eq .chezmoi.os "linux" }}
 {{ if ne .chezmoi.osRelease.id "arch" }}
 .config/electron-flags.conf
+{{ end }}
 {{ end }}
 
 {{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
