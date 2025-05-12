@@ -9,9 +9,9 @@ BG_ACTIVE=0xa03c4841
 BG_INACTIVE=0x603c4841
 BG_INACTIVE_EMPTY=0x303c4841
 
-lockfile="/tmp/sketchybar_lock"
+lockfile="/tmp/sketchybar_lock_$NAME"
 exec {fd}>$lockfile
-flock --timeout 2 "$fd" || exit 1
+flock -n -x "$fd" || exit 1
 
 if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
     sketchybar --set $NAME label.color="$TEXT_ACTIVE" background.color="$BG_ACTIVE"
@@ -20,5 +20,7 @@ elif [ $(aerospace list-windows --workspace "$1" --count) -gt 0 ]; then
 else
     sketchybar --set $NAME label.color="$TEXT_INACTIVE_EMPTY" background.color="$BG_INACTIVE_EMPTY"
 fi
+
+flock -u "$fd"
 
 exit 0
