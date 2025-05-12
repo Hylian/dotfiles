@@ -1,3 +1,5 @@
+#!/bin/dash
+
 # Drag windows with control + cmd
 defaults write -g NSWindowShouldDragOnGesture -bool true
 # Don't play animation when dragging
