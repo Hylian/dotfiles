@@ -40,16 +40,18 @@ cmd-semicolon = "exec-and-forget open -n /Applications/Ghostty.app --args -e zsh
 cmd-shift-q = 'exec-and-forget open -n /Applications/Zen\ Browser.app'
 {{ end }}
 
-# i3 wraps focus by default
-cmd-h = 'focus --boundaries-action wrap-around-the-workspace left'
-cmd-j = 'focus --boundaries-action wrap-around-the-workspace down'
-cmd-k = 'focus --boundaries-action wrap-around-the-workspace up'
-cmd-l = 'focus --boundaries-action wrap-around-the-workspace right'
+cmd-h = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop left'
+cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
+cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
+cmd-l = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop right'
 
 cmd-shift-h = 'move left'
 cmd-shift-j = 'move down'
 cmd-shift-k = 'move up'
 cmd-shift-l = 'move right'
+
+cmd-ctrl-h = 'move-node-to-monitor --focus-follows-window left'
+cmd-ctrl-l = 'move-node-to-monitor --focus-follows-window right'
 
 # cmd-left = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev"'
 # cmd-right = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace next"'
@@ -85,7 +87,14 @@ cmd-shift-5 = 'move-node-to-workspace 5'
 #cmd-shift-9 = 'move-node-to-workspace 9'
 #cmd-shift-0 = 'move-node-to-workspace 10'
 
-cmd-alt-shift-c = 'reload-config'
+[workspace-to-monitor-force-assignment]
+    1 = 'main'
+    2 = 'main'
+    3 = ['secondary', 'main']
+    4 = ['secondary', 'main']
+    5 = ['secondary', 'main']
+
+cmd-ctrl-c = 'reload-config'
 
 cmd-alt-r = 'mode resize'
 
@@ -102,7 +111,7 @@ inner.horizontal = 8
 inner.vertical =   8
 outer.left =       6
 outer.bottom =     6
-outer.top =        8
+outer.top =        38
 outer.right =      6
 
 
