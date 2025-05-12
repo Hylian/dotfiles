@@ -53,8 +53,8 @@ cmd-shift-l = 'move right'
 cmd-ctrl-h = 'move-node-to-monitor --focus-follows-window left'
 cmd-ctrl-l = 'move-node-to-monitor --focus-follows-window right'
 
-# cmd-left = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev"'
-# cmd-right = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace next"'
+cmd-left = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev"'
+cmd-right = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace next"'
 
 cmd-shift-f = 'fullscreen'
 
@@ -109,10 +109,10 @@ esc = 'mode main'
 [gaps]
 inner.horizontal = 8
 inner.vertical =   8
-outer.left =       6
-outer.bottom =     6
-outer.top =        38
-outer.right =      6
+outer.left =       [{monitor.'built-in' = 6}, 6]
+outer.bottom =     [{monitor.'built-in' = 6}, 6]
+outer.top =        [{ monitor.main = 38 },    6]
+outer.right =      [{monitor.'built-in' = 6}, 6]
 
 
 {{ if eq .chezmoi.hostname "fbkpro" }}
