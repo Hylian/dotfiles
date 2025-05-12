@@ -53,8 +53,8 @@ cmd-shift-l = 'move right'
 cmd-ctrl-h = 'move-node-to-monitor --focus-follows-window left'
 cmd-ctrl-l = 'move-node-to-monitor --focus-follows-window right'
 
-cmd-left = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev"'
-cmd-right = 'exec-and-forget /bin/sh -c "aerospace list-workspaces --monitor focused --empty no | aerospace workspace next"'
+cmd-left = 'workspace prev'
+cmd-right = 'workspace next'
 
 cmd-shift-f = 'fullscreen'
 
@@ -86,13 +86,6 @@ cmd-shift-5 = 'move-node-to-workspace 5'
 #cmd-shift-8 = 'move-node-to-workspace 8'
 #cmd-shift-9 = 'move-node-to-workspace 9'
 #cmd-shift-0 = 'move-node-to-workspace 10'
-
-[workspace-to-monitor-force-assignment]
-    1 = 'main'
-    2 = 'main'
-    3 = ['secondary', 'main']
-    4 = ['secondary', 'main']
-    5 = ['secondary', 'main']
 
 cmd-ctrl-c = 'reload-config'
 
@@ -138,5 +131,13 @@ outer.right =      [{monitor.'built-in' = 6}, 6]
     check-further-callbacks = false
     run = ['move-node-to-workspace 3']
 {{ end }}
+
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'main'
+3 = ['secondary', 'main']
+4 = ['secondary', 'main']
+5 = ['secondary', 'main']
+
 
 # vim: ft=toml
