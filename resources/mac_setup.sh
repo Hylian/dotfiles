@@ -16,5 +16,7 @@ defaults write com.apple.dock autohide-delay -float 0
 defaults write com.apple.dock autohide-time-modifier -float 0
 # Speed up window resize for Cocoa applications
 defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+# Don't pop up the stupid accented character thing when holding a key
+defaults write -g ApplePressAndHoldEnabled -bool false
 
 killAll Finder && killAll Dock
