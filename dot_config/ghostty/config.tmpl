@@ -84,8 +84,12 @@ app-notifications = false
 macos-titlebar-style = hidden
 
 # Perf
+{{- if ne .chezmoi.os "darwin" -}}
 quit-after-last-window-closed = false
 quit-after-last-window-closed-delay = 10m
+{{ else }}
+quit-after-last-window-closed = true
+{{- end }}
 window-save-state = never
 gtk-single-instance = true
 
