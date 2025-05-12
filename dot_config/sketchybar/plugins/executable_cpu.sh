@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
-#$PLUGIN_DIR/stats/scripts/cpu.sh
+#!/bin/dash
 
-sketchybar -m --set "$NAME" label="$(top -l  2 | grep -E "^CPU" | tail -1 | awk '{ print $3 + $5"%" }')"
+# Get CPU usage percentage and convert to float between 0 and 1
+CPU_USAGE=$(top -l 1 | grep -E "^CPU" | tail -1 | awk '{ print ($3 + $5)/100 }')
+
+# Update the graph with the new value
+sketchybar --push "$NAME" "$CPU_USAGE"

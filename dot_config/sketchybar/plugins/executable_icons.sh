@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/dash
 
 export BATTERY=
 export CPU=

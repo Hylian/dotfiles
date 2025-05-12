@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/dash
 
 export TEXT=0xffd3c6aa
 
