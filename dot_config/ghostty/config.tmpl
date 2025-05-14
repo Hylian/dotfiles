@@ -74,6 +74,7 @@ background-opacity = 1.0
 window-decoration = false
 
 # Settings
+shell-integration=none
 confirm-close-surface = false
 clipboard-read = allow
 link-url = true
@@ -105,9 +106,21 @@ keybind = alt+7=unbind
 keybind = alt+8=unbind
 keybind = alt+9=unbind
 keybind = alt+0=unbind
+keybind = alt+left=unbind
+keybind = alt+right=unbind
+keybind = alt+up=unbind
+keybind = alt+down=unbind
 keybind = alt+control+left=unbind
 keybind = alt+control+right=unbind
 keybind = alt+left_bracket=unbind
 keybind = alt+right_bracket=unbind
 keybind = alt+shift+left_bracket=unbind
 keybind = alt+shift+right_bracket=unbind
+keybind = super+d=quit
+
+{{ if eq .chezmoi.os "darwin" }}
+keybind = ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+{{ end }}
