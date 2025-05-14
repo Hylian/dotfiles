@@ -72,20 +72,35 @@ function preexec {
   refresh
 }
 
-precmd() {
-    print -Pn "\e]133;A\e\\"
+#precmd() {
+#    print -Pn "\e]133;A\e\\"
+#}
+
+zellij_tab_name_update() {
+    if [[ -n $ZELLIJ ]]; then
+        local current_dir=$PWD
+        if [[ $current_dir == $HOME ]]; then
+            current_dir="~"
+        else
+            current_dir=${current_dir##*/}
+        fi
+        command nohup zellij action rename-tab $current_dir >/dev/null 2>&1
+    fi
 }
 
-function osc7 {
-  local LC_ALL=C
-  export LC_ALL
-
-  setopt localoptions extendedglob
-  input=( ${(s::)PWD} )
-  uri=${(j::)input/(#b)([^A-Za-z0-9_.\!~*\'\(\)-\/])/%${(l:2::0:)$(([##16]#match))}}
-  print -n "\e]7;file://${HOSTNAME}${uri}\e\\"
-}
-add-zsh-hook -Uz chpwd osc7
+zellij_tab_name_update
+chpwd_functions+=(zellij_tab_name_update)
+#
+#function osc7 {
+#  local LC_ALL=C
+#  export LC_ALL
+#
+#  setopt localoptions extendedglob
+#  input=( ${(s::)PWD} )
+#  uri=${(j::)input/(#b)([^A-Za-z0-9_.\!~*\'\(\)-\/])/%${(l:2::0:)$(([##16]#match))}}
+#  print -n "\e]7;file://${HOSTNAME}${uri}\e\\"
+#}
+#add-zsh-hook -Uz chpwd osc7
 
 # FZF
 if (( $+commands[fdfind] )); then
