@@ -5,7 +5,11 @@ font-family-bold = PragmataPro Mono
 font-family-italic = PragmataPro Mono
 font-family-bold-italic = PragmataPro Mono
 font-synthetic-style = true
+{{ if eq .chezmoi.hostname "eterna" }}
+font-size = 16
+{{ else }}
 font-size = 18
+{{ end }}
 
 # Colors
 
@@ -93,7 +97,7 @@ quit-after-last-window-closed-delay = 10m
 quit-after-last-window-closed = true
 {{- end }}
 window-save-state = never
-gtk-single-instance = true
+gtk-single-instance = false
 
 # Bindings
 keybind = alt+1=unbind

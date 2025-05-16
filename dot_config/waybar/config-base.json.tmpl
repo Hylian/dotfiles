@@ -4,7 +4,7 @@
   "output": ["eDP-1"],
   "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
   "modules-center": [],
-  "modules-right": ["tray", "pulseaudio", "backlight", "network", "disk", "memory", "cpu", "temperature", "battery", "clock"],
+  "modules-right": ["tray", "wireplumber", "backlight", "network", "disk", "memory", "cpu", "temperature", "battery", "clock"],
 
   "sway/workspaces": {
     "all-outputs": true,
@@ -40,13 +40,15 @@
   },
 
   "battery": {
-    "bat": "BAT0",
-    "adapter": "AC",
+{{ if eq .chezmoi.hostname "eterna" }}
+    "adapter": "BATT",
+    "adapter": "ACAD",
+{{ end }}
     "states": {
       "warning": 30,
       "critical": 15
     },
-    "full-at": 99,
+    "full-at": 100,
     "format": "{capacity}% {time}{icon}",
     "format-time": "{H}h{M}m ",
     "format-icons": ["", "", "", "", ""],
@@ -117,12 +119,6 @@
     "device": "intel_backlight",
     "format": "{percent}% {icon}",
     "format-icons": ["", ""]
-  },
-
-  "custom/wl-gammarelay-temperature": {
-    "format": "{} ",
-    "exec": "wl-gammarelay --subscribe Temperature",
-    "on-scroll-up": "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n +100",
-    "on-scroll-down": "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n -100"
   }
+
 }

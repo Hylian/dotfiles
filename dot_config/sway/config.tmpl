@@ -54,10 +54,24 @@ input pointer {
   scroll_factor 2.0
 }
 
+input type:touchpad {
+  accel_profile "adaptive"
+  scroll_factor 0.45
+  pointer_accel 0.6
+  natural_scroll enabled
+  tap disabled
+}
+
 input type:keyboard {
   repeat_delay 200
   repeat_rate 50
   xkb_options ctrl:nocaps
+}
+
+input "9610:12:HAILUCK_CO.,LTD_USB_KEYBOARD_Mouse" {
+  accel_profile "adaptive"
+  scroll_factor 0.5
+  pointer_accel 0.4
 }
 
 # resolution: 2560x1440
@@ -321,7 +335,7 @@ bindsym $mod+bracketleft scratchpad show
 bindsym $mod+Control+f floating toggle
 
 bindsym $mod+Control+l exec swaylock
-bindsym $mod+Control+Shift+l exec systemctl suspend
+bindsym $mod+Control+Alt+l exec systemctl suspend
 bindsym $mod+c exec pkill -SIGHUP kanshi
 bindsym $mod+Shift+c reload
 
@@ -405,12 +419,21 @@ bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym XF86AudioPlay exec playerctl play-pause
+{{ if eq .chezmoi.hostname "eterna" }}
+bindsym Print exec brightnessctl set 5%-
+bindsym Insert exec brightnessctl set 5%+
+{{ end }}
 
 bar swaybar_command waybar
 
 set $gnome-schema org.gnome.desktop.interface
 
 {{ if eq .chezmoi.hostname "natura" }}
+exec blueman-applet
+exec udiskie --tray
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+{{ end }}
+{{ if eq .chezmoi.hostname "eterna" }}
 exec blueman-applet
 exec udiskie --tray
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
