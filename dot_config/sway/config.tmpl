@@ -41,6 +41,9 @@ output "LG Electronics LG Ultra HD 0x00001DB9" scale 2
 output "Nreal Air 0x00006600" background #000000 solid_color
 output HDMI-A-1 background #000000 solid_color
 #output HEADLESS-1 mode 1404x1872
+{{ else if eq .chezmoi.hostname "eterna" -}}
+output * background #000000 solid_color
+output eDP-1 transform 90
 {{ else -}}
 output * background #000000 solid_color
 {{ end }}
