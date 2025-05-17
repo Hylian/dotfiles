@@ -33,8 +33,11 @@ font-size = 18
 #palette = 14=#85e6c1
 #palette = 16=#fdffe8
 
-#background = 1E2326
+{{ if eq .chezmoi.hostname "eterna" }}
+background = 1E2326
+{{ else }}
 background = 000000
+{{ end }}
 foreground = D3C6AA
 
 palette =  0=#272E33
