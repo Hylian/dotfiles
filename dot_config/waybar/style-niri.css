@@ -136,11 +136,11 @@ label:focus {
 }
 
 #battery.charging, #battery.plugged {
-  background-color: #ffa357;
+  color: #ffa357;
 }
 
 #battery.critical:not(.charging) {
-  background-color: #f53c3c;
+  color: #f53c3c;
   animation-name: blink;
   animation-duration: 0.5s;
   animation-timing-function: linear;
@@ -149,5 +149,5 @@ label:focus {
 }
 
 #temperature.critical {
-  background-color: #eb4d4b;
+  color: #eb4d4b;
 }

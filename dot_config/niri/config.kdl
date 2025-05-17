@@ -525,15 +525,20 @@ binds {
     Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
 
+    Mod+Space {spawn "bash" "-c" "if $(gsettings get org.gnome.desktop.a11y.applications screen-keyboard-enabled); then gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false; else gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true; fi"; }
+
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
 }
 
 switch-events {
-    tablet-mode-on { spawn "bash" "-c" "gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true"; }
-    tablet-mode-off { spawn "bash" "-c" "gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false"; }
+    tablet-mode-on { spawn "bash" "-c" "notify-send" "tablet mode on"; }
+    // tablet-mode-on { spawn "bash" "-c" "gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true"; }
+    tablet-mode-off { spawn "bash" "-c" "notify-send" "tablet mode off"; }
+    //tablet-mode-off { spawn "bash" "-c" "gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false"; }
 }
 
 spawn-at-startup "waybar"
 spawn-at-startup "squeekboard"
+spawn-at-startup "dunst"
