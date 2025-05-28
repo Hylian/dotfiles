@@ -11,6 +11,7 @@
 .config/electron-flags.conf
 .config/fontconfig
 .config/kanshi
+.config/niri
 .config/systemd
 .config/sway
 .config/swayidle
