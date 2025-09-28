@@ -104,7 +104,7 @@ inner.horizontal = 8
 inner.vertical =   8
 outer.left =       [{monitor.'built-in' = 6}, 6]
 outer.bottom =     [{monitor.'built-in' = 6}, 6]
-outer.top =        [{monitor.'built-in' = 6}, {monitor.main = 38}, 6]
+outer.top =        [{monitor.'built-in' = 6}, {monitor.main = 36}, 6]
 outer.right =      [{monitor.'built-in' = 6}, 6]
 
 
@@ -133,11 +133,19 @@ outer.right =      [{monitor.'built-in' = 6}, 6]
 {{ end }}
 
 [workspace-to-monitor-force-assignment]
+{{ if eq .chezmoi.hostname "fbkpro" -}}
 1 = 'main'
 2 = 'main'
 3 = ['secondary', 'main']
 4 = ['secondary', 'main']
 5 = ['secondary', 'main']
+{{ else if eq .chezmoi.hostname "midnight-future" -}}
+1 = ['secondary', 'main']
+2 = ['secondary', 'main']
+3 = 'main'
+4 = 'main'
+5 = 'main'
+{{ end -}}
 
 
 # vim: ft=toml
