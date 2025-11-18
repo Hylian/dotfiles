@@ -284,7 +284,12 @@ ui {
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
+{{ if ne .theme "dark" -}}
+theme "everforest-light"
+{{- else -}}
 theme "everforest-dark"
+{{- end }}
+
 
 // Choose the base input mode of zellij.
 // Default: normal

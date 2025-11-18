@@ -1,5 +1,5 @@
 local function map(mode, combo, mapping, opts)
-  local options = {noremap = true}
+  local options = {noremap = true, silent = true}
   if opts then
     options = vim.tbl_extend('force', options, opts)
   end
@@ -67,9 +67,9 @@ map('n', '}',             ":CodeCompanionChat Toggle<CR>")
 map('v', '}',             ":CodeCompanionChat Toggle<CR>")
 map('v', 'ga',            "<cmd>CodeCompanionChat Add<cr>")
 
-map('n', '<C-p>',     ":set paste<CR>o<ESC>p:set nopaste<CR>", {noremap = true, silent = true})
-map('n', '<C-S-p>',   ":set paste<>O<ESC>p:set nopaste<CR>", {noremap = true, silent = true})
-map('n', '<CR>',      ":noh<CR><CR>", {noremap = true})
+map('n', '<C-p>',     ":set paste<CR>o<ESC>p:set nopaste<CR>")
+map('n', '<C-S-p>',   ":set paste<>O<ESC>p:set nopaste<CR>")
+map('n', '<CR>',      ":noh<CR><CR>")
 map('n', 'gd',        "<cmd>lua require('fzf-lua').lsp_definitions()<CR>")
 map('n', 'gr',        "<cmd>lua require('fzf-lua').lsp_references()<CR>")
 map('n', ']',         "<cmd>lua require('fzf-lua').lsp_finder()<CR>")

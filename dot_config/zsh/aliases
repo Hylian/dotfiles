@@ -51,7 +51,7 @@ fi
 if (( $+commands[tag] )); then
   export TAG_SEARCH_PROG=rg
   tag() { command tag "$@"; source ${TAG_ALIAS_FILE:-/tmp/tag_aliases} 2>/dev/null }
-  alias trg=tag
+  alias rg=tag
 fi
 
 if (( $+commands[fdfind] )); then
@@ -90,6 +90,7 @@ uproot() {
     cd "$chosen_top"
   fi
 }
+alias upr='uproot'
 
 alias zellij-kill='zellij ls -s | grep -v persist | xargs -L1 zellij k'
 
@@ -118,8 +119,6 @@ alias stgr='stg refresh'
 alias stgri='stg refresh --index'
 alias stguc='stg uncommit'
 alias stgc='stg commit'
-
-alias rm='rm -i'
 
 gpush() {
   git push origin $(git log --pretty=oneline | fzf | cut -d ' ' -f1):refs/for/main

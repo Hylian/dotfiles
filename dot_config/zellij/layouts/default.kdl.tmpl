@@ -3,6 +3,45 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                {{ if ne .theme "dark" -}}
+                format_left   "{mode}"
+                format_center "{tabs}"
+                format_right  "#[fg=#3A94C5,bg=#FFFBEF]#[bg=#3A94C5,fg=#F2EFDF] {session} #[fg=#8DA101,bg=#3A94C5]{command_hostname}#[fg=#8DA101]"
+                format_space  "#[fg=#8DA101,bg=#FFFBEF]"
+
+                border_enabled  "false"
+
+                hide_frame_for_single_pane "false"
+
+                format_hide_on_overlength "true"
+                format_precedence "clr"
+
+                mode_normal        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] NORMAL #[fg=#8DA101,bg=#FFFBEF]"
+                mode_locked        "#[fg=#F85552]#[bg=#F85552,fg=#F2EFDF] LOCKED #[fg=#F85552,bg=#FFFBEF]"
+                mode_resize        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] RESIZE #[fg=#8DA101,bg=#FFFBEF]"
+                mode_pane          "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF]  PANE  #[fg=#8DA101,bg=#FFFBEF]"
+                mode_tab           "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF]  TAB   #[fg=#8DA101,bg=#FFFBEF]"
+                mode_scroll        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SCROLL #[fg=#8DA101,bg=#FFFBEF]"
+                mode_enter_search  "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SEARCH #[fg=#8DA101,bg=#FFFBEF]"
+                mode_search        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SEARCH #[fg=#8DA101,bg=#FFFBEF]"
+                mode_rename_tab    "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] RENAME #[fg=#8DA101,bg=#FFFBEF]"
+                mode_rename_pane   "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] RENAME #[fg=#8DA101,bg=#FFFBEF]"
+                mode_session       "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SESSN  #[fg=#8DA101,bg=#FFFBEF]"
+                mode_move          "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] MOVE   #[fg=#8DA101,bg=#FFFBEF]"
+                mode_prompt        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] PROMPT #[fg=#8DA101,bg=#FFFBEF]"
+
+                tab_normal   "#[fg=#F8F5E4,bg=#FFFBEF]#[bg=#F8F5E4,fg=#BEC5B2] {name} #[fg=#F8F5E4,bg=#FFFBEF]#[fg=#F8F5E4,bg=#FFFBEF] "
+                tab_active   "#[fg=#FFFBEF,bg=#FCECED]#[fg=#5C6A72,bg=#FCECED] {name} #[fg=#FFFBEF,bg=#FCECED]#[fg=#FCECED,bg=#FFFBEF] "
+
+                command_hostname_command  "hostname -s"
+                command_hostname_format "#[bg=#8DA101,fg=#F2EFDF] {stdout} "
+                command_hostname_rendermode  "static"
+                command_hostname_interval    "0"
+
+                datetime        "#[fg=#F2EFDF,bold] {format} "
+                datetime_format "%A, %d %b %Y %H:%M"
+                datetime_timezone "America/New_York"
+                {{- else -}}
                 format_left   "{mode}"
                 format_center "{tabs}"
                 format_right  "#[fg=#7FBBB3,bg=#272E33]#[bg=#7FBBB3,fg=#374145] {session} #[fg=#A7C080,bg=#7FBBB3]{command_hostname}#[fg=#A7C080]"
@@ -40,6 +79,7 @@ layout {
                 datetime        "#[fg=#374145,bold] {format} "
                 datetime_format "%A, %d %b %Y %H:%M"
                 datetime_timezone "America/New_York"
+                {{- end }}
             }
         }
         children

@@ -6,15 +6,21 @@ require('deadcolumn').setup({
     end,
     blending = {
         threshold = 0.75,
-        --colorcode = '#fffbef',
+        {{ if ne .theme "dark" -}}
+        colorcode = '#fffbef',
+        {{- else -}}
         colorcode = '#272e33',
+        {{- end }}
         hlgroup = { 'Normal', 'bg' },
     },
     warning = {
         alpha = 0.4,
         offset = 0,
-        --colorcode = '#bec5b2',
+        {{ if ne .theme "dark" -}}
+        colorcode = '#fceced',
+        {{- else -}}
         colorcode = '#4f5b58',
+        {{- end }}
         hlgroup = { 'Error', 'bg' },
     },
     extra = {

@@ -45,7 +45,11 @@ vim.opt.shortmess = 'ostTAcCWFSI'
 vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+{{ if ne .theme "dark" -}}
+vim.opt.background = 'light'
+{{- else -}}
 vim.opt.background = 'dark'
+{{- end }}
 vim.opt.scrolloff = 4
 vim.opt.showtabline = 2
 --vim.opt.lazyredraw = true
@@ -69,6 +73,22 @@ if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
          "'cache_enabled': 1," ..
       "}")
   elseif os.getenv("ZELLIJ") ~= nil then
+  {{ if eq .chezmoi.os "darwin" -}}
+  {{- else if eq .chezmoi.os "linux" -}}
+    vim.cmd(
+      "let g:clipboard = {" ..
+         "'name': 'Zellij Clipboard'," ..
+         "'copy': {" ..
+            "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
+            "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
+          "}," ..
+         "'paste': {" ..
+            "'+': ['wl-paste']," ..
+            "'*': ['wl-paste']," ..
+         "}," ..
+         "'cache_enabled': 1," ..
+      "}")
+  {{ end -}}
     vim.cmd(
       "let g:clipboard = {" ..
          "'name': 'Zellij Clipboard'," ..
@@ -107,28 +127,28 @@ if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
   end
 end
 
-local function update_wayland_display()
-  --if os.getenv("ZELLIJ") ~= nil and os.getenv("SSH_TTY") ~= nil then
-  if vim.env.ZELLIJ ~= nil then
-    local file = io.open("/tmp/wayland_display", "r")
-    if file then
-      local wayland_display = file:read("*l")
-      file:close()
-      if wayland_display then
-        vim.env.WAYLAND_DISPLAY = wayland_display
-        --print(wayland_display)
-      end
-    else
-      print("Error: Could not open /tmp/wayland_display")
-    end
-  end
-end
+--local function update_wayland_display()
+--  --if os.getenv("ZELLIJ") ~= nil and os.getenv("SSH_TTY") ~= nil then
+--  if vim.env.ZELLIJ ~= nil then
+--    local file = io.open("/tmp/wayland_display", "r")
+--    if file then
+--      local wayland_display = file:read("*l")
+--      file:close()
+--      if wayland_display then
+--        vim.env.WAYLAND_DISPLAY = wayland_display
+--        --print(wayland_display)
+--      end
+--    else
+--      print("Error: Could not open /tmp/wayland_display")
+--    end
+--  end
+--end
 
-vim.api.nvim_create_autocmd({'BufEnter', 'FocusGained'}, {
-  desc = 'Update WAYLAND_DISPLAY envvar',
-  pattern = '*',
-  callback = update_wayland_display,
-})
+--vim.api.nvim_create_autocmd({'BufEnter', 'FocusGained'}, {
+--  desc = 'Update WAYLAND_DISPLAY envvar',
+--  pattern = '*',
+--  callback = update_wayland_display,
+--})
 
 vim.api.nvim_create_autocmd({'BufWinEnter'}, {
   desc = 'Cursor history across file opens',

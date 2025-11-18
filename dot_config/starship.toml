@@ -108,7 +108,8 @@ format = '\[[$symbol$version]($style)\]'
 format = '\[[$symbol($version)]($style)\]'
 
 [python]
-format = '\[[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)\]'
+symbol = 'py'
+format = '\[[${symbol}(\($virtualenv\))]($style)\]'
 
 [rust]
 format = '[$symbol ($version)]($style)'
