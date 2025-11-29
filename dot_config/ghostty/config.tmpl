@@ -80,7 +80,11 @@ mouse-hide-while-typing = true
 
 # Fancy
 background-opacity = 1.0
+{{ if eq .chezmoi.os "darwin" -}}
+window-decoration = true
+{{- else -}}
 window-decoration = false
+{{- end }}
 
 # Settings
 shell-integration=none
