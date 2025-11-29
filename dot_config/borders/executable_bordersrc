@@ -3,7 +3,7 @@
 options=(
   hidpi=on
   ax_focus=off
-  active_color="glow(0xffd3c6aa)"
+  active_color=0xffd3c6aa
   inactive_color=0x00494d64
   width=4
 )
