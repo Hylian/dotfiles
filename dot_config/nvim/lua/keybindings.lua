@@ -41,6 +41,7 @@ map('n', '<A-f>',         "<cmd>lua vim.fn.system('zellij action toggle-fullscre
 map('n', '<A-S-s>',       "<cmd>lua require('focus').split_nicely()<CR>")
 map('n', '<A-w>',         ":w<CR>")
 map('n', '<A-d>',         ":q<CR>")
+map('n', '<A-S-q>',       ":qa!<CR>")
 --map('n', '<A-]>',         ":tab split<CR>")
 map('n', '<A-C-S-]>',       "<C-w>r")
 map('n', '<A-S-n>',       ":$tabnew<CR>")
