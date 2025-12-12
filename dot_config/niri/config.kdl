@@ -25,8 +25,8 @@ input {
         // dwtp
         // drag-lock
         natural-scroll
-        accel-speed 0.6
-        accel-profile "adaptive"
+        accel-speed 0.4
+        accel-profile "flat"
         // scroll-method "two-finger"
         // disabled-on-external-mouse
     }
@@ -34,8 +34,8 @@ input {
     mouse {
         // off
         // natural-scroll
-        accel-speed 0.4
-        accel-profile "adaptive"
+        accel-speed 0.2
+        accel-profile "flat"
         // scroll-method "no-scroll"
     }
 
@@ -102,7 +102,8 @@ layout {
     // preset-window-heights { }
 
     // You can change the default width of the new windows.
-    default-column-width { proportion 0.5; }
+    //default-column-width { proportion 0.5; }
+    default-column-width { proportion 0.66667; }
     // If you leave the brackets empty, the windows themselves will decide their initial width.
     // default-column-width {}
 
@@ -273,6 +274,10 @@ window-rule {
 window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
+}
+
+hotkey-overlay {
+    skip-at-startup
 }
 
 binds {
