@@ -1,12 +1,10 @@
+config-version = 2
+
 start-at-login = true
 
 after-startup-command = [
-  'exec-and-forget borders',
+#'exec-and-forget borders',
 #'exec-and-forget sketchybar'
-]
-
-exec-on-workspace-change = ['/bin/dash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
 ]
 
 automatically-unhide-macos-hidden-apps = true
@@ -15,7 +13,8 @@ enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # Mouse follows focus when focused monitor changes
-on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focused-monitor-changed = ['move-mouse window-lazy-center']
+on-focus-changed = ['move-mouse window-lazy-center']
 
 # All possible keys:
 # - Letters.        a, b, c, ..., z
@@ -32,13 +31,12 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 [mode.main.binding]
 cmd-enter = "exec-and-forget open -n /Applications/Ghostty.app"
-{{ if eq .chezmoi.hostname "shined-mac" }}
+{{ if eq .chezmoi.hostname "shined-mac" -}}
 cmd-semicolon = "exec-and-forget open -n /Applications/Ghostty.app --args -e zsh -c ~/dotfiles/scripts/ssh/desktop.sh"
-{{ end }}
-
-{{ if eq .chezmoi.hostname "fbkpro" }}
+{{- end }}
+{{ if eq .chezmoi.hostname "fbkpro" -}}
 cmd-shift-q = 'exec-and-forget open -n /Applications/Zen\ Browser.app'
-{{ end }}
+{{- end }}
 
 cmd-h = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop left'
 cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
@@ -58,10 +56,9 @@ cmd-right = 'workspace next'
 
 cmd-shift-f = 'fullscreen'
 
-cmd-leftSquareBracket = 'layout floating tiling' # 'floating toggle' in i3
-cmd-rightSquareBracket = 'layout h_accordion' # 'layout tabbed' in i3
-cmd-backslash = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
-
+cmd-shift-ctrl-f = 'layout floating tiling'
+cmd-leftSquareBracket = 'layout tiles horizontal vertical'
+cmd-rightSquareBracket = 'layout h_accordion'
 
 cmd-backtick = 'workspace-back-and-forth'
 
@@ -70,22 +67,22 @@ cmd-2 = 'workspace 2'
 cmd-3 = 'workspace 3'
 cmd-4 = 'workspace 4'
 cmd-5 = 'workspace 5'
-#cmd-6 = 'workspace 6'
-#cmd-7 = 'workspace 7'
-#cmd-8 = 'workspace 8'
-#cmd-9 = 'workspace 9'
-#cmd-0 = 'workspace 10'
+cmd-6 = 'workspace 6'
+cmd-7 = 'workspace 7'
+cmd-8 = 'workspace 8'
+cmd-9 = 'workspace 9'
+cmd-0 = 'workspace 10'
 
 cmd-shift-1 = 'move-node-to-workspace 1'
 cmd-shift-2 = 'move-node-to-workspace 2'
 cmd-shift-3 = 'move-node-to-workspace 3'
 cmd-shift-4 = 'move-node-to-workspace 4'
 cmd-shift-5 = 'move-node-to-workspace 5'
-#cmd-shift-6 = 'move-node-to-workspace 6'
-#cmd-shift-7 = 'move-node-to-workspace 7'
-#cmd-shift-8 = 'move-node-to-workspace 8'
-#cmd-shift-9 = 'move-node-to-workspace 9'
-#cmd-shift-0 = 'move-node-to-workspace 10'
+cmd-shift-6 = 'move-node-to-workspace 6'
+cmd-shift-7 = 'move-node-to-workspace 7'
+cmd-shift-8 = 'move-node-to-workspace 8'
+cmd-shift-9 = 'move-node-to-workspace 9'
+cmd-shift-0 = 'move-node-to-workspace 10'
 
 cmd-ctrl-c = 'reload-config'
 
@@ -106,7 +103,6 @@ outer.left =       [{monitor.'built-in' = 6}, 6]
 outer.bottom =     [{monitor.'built-in' = 6}, 6]
 outer.top =        [{monitor.'built-in' = 6}, {monitor.main = 36}, 6]
 outer.right =      [{monitor.'built-in' = 6}, 6]
-
 
 {{ if eq .chezmoi.hostname "fbkpro" }}
 [[on-window-detected]]
@@ -132,6 +128,32 @@ outer.right =      [{monitor.'built-in' = 6}, 6]
     run = ['move-node-to-workspace 3']
 {{ end }}
 
+{{ if eq .chezmoi.hostname "midnight-future" -}}
+[[on-window-detected]]
+    if.app-id = 'org.whispersystems.signal-desktop'
+    run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+    if.app-id = 'org.hnc.Discord'
+    run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.Safari.WebApp.C7EF0105-CFB8-41B2-8600-DE9993EF2A80'
+    run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+    if.app-id = 'app.zen-browser.zen'
+    run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.mail'
+    run = 'move-node-to-workspace 10'
+{{ end }}
+
+[[on-window-detected]]
+    if.app-id = 'com.1password.1password'
+    run = 'layout floating'
+
 [workspace-to-monitor-force-assignment]
 {{ if eq .chezmoi.hostname "fbkpro" -}}
 1 = 'main'
@@ -140,12 +162,16 @@ outer.right =      [{monitor.'built-in' = 6}, 6]
 4 = ['secondary', 'main']
 5 = ['secondary', 'main']
 {{ else if eq .chezmoi.hostname "midnight-future" -}}
-1 = ['secondary', 'main']
-2 = ['secondary', 'main']
-3 = 'main'
-4 = 'main'
-5 = 'main'
+1 = 1
+2 = 1
+3 = 2
+4 = 2
+5 = 2
+6 = 2
+7 = 2
+8 = 3
+9 = 3
+10 = 3
 {{ end -}}
-
 
 # vim: ft=toml

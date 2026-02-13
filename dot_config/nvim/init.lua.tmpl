@@ -57,75 +57,75 @@ vim.opt.showtabline = 2
 vim.cmd('highlight LineNr ctermfg=blue')
 --vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
 
-if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
-  if os.getenv("TMUX") ~= nil then
-    vim.cmd(
-      "let g:clipboard = {" ..
-         "'name': 'Tmux Clipboard'," ..
-         "'copy': {" ..
-            "'+': ['tmux', 'load-buffer', '-w', '-']," ..
-            "'*': ['tmux', 'load-buffer', '-']," ..
-          "}," ..
-         "'paste': {" ..
-            "'+': ['tmux', 'save-buffer', '-']," ..
-            "'*': ['tmux', 'save-buffer', '-']," ..
-         "}," ..
-         "'cache_enabled': 1," ..
-      "}")
-  elseif os.getenv("ZELLIJ") ~= nil then
-  {{ if eq .chezmoi.os "darwin" -}}
-  {{- else if eq .chezmoi.os "linux" -}}
-    vim.cmd(
-      "let g:clipboard = {" ..
-         "'name': 'Zellij Clipboard'," ..
-         "'copy': {" ..
-            "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
-            "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
-          "}," ..
-         "'paste': {" ..
-            "'+': ['wl-paste']," ..
-            "'*': ['wl-paste']," ..
-         "}," ..
-         "'cache_enabled': 1," ..
-      "}")
-  {{ end -}}
-    vim.cmd(
-      "let g:clipboard = {" ..
-         "'name': 'Zellij Clipboard'," ..
-         "'copy': {" ..
-            "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
-            "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
-          "}," ..
-         "'paste': {" ..
-            "'+': ['wl-paste']," ..
-            "'*': ['wl-paste']," ..
-         "}," ..
-         "'cache_enabled': 1," ..
-      "}")
-    vim.api.nvim_create_autocmd('TextYankPost', {
-      callback = function()
-          local copy_to_unnamedplus = require('vim.ui.clipboard.osc52').copy('+')
-          copy_to_unnamedplus(vim.v.event.regcontents)
-          local copy_to_unnamed = require('vim.ui.clipboard.osc52').copy('*')
-          copy_to_unnamed(vim.v.event.regcontents)
-      end
-    })
-  else
-    if pcall(require, 'vim.ui.clipboard.osc52') then
-      vim.g.clipboard = {
-        name = 'OSC 52',
-        copy = {
-          ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-          ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-        },
-        paste = {
-          ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-          ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-        },
-      }
-    end
-  end
-end
+--if (os.getenv("SSH_TTY") ~= nil) or (os.getenv("NVIM_SSH_OVERRIDE") ~= nil) then
+--  if os.getenv("TMUX") ~= nil then
+--    vim.cmd(
+--      "let g:clipboard = {" ..
+--         "'name': 'Tmux Clipboard'," ..
+--         "'copy': {" ..
+--            "'+': ['tmux', 'load-buffer', '-w', '-']," ..
+--            "'*': ['tmux', 'load-buffer', '-']," ..
+--          "}," ..
+--         "'paste': {" ..
+--            "'+': ['tmux', 'save-buffer', '-']," ..
+--            "'*': ['tmux', 'save-buffer', '-']," ..
+--         "}," ..
+--         "'cache_enabled': 1," ..
+--      "}")
+--  elseif os.getenv("ZELLIJ") ~= nil then
+--  {{ if eq .chezmoi.os "darwin" -}}
+--  {{- else if eq .chezmoi.os "linux" -}}
+--    vim.cmd(
+--      "let g:clipboard = {" ..
+--         "'name': 'Zellij Clipboard'," ..
+--         "'copy': {" ..
+--            "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
+--            "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
+--          "}," ..
+--         "'paste': {" ..
+--            "'+': ['wl-paste']," ..
+--            "'*': ['wl-paste']," ..
+--         "}," ..
+--         "'cache_enabled': 1," ..
+--      "}")
+--  {{ end -}}
+--    vim.cmd(
+--      "let g:clipboard = {" ..
+--         "'name': 'Zellij Clipboard'," ..
+--         "'copy': {" ..
+--            "'+': ['wl-copy', '-p', '--type', 'text/plain']," ..
+--            "'*': ['wl-copy', '-p', '--type', 'text/plain']," ..
+--          "}," ..
+--         "'paste': {" ..
+--            "'+': ['wl-paste']," ..
+--            "'*': ['wl-paste']," ..
+--         "}," ..
+--         "'cache_enabled': 1," ..
+--      "}")
+--    vim.api.nvim_create_autocmd('TextYankPost', {
+--      callback = function()
+--          local copy_to_unnamedplus = require('vim.ui.clipboard.osc52').copy('+')
+--          copy_to_unnamedplus(vim.v.event.regcontents)
+--          local copy_to_unnamed = require('vim.ui.clipboard.osc52').copy('*')
+--          copy_to_unnamed(vim.v.event.regcontents)
+--      end
+--    })
+--  else
+--    if pcall(require, 'vim.ui.clipboard.osc52') then
+--      vim.g.clipboard = {
+--        name = 'OSC 52',
+--        copy = {
+--          ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+--          ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+--        },
+--        paste = {
+--          ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+--          ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+--        },
+--      }
+--    end
+--  end
+--end
 
 --local function update_wayland_display()
 --  --if os.getenv("ZELLIJ") ~= nil and os.getenv("SSH_TTY") ~= nil then
