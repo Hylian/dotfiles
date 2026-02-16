@@ -43,10 +43,10 @@ cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop do
 cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
 cmd-l = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop right'
 
-cmd-shift-h = 'move left'
-cmd-shift-j = 'move down'
-cmd-shift-k = 'move up'
-cmd-shift-l = 'move right'
+cmd-shift-h = ['move --boundaries all-monitors-outer-frame left', 'move-mouse window-force-center']
+cmd-shift-j = ['move --boundaries all-monitors-outer-frame down', 'move-mouse window-force-center']
+cmd-shift-k = ['move --boundaries all-monitors-outer-frame up', 'move-mouse window-force-center']
+cmd-shift-l = ['move --boundaries all-monitors-outer-frame right', 'move-mouse window-force-center']
 
 cmd-ctrl-h = 'move-node-to-monitor --focus-follows-window left'
 cmd-ctrl-l = 'move-node-to-monitor --focus-follows-window right'
@@ -97,14 +97,14 @@ enter = 'mode main'
 esc = 'mode main'
 
 [gaps]
-inner.horizontal = 8
-inner.vertical =   8
-outer.left =       [{monitor.'built-in' = 6}, 6]
-outer.bottom =     [{monitor.'built-in' = 6}, 6]
-outer.top =        [{monitor.'built-in' = 6}, {monitor.main = 36}, 6]
-outer.right =      [{monitor.'built-in' = 6}, 6]
+inner.horizontal = 4
+inner.vertical =   4
+outer.left =       [{monitor.'built-in' = 6}, 4]
+outer.bottom =     [{monitor.'built-in' = 6}, 4]
+outer.top =        [{monitor.'built-in' = 6}, 4]
+outer.right =      [{monitor.'built-in' = 6}, 4]
 
-{{ if eq .chezmoi.hostname "fbkpro" }}
+{{ if eq .chezmoi.hostname "fbkpro" -}}
 [[on-window-detected]]
     if.app-id = 'app.zen-browser.zen'
     if.during-aerospace-startup = true
@@ -126,7 +126,7 @@ outer.right =      [{monitor.'built-in' = 6}, 6]
     if.app-id = 'com.hnc.Discord'
     check-further-callbacks = false
     run = ['move-node-to-workspace 3']
-{{ end }}
+{{- end }}
 
 {{ if eq .chezmoi.hostname "midnight-future" -}}
 [[on-window-detected]]
