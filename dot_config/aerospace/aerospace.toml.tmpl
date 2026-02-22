@@ -13,8 +13,8 @@ enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # Mouse follows focus when focused monitor changes
-on-focused-monitor-changed = ['move-mouse window-lazy-center']
-on-focus-changed = ['move-mouse window-lazy-center']
+#on-focused-monitor-changed = ['move-mouse window-lazy-center']
+#on-focus-changed = ['move-mouse window-lazy-center']
 
 # All possible keys:
 # - Letters.        a, b, c, ..., z
@@ -31,17 +31,17 @@ on-focus-changed = ['move-mouse window-lazy-center']
 
 [mode.main.binding]
 cmd-enter = "exec-and-forget open -n /Applications/Ghostty.app"
-{{ if eq .chezmoi.hostname "shined-mac" -}}
+{{- if eq .chezmoi.hostname "shined-mac" -}}
 cmd-semicolon = "exec-and-forget open -n /Applications/Ghostty.app --args -e zsh -c ~/dotfiles/scripts/ssh/desktop.sh"
-{{- end }}
+{{- end -}}
 {{ if eq .chezmoi.hostname "fbkpro" -}}
 cmd-shift-q = 'exec-and-forget open -n /Applications/Zen\ Browser.app'
 {{- end }}
 
-cmd-h = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop left'
-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
-cmd-l = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop right'
+cmd-h = ['focus --boundaries all-monitors-outer-frame --boundaries-action stop left', 'move-mouse window-lazy-center']
+cmd-j = ['focus --boundaries all-monitors-outer-frame --boundaries-action stop down', 'move-mouse window-lazy-center']
+cmd-k = ['focus --boundaries all-monitors-outer-frame --boundaries-action stop up', 'move-mouse window-lazy-center']
+cmd-l = ['focus --boundaries all-monitors-outer-frame --boundaries-action stop right', 'move-mouse window-lazy-center']
 
 cmd-shift-h = ['move --boundaries all-monitors-outer-frame left', 'move-mouse window-force-center']
 cmd-shift-j = ['move --boundaries all-monitors-outer-frame down', 'move-mouse window-force-center']
