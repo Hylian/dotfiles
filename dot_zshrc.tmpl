@@ -35,7 +35,11 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
+if test -f "$HOME/go/bin"; then
+  export PATH="$HOME/go/bin:$PATH"
+fi
 export PATH="$HOME/.local/bin:$PATH"
+
 if test -f "$HOME/.config/zsh/paths"; then
   source $HOME/.config/zsh/aliases
 fi
