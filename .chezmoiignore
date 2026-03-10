@@ -31,4 +31,8 @@
 .zprofile
 {{ end }}
 
+{{ if ne .chezmoi.hostname "eterna" -}}
+.config/waybar/config
+{{ end }}
+
 resources/
