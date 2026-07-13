@@ -1,0 +1,9 @@
+[Unit]
+Description=kanshi
+
+[Service]
+ExecStart=kanshi
+Type=simple
+
+[Install]
+WantedBy=default.target

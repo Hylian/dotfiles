@@ -1,0 +1,43 @@
+/* suggest-widget size */
+
+.monaco-editor .suggest-widget.docs-side {
+  width: 1000px;
+}
+
+.monaco-editor .suggest-widget.docs-side > .details {
+  width: 60%;
+  max-height: 800px !important;
+}
+
+.monaco-editor .suggest-widget.docs-side > .tree {
+  width: 30%;
+  float: left;
+}
+
+/* parameter-hints-widget */
+
+.editor-widget.parameter-hints-widget.visible {
+  max-height: 800px !important;
+}
+
+.monaco-editor .parameter-hints-widget > .wrapper {
+  max-width: 1000px;
+}
+
+/* editor-hover */
+
+.monaco-editor .monaco-hover {
+  max-width: 2000px !important;
+  max-height: 800px !important;
+  margin: 0;
+}
+
+.monaco-editor .monaco-hover-content {
+  max-width: 2000px !important;
+  max-height: 800px !important;
+  margin: 0;
+}
+
+.editor-container {
+  -webkit-font-smoothing: antialiased;
+}

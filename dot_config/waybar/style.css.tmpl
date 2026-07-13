@@ -1,0 +1,5 @@
+{{- if eq .chezmoi.hostname "eterna" -}}
+{{-   include "dot_config/waybar/style-niri.css" -}}
+{{- else -}}
+{{-   include "dot_config/waybar/style-sway.css" -}}
+{{- end -}}

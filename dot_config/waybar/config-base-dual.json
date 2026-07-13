@@ -1,0 +1,168 @@
+[
+{
+  "name": "swaybar",
+  "height": 24,
+  "spacing": 4,
+  "margin-top": 0,
+  "margin-left": 0,
+  "margin-right": 0,
+  "margin-bottom": 0,
+  "output": "DP-4",
+  "modules-left": [],
+  "modules-center": ["sway/workspaces"],
+  "modules-right": ["sway/mode"],
+
+  "sway/workspaces": {
+    "all-outputs": true,
+    "persistent-workspaces": {
+    }
+  },
+
+  "sway/mode": {
+    "format": "<span style=\"italic\">{}</span>"
+  },
+
+  "sway/scratchpad": {
+    "format": "{icon} {count}",
+    "show-empty": false,
+    "format-icons": ["", ""],
+    "tooltip": true,
+    "tooltip-format": "{app}: {title}"
+  }
+
+},
+{
+  "name": "traybar",
+  "height": 24,
+  "spacing": 4,
+  "margin-top": 0,
+  "margin-left": 0,
+  "margin-right": 0,
+  "margin-bottom": 0,
+  "output": "DP-2",
+  "modules-left": ["sway/window"],
+  "modules-center": [],
+  "modules-right": ["tray", "custom/suspend", "wireplumber", "disk", "cpu", "memory", "temperature", "clock#date", "clock#time"],
+  "sway/window": {
+    "all-outputs": true
+  },
+  "tray": {
+    "spacing": 14,
+    "icon-size": 22
+  },
+  "custom/suspend": {
+    "on-click": "systemctl suspend",
+    "format": "󰤄"
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": ""
+    },
+    "timeout": 30
+  },
+  "clock#time": {
+    "timezone": "America/New_York",
+    "format": "{:%I:%M %p} "
+  },
+
+  "clock#date": {
+    "timezone": "America/New_York",
+    "format": "{:%a %b %d} "
+  },
+
+  "battery": {
+    "bat": "BAT0",
+    "adapter": "AC",
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "full-at": 99,
+    "format": "{capacity}% {time}{icon}",
+    "format-time": "{H}h{M}m ",
+    "format-icons": ["", "", "", "", ""],
+    "format-charging": "{capacity}%  "
+  },
+
+  "disk": {
+    "format": "{percentage_used}% [{used}] ",
+    "interval": 30,
+    "path": "/"
+  },
+
+  "cpu": {
+    "format": "{usage:2}% [{min_frequency:.2f}GHz {avg_frequency:.2f}GHz {max_frequency:.2f}GHz] ",
+    "interval": 1,
+    "tooltip": false
+  },
+
+  "memory": {
+    "interval": 1,
+    "format": "{}% [{used:.2f}GiB] "
+  },
+
+  "temperature": {
+    "thermal-zone": 9,
+    "critical-threshold": 80,
+    "format": "{temperatureC}°C {icon}",
+    "format-icons": [""]
+  },
+
+  "network": {
+    "format-wifi": "{signalStrength}% ",
+    "format-ethernet": "",
+    "tooltip-format": "{ifname} via {gwaddr} ",
+    "format-linked": "{ifname} (No IP) ",
+    "format-disconnected": "Disconnected ⚠",
+    "format-alt": "{ifname}: {ipaddr}/{cidr}"
+  },
+
+  "wireplumber": {
+    "format": "{node_name} {volume}% ",
+    "format-muted": "",
+    "format-icons": ["", "", ""],
+    "on-click": "~/dotfiles/scripts/wp_toggle.sh",
+    "on-click-middle": "pavucontrol"
+  },
+
+  "pulseaudio": {
+    "scroll-step": 1,
+    "format": "{volume}% {icon} {format_source}",
+    "format-bluetooth": "{volume}% {icon} {format_source}",
+    "format-bluetooth-muted": " {icon} {format_source}",
+    "format-muted": " {format_source}",
+    "format-source": "{volume}% ",
+    "format-source-muted": "",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol"
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{percent}% {icon}",
+    "format-icons": ["", ""]
+  },
+
+  "custom/wl-gammarelay-temperature": {
+    "format": "{} ",
+    "exec": "wl-gammarelay --subscribe Temperature",
+    "on-scroll-up": "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n +100",
+    "on-scroll-down": "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n -100"
+  },
+  "custom/disp-rotate": {
+    "format": "⟳",
+    "on-click": "swaymsg \"output 'Dell Inc. DELL U2723QE 7S2KXN3' transform 0\"",
+    "on-click-right": "swaymsg \"output 'Dell Inc. DELL U2723QE 7S2KXN3' transform 270\""
+  }
+}
+]

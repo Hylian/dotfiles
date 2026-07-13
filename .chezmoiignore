@@ -1,0 +1,38 @@
+.config/fontconfig/fonts.conf
+
+{{ if ne .chezmoi.os "darwin" }}
+.config/aerospace
+.config/sketchybar
+.config/borders
+{{ end }}
+{{ if ne .chezmoi.os "linux" }}
+.zprofile
+.config/dunst
+.config/electron-flags.conf
+.config/fontconfig
+.config/kanshi
+.config/niri
+.config/systemd
+.config/sway
+.config/swayidle
+.config/swaylock
+.config/waybar
+.local/bin
+.local/share/applications
+{{ end }}
+
+{{ if eq .chezmoi.os "linux" }}
+{{ if ne .chezmoi.osRelease.id "arch" }}
+.config/electron-flags.conf
+{{ end }}
+{{ end }}
+
+{{ if or (eq .chezmoi.hostname "shined3") (eq .chezmoi.hostname "shined")}}
+.zprofile
+{{ end }}
+
+{{ if ne .chezmoi.hostname "eterna" -}}
+.config/waybar/config
+{{ end }}
+
+resources/

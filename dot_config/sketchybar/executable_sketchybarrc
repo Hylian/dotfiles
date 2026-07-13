@@ -1,0 +1,157 @@
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+source "$PLUGIN_DIR/colors.sh"
+source "$PLUGIN_DIR/icons.sh"
+
+
+NERD_FONT="Hack Nerd Font"
+FONT="PragmataPro Mono"
+
+##### Bar Appearance #####
+# Configuring the general appearance of the bar.
+# These are only some of the options available. For all options see:
+# https://felixkratz.github.io/SketchyBar/config/bar
+# If you are looking for other colors, see the color picker:
+# https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
+
+#sketchybar --bar position=top height=32 blur_radius=30 color=0x40000000 corner_radius=8 margin=6 y_offset=2
+sketchybar --bar position=top height=32 color=0xff000000 padding_left=6 padding_right=8 font_smoothing=on display=main
+
+##### Changing Defaults #####
+# We now change some default values, which are applied to all further items.
+# For a full list of all available item properties see:
+# https://felixkratz.github.io/SketchyBar/config/items
+
+default=(
+  padding_left=2
+  padding_right=2
+  icon.font="Hack Nerd Font:Bold:17.0"
+  label.font.family="PragmataPro Mono"
+  label.font.style="Regular"
+  label.font.size=18.0
+  label.color="$TEXT"
+  icon.color=0xffffffff
+  icon.padding_left=10
+  icon.padding_right=4
+  label.padding_left=2
+  label.padding_right=10
+  label.align=center
+  background.padding_left=2
+  background.padding_right=2
+  background.color="$BG_GREEN"
+  background.corner_radius=8
+  background.height=27
+  background.drawing=on
+)
+sketchybar --default "${default[@]}"
+
+
+sketchybar --add event aerospace_workspace_change
+
+for sid in $(aerospace list-workspaces --all); do
+sketchybar --add item spaceid.$sid left \
+    --subscribe spaceid.$sid aerospace_workspace_change \
+    --set spaceid.$sid \
+    background.color="$BG_GREEN" \
+    background.corner_radius=8 \
+    background.height=27 \
+    background.padding_left=6 \
+    background.padding_right=1 \
+    icon.padding_left=0 \
+    icon.drawing=off \
+    label.font.size=19.0 \
+    label.align=center \
+    label.padding_left=17 \
+    label.padding_right=19 \
+    label="$sid" \
+    script="$CONFIG_DIR/plugins/aerospace.sh $sid"
+done
+
+sketchybar --add item front_app q \
+           --subscribe front_app front_app_switched \
+           --set front_app icon.drawing=off script="$PLUGIN_DIR/front_app.sh" \
+               background.color="$BG_GREEN" \
+               background.corner_radius=8 \
+               background.drawing=false \
+               label.padding_left=9 \
+               label.padding_right=9 \
+               background.height=27
+
+sketchybar --add item clock right \
+           --set clock icon.color="$YELLOW" icon.padding_right=6 update_freq=10 icon=  script="$PLUGIN_DIR/clock.sh" \
+           --add item volume right \
+           --set volume icon.color="$ORANGE"  icon.padding_right=10 script="$PLUGIN_DIR/volume.sh" \
+           --subscribe volume volume_change \
+           --add item battery right \
+           --set battery icon.color="$GREEN" update_freq=120 script="$PLUGIN_DIR/battery.sh" \
+           --subscribe battery system_woke power_source_change
+
+
+cpu_percent=(
+	icon="$CPU"
+	icon.color="$BLUE"
+  icon.drawing=false
+	update_freq=1
+	mach_helper="$HELPER"
+  graph.color="$YELLOW"
+  graph.fill_color="$BG_GREEN"
+  graph.line_width=0.5
+  label.padding_right=0
+  label.padding_left=0
+  background.height=27
+	script="$PLUGIN_DIR/cpu.sh"
+)
+
+sketchybar --add graph cpu.percent right 60 --set cpu.percent "${cpu_percent[@]}"
+
+
+memory=(label.color="$TEXT"
+	icon="$MEMORY"
+	icon.color="$BLUE"
+	update_freq=15
+	script="$PLUGIN_DIR/ram.sh"
+)
+
+sketchybar --add item memory right --set memory "${memory[@]}"
+
+disk=(label.color="$TEXT"
+	icon="$DISK"
+	icon.color="$RED"
+	update_freq=60
+	script="$PLUGIN_DIR/disk.sh"
+)
+
+sketchybar --add item disk right 		\
+					 --set disk "${disk[@]}"
+
+network_down=(
+	y_offset=-7
+	label.font="$FONT:Heavy:10"
+	label.color="$TEXT"
+	icon="$NETWORK_DOWN"
+	icon.font="$NERD_FONT:Bold:16.0"
+	icon.color="$GREEN"
+	icon.highlight_color="$BLUE"
+	update_freq=1
+)
+
+network_up=(
+	background.padding_right=-70
+	y_offset=7
+	label.font="$FONT:10"
+	label.color="$TEXT"
+	icon="$NETWORK_UP"
+	icon.font="$NERD_FONT:Bold:16.0"
+	icon.color="$GREEN"
+	icon.highlight_color="$BLUE"
+	update_freq=1
+	script="$PLUGIN_DIR/network.sh"
+)
+
+#sketchybar 	--add item network.down right 						\
+#						--set network.down "${network_down[@]}" 	\
+#						--add item network.up right 							\
+#						--set network.up "${network_up[@]}"
+
+##### Force all scripts to run the first time (never do this in a script) #####
+sketchybar --update
