@@ -128,6 +128,24 @@ outer.right =      [{monitor.'built-in' = 6}, 4]
     run = ['move-node-to-workspace 3']
 {{- end }}
 
+{{ if eq .chezmoi.hostname "baumkuchen" -}}
+[[on-window-detected]]
+    if.app-id = 'org.whispersystems.signal-desktop'
+    run = ['move-node-to-workspace 2', 'resize width 605']
+
+[[on-window-detected]]
+    if.app-id = 'com.hnc.Discord'
+    run = ['move-node-to-workspace 2', 'resize width 907']
+
+[[on-window-detected]]
+    if.app-id = 'jcsalterego.Sky'
+    run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+    if.app-id = 'com.fastmail.mac.Fastmail'
+    run = 'move-node-to-workspace 4'
+{{- end }}
+
 {{ if eq .chezmoi.hostname "midnight-future" -}}
 [[on-window-detected]]
     if.app-id = 'org.whispersystems.signal-desktop'
