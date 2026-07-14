@@ -388,13 +388,13 @@ bindsym $mod+r mode "resize"
 {{ if eq .chezmoi.hostname "shined" }}
 bindsym $mod+Return exec "echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty"
 bindsym $mod+space exec echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty -e zsh "-c 'zellij a persist || zellij -s persist'"
-bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome-beta.desktop"
+bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome.desktop"
 bindsym $mod+g exec "nautilus -w"
 
 {{ else if eq .chezmoi.hostname "shined3" }}
 bindsym $mod+Return exec "ghostty"
 bindsym $mod+space exec "ghostty -e zsh -c '~/dotfiles/scripts/ssh/desktop-waypipe.sh'"
-bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome-beta.desktop"
+bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome.desktop"
 bindsym $mod+g exec "nautilus -w"
 
 {{ else if eq .chezmoi.hostname "natura" }}
