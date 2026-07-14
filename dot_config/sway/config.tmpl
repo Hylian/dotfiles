@@ -387,7 +387,7 @@ bindsym $mod+r mode "resize"
 
 {{ if eq .chezmoi.hostname "shined" }}
 bindsym $mod+Return exec "echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty"
-bindsym $mod+space exec echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty -e zsh "-c 'zellij a persist || zellij -s persist'"
+bindsym $mod+space exec echo $WAYLAND_DISPLAY > /tmp/wayland_display && ghostty -e zsh "-c 'zellij a -c persist options --on-force-close detach'"
 bindsym $mod+q exec "gio launch $HOME/.local/share/applications/google-chrome.desktop"
 bindsym $mod+g exec "nautilus -w"
 
