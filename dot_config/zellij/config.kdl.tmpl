@@ -354,7 +354,8 @@ mirror_session true
 //   - quit
 //
 {{ if eq .chezmoi.hostname "shined" -}}
-on_force_close "detach"
+//on_force_close "detach"
+on_force_close "quit"
 {{ else -}}
 on_force_close "quit"
 {{ end }}
