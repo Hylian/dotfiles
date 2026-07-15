@@ -185,10 +185,13 @@ local file_path
       --prompt "nvim> " \
       --header "" \
       --height '40%' \
-      --preview "$BAT_BIN --color=always {1}" \
+      --freeze-left=1 \
+      --freeze-right=1 \
+      --delimiter=/ \
+      --preview "$BAT_BIN --color=always {}" \
       --preview-window 'right,50%' \
       --bind 'change:first' \
-      --bind 'enter:become(echo {1})' \
+      --bind 'enter:become(echo {})' \
       --bind 'pgup:preview-half-page-up' \
       --bind 'pgdn:preview-half-page-down' \
       --bind 'ctrl-delete:clear-query')
