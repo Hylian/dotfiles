@@ -15,7 +15,7 @@ if (( $+commands[eza] )); then
   _auto_ls_chpwd() {
     if [[ "$PWD" != /google* ]]; then
       emulate -L zsh
-      eza -s modified --reverse
+      eza --group-directories-first
     fi
   }
   chpwd_functions+=(_auto_ls_chpwd)
@@ -25,7 +25,7 @@ elif (( $+commands[exa] )); then
   _auto_ls_chpwd() {
     if [[ "$PWD" != /google* ]]; then
       emulate -L zsh
-      exa -s modified --reverse
+      exa --group-directories-first
     fi
   }
   chpwd_functions+=(_auto_ls_chpwd)

@@ -24,19 +24,21 @@ elif [[ -f "$ANTIGEN_PATH_DEBIAN" ]]; then
 fi
 
 if [[ "$has_antigen" == true ]]; then
-  antigen use oh-my-zsh
+  local ANTIGEN_INIT="$HOME/.antigen/init.zsh"
+  if [[ ! -f "$ANTIGEN_INIT" || "$HOME/.zshrc" -nt "$ANTIGEN_INIT" ]]; then
+    antigen use oh-my-zsh
 
-  antigen bundle direnv
-  antigen bundle fd
-  antigen bundle pip
-  antigen bundle ripgrep
-  antigen bundle jeffreytse/zsh-vi-mode
-  antigen bundle zsh-users/zsh-autosuggestions
-  antigen bundle fzf
+    antigen bundle direnv
+    antigen bundle fd
+    antigen bundle pip
+    antigen bundle ripgrep
+    antigen bundle jeffreytse/zsh-vi-mode
+    antigen bundle zsh-users/zsh-autosuggestions
+    antigen bundle fzf
 
-  antigen theme minimal
-
-  antigen apply
+    antigen apply
+  fi
+  source "$ANTIGEN_INIT"
 fi
 
 DISABLE_UNTRACKED_FILES_DIRTY="true"
@@ -101,7 +103,7 @@ fi
 
 # Zsh Hooks
 function refresh {
-  if [ -n "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -n "$WAYLAND_DISPLAY" ]; then
+  if [ -n "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
     export $(tmux show-env WAYLAND_DISPLAY 2> /dev/null)
   elif [ -n "$ZELLIJ" ] && [ -f /tmp/wayland_display ]; then
     export WAYLAND_DISPLAY=$(< /tmp/wayland_display)
