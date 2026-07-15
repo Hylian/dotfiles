@@ -83,6 +83,7 @@ fi
 if (( $+commands[zellij] )); then
   if [[ ! -f "$ZSH_CACHE_DIR/zellij.zsh" || "$commands[zellij]" -nt "$ZSH_CACHE_DIR/zellij.zsh" ]]; then
     zellij setup --generate-auto-start zsh >! "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
+    zcompile "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
   fi
   source "$ZSH_CACHE_DIR/zellij.zsh"
 fi
@@ -90,6 +91,7 @@ fi
 if (( $+commands[zoxide] )); then
   if [[ ! -f "$ZSH_CACHE_DIR/zoxide.zsh" || "$commands[zoxide]" -nt "$ZSH_CACHE_DIR/zoxide.zsh" ]]; then
     zoxide init zsh --cmd j >! "$ZSH_CACHE_DIR/zoxide.zsh" 2>/dev/null
+    zcompile "$ZSH_CACHE_DIR/zoxide.zsh" 2>/dev/null
   fi
   source "$ZSH_CACHE_DIR/zoxide.zsh"
 fi
@@ -97,6 +99,7 @@ fi
 if (( $+commands[starship] )); then
   if [[ ! -f "$ZSH_CACHE_DIR/starship.zsh" || "$commands[starship]" -nt "$ZSH_CACHE_DIR/starship.zsh" ]]; then
     starship init zsh >! "$ZSH_CACHE_DIR/starship.zsh" 2>/dev/null
+    zcompile "$ZSH_CACHE_DIR/starship.zsh" 2>/dev/null
   fi
   source "$ZSH_CACHE_DIR/starship.zsh"
 fi
@@ -148,6 +151,7 @@ export FZF_DEFAULT_OPTS='--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da1
 if (( $+commands[fzf] )); then
   if [[ ! -f "$ZSH_CACHE_DIR/fzf.zsh" || "$commands[fzf]" -nt "$ZSH_CACHE_DIR/fzf.zsh" ]]; then
     fzf --zsh >! "$ZSH_CACHE_DIR/fzf.zsh" 2>/dev/null
+    zcompile "$ZSH_CACHE_DIR/fzf.zsh" 2>/dev/null
   fi
   zvm_after_init_commands+=("source '$ZSH_CACHE_DIR/fzf.zsh'")
 fi

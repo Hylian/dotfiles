@@ -6,41 +6,12 @@ $username\
 $character"""
 
 right_format = """
-$localip\
-$shlvl\
-$git_metrics\
-$git_status\
-$hg_branch\
-$docker_context\
-$package\
-$c\
-$cmake\
-$golang\
-$nodejs\
-$perl\
-$php\
-$python\
-$rust\
-$buf\
-$nix_shell\
-$conda\
-$meson\
-$memory_usage\
-$env_var\
-$custom\
-$sudo\
-$cmd_duration\
-$line_break\
-$jobs\
-$battery\
-$time\
-$status\
-$os\
-$container\
-$shell\
 $git_branch\
 $git_commit\
 $git_state\
+$cmd_duration\
+$jobs\
+$status\
 $hostname"""
 
 [directory]
