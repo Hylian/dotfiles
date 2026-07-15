@@ -12,21 +12,23 @@ fi
 if (( $+commands[eza] )); then
   alias ls='eza'
   alias ll='eza -l -a'
-  function chpwd() {
-    if [[ $(pwd) != /google* ]] then
+  _auto_ls_chpwd() {
+    if [[ "$PWD" != /google* ]]; then
       emulate -L zsh
       eza -s modified --reverse
     fi
   }
+  chpwd_functions+=(_auto_ls_chpwd)
 elif (( $+commands[exa] )); then
   alias ls='exa'
   alias ll='exa -l -a'
-  function chpwd() {
-    if [[ $(pwd) != /google* ]] then
+  _auto_ls_chpwd() {
+    if [[ "$PWD" != /google* ]]; then
       emulate -L zsh
       exa -s modified --reverse
     fi
   }
+  chpwd_functions+=(_auto_ls_chpwd)
 fi
 
 if (( $+commands[batcat] )); then

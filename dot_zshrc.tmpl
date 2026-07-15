@@ -1,21 +1,29 @@
+# Setup Zsh Initialization Cache
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+[[ -d "$ZSH_CACHE_DIR" ]] || mkdir -p "$ZSH_CACHE_DIR"
+
+# Zsh Completion Caching
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$ZSH_CACHE_DIR/zcompcache"
+
 # Setup Antigen
 ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
 ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
 ANTIGEN_PATH_MAC=/opt/homebrew/share/antigen/antigen.zsh
 has_antigen=false
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  source $ANTIGEN_PATH_MAC
+if [[ "$OSTYPE" == "darwin"* && -f "$ANTIGEN_PATH_MAC" ]]; then
+  source "$ANTIGEN_PATH_MAC"
   has_antigen=true
-elif test -f "$ANTIGEN_PATH_ARCH"; then
-  source $ANTIGEN_PATH_ARCH
+elif [[ -f "$ANTIGEN_PATH_ARCH" ]]; then
+  source "$ANTIGEN_PATH_ARCH"
   has_antigen=true
-elif test -f "$ANTIGEN_PATH_DEBIAN"; then
-  source $ANTIGEN_PATH_DEBIAN
+elif [[ -f "$ANTIGEN_PATH_DEBIAN" ]]; then
+  source "$ANTIGEN_PATH_DEBIAN"
   has_antigen=true
 fi
 
-if [ "$has_antigen" = true ]; then
+if [[ "$has_antigen" == true ]]; then
   antigen use oh-my-zsh
 
   antigen bundle direnv
@@ -35,39 +43,57 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
-if test -f "/opt/homebrew/opt/ccache/libexec"; then
+if [[ -d "/opt/homebrew/opt/ccache/libexec" ]]; then
   export PATH="/opt/homebrew/opt/ccache/libexec:$PATH"
 fi
 
-if test -f "$HOME/go/bin"; then
+if [[ -d "$HOME/go/bin" ]]; then
   export PATH="$HOME/go/bin:$PATH"
 fi
 export PATH="$HOME/.local/bin:$PATH"
-
-if test -f "$HOME/.config/zsh/paths"; then
-  source $HOME/.config/zsh/aliases
-fi
 
 export KEYTIMEOUT=5
 export WINEARCH=win32
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 export BAT_THEME="ansi"
 
-if test -f "$HOME/.config/zsh/aliases"; then
-  source $HOME/.config/zsh/aliases
+if [[ -f "$HOME/.config/zsh/paths" ]]; then
+  source "$HOME/.config/zsh/paths"
 fi
 
-if test -f "$HOME/.config/zsh/galiases"; then
-  source $HOME/.config/zsh/galiases
+if [[ -f "$HOME/.config/zsh/aliases" ]]; then
+  source "$HOME/.config/zsh/aliases"
 fi
 
-if test -f "$HOME/.config/zsh/gemini"; then
-  source $HOME/.config/zsh/gemini
+if [[ -f "$HOME/.config/zsh/galiases" ]]; then
+  source "$HOME/.config/zsh/galiases"
 fi
 
-eval "$(zellij setup --generate-auto-start zsh)"
-eval "$(zoxide init zsh --cmd j)"
-eval "$(starship init zsh)"
+if [[ -f "$HOME/.config/zsh/gemini" ]]; then
+  source "$HOME/.config/zsh/gemini"
+fi
+
+# Cached Tool Initializations
+if (( $+commands[zellij] )); then
+  if [[ ! -f "$ZSH_CACHE_DIR/zellij.zsh" || "$commands[zellij]" -nt "$ZSH_CACHE_DIR/zellij.zsh" ]]; then
+    zellij setup --generate-auto-start zsh >! "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
+  fi
+  source "$ZSH_CACHE_DIR/zellij.zsh"
+fi
+
+if (( $+commands[zoxide] )); then
+  if [[ ! -f "$ZSH_CACHE_DIR/zoxide.zsh" || "$commands[zoxide]" -nt "$ZSH_CACHE_DIR/zoxide.zsh" ]]; then
+    zoxide init zsh --cmd j >! "$ZSH_CACHE_DIR/zoxide.zsh" 2>/dev/null
+  fi
+  source "$ZSH_CACHE_DIR/zoxide.zsh"
+fi
+
+if (( $+commands[starship] )); then
+  if [[ ! -f "$ZSH_CACHE_DIR/starship.zsh" || "$commands[starship]" -nt "$ZSH_CACHE_DIR/starship.zsh" ]]; then
+    starship init zsh >! "$ZSH_CACHE_DIR/starship.zsh" 2>/dev/null
+  fi
+  source "$ZSH_CACHE_DIR/starship.zsh"
+fi
 
 # Zsh Hooks
 function refresh {
@@ -82,10 +108,6 @@ function preexec {
   refresh
 }
 
-#precmd() {
-#    print -Pn "\e]133;A\e\\"
-#}
-
 zellij_tab_name_update() {
     if [[ -n $ZELLIJ ]]; then
         local current_dir=$PWD
@@ -94,23 +116,11 @@ zellij_tab_name_update() {
         else
             current_dir=${current_dir##*/}
         fi
-        command nohup zellij action rename-tab $current_dir >/dev/null 2>&1
+        ( command zellij action rename-tab "$current_dir" >/dev/null 2>&1 & )
     fi
 }
 
-zellij_tab_name_update
 chpwd_functions+=(zellij_tab_name_update)
-#
-#function osc7 {
-#  local LC_ALL=C
-#  export LC_ALL
-#
-#  setopt localoptions extendedglob
-#  input=( ${(s::)PWD} )
-#  uri=${(j::)input/(#b)([^A-Za-z0-9_.\!~*\'\(\)-\/])/%${(l:2::0:)$(([##16]#match))}}
-#  print -n "\e]7;file://${HOSTNAME}${uri}\e\\"
-#}
-#add-zsh-hook -Uz chpwd osc7
 
 # FZF
 if (( $+commands[fdfind] )); then
@@ -129,16 +139,27 @@ export FZF_DEFAULT_OPTS='--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da1
 {{- else -}}
 {{- end }}
 
-
-zvm_after_init_commands+=('source <(fzf --zsh)')
-
-# Widgets
-if test -f "$HOME/.config/zsh/widgets"; then
-  source $HOME/.config/zsh/widgets
+if (( $+commands[fzf] )); then
+  if [[ ! -f "$ZSH_CACHE_DIR/fzf.zsh" || "$commands[fzf]" -nt "$ZSH_CACHE_DIR/fzf.zsh" ]]; then
+    fzf --zsh >! "$ZSH_CACHE_DIR/fzf.zsh" 2>/dev/null
+  fi
+  zvm_after_init_commands+=("source '$ZSH_CACHE_DIR/fzf.zsh'")
 fi
 
-if test -f "$HOME/.nvm"; then
+# Widgets
+if [[ -f "$HOME/.config/zsh/widgets" ]]; then
+  source "$HOME/.config/zsh/widgets"
+fi
+
+# Lazy NVM Sourcing
+if [[ -d "$HOME/.nvm" ]]; then
   export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  lazy_load_nvm() {
+    unset -f nvm node npm npx yarn pnpm 2>/dev/null
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  }
+  for cmd in nvm node npm npx yarn pnpm; do
+    eval "$cmd() { lazy_load_nvm; $cmd \"\$@\"; }"
+  done
 fi
