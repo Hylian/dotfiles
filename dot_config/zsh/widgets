@@ -4,7 +4,7 @@ fzf-cd-widget() {
   setopt localoptions pipefail no_aliases 2> /dev/null
   local dir
   {
-    dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
+    dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme=path --bind=ctrl-z:ignore,change:first ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
   } always {
     zle reset-prompt
   }
@@ -29,8 +29,9 @@ cd-fzf-helper() {
     --layout=reverse \
     --prompt 'cd> ' \
     --header "${2:2}" \
-    --preview "eza -G --color=always --group-directories-first -s modified ./$2/{1}" \
+    --preview "eval eza -G --color=always --group-directories-first -s modified ./$2/{1}" \
     --preview-window 'right,50%' \
+    --bind 'change:first' \
     --bind 'pgup:preview-half-page-up' \
     --bind 'pgdn:preview-half-page-down' \
     --bind 'ctrl-delete:clear-query' \
@@ -95,9 +96,14 @@ bindkey -M viins '^g' cd-fzf
 
 # zoxide + fzf
 zoxide-fzf() {
+  local result
   {
     zle push-input
-    _ZO_FZF_OPTS="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down --cycle --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987 --preview 'eza -G --color=always --group-directories-first -s modified {2..}'" __zoxide_zi
+    local fzf_opts="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down,change:first --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987 --preview 'eval eza -G --color=always --group-directories-first -s modified {}'"
+    result="$(command zoxide query -l | sed "s|^${HOME}|~|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
+    if [[ -n "$result" ]]; then
+      __zoxide_cd "${result/#\~/$HOME}"
+    fi
   } always {
     zle reset-prompt
   }
@@ -108,9 +114,14 @@ bindkey -M vicmd '^j' zoxide-fzf
 bindkey -M viins '^j' zoxide-fzf
 
 zoxide-fzf-curdir() {
+  local result
   {
     zle push-input
-    _ZO_FZF_OPTS="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down --cycle --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987 --preview 'eza -G --color=always --group-directories-first -s modified {2..}'" __zoxide_zi "${PWD}" "/"
+    local fzf_opts="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down,change:first --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987 --preview 'eval eza -G --color=always --group-directories-first -s modified {}'"
+    result="$(command zoxide query -l -- "${PWD}" "/" | sed "s|^${PWD}/||; s|^${PWD}$|.|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
+    if [[ -n "$result" ]]; then
+      __zoxide_cd "${PWD}/${result}"
+    fi
   } always {
     zle reset-prompt
   }
@@ -176,6 +187,7 @@ local file_path
       --height '40%' \
       --preview "$BAT_BIN --color=always {1}" \
       --preview-window 'right,50%' \
+      --bind 'change:first' \
       --bind 'enter:become(echo {1})' \
       --bind 'pgup:preview-half-page-up' \
       --bind 'pgdn:preview-half-page-down' \
