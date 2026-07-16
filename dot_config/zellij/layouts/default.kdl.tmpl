@@ -6,7 +6,7 @@ layout {
                 {{ if ne .theme "dark" -}}
                 format_left   "{mode}"
                 format_center "{tabs}"
-                format_right  "#[fg=#8DA101,bg=#FFFBEF]#[bg=#8DA101,fg=#F2EFDF]  {command_git_branch} #[fg=#3A94C5,bg=#8DA101]#[bg=#3A94C5,fg=#F2EFDF] {session} #[fg=#8DA101,bg=#3A94C5]#[bg=#8DA101,fg=#F2EFDF] {{ .chezmoi.fqdnHostname }} #[fg=#8DA101]"
+                format_right  "#[fg=#DF69BA,bg=#FFFBEF]#[bg=#DF69BA,fg=#F2EFDF]  {command_git_branch} #[fg=#3A94C5,bg=#DF69BA]#[bg=#3A94C5,fg=#F2EFDF] {session} #[fg=#8DA101,bg=#3A94C5]#[bg=#8DA101,fg=#F2EFDF] {{ .chezmoi.fqdnHostname }} #[fg=#8DA101]"
                 format_space  "#[fg=#8DA101,bg=#FFFBEF]"
 
                 border_enabled  "false"
@@ -33,7 +33,7 @@ layout {
                 tab_normal   "#[fg=#F8F5E4,bg=#FFFBEF]#[bg=#F8F5E4,fg=#BEC5B2] {name} #[fg=#F8F5E4,bg=#FFFBEF]#[fg=#F8F5E4,bg=#FFFBEF] "
                 tab_active   "#[fg=#FFFBEF,bg=#FCECED]#[fg=#5C6A72,bg=#FCECED] {name} #[fg=#FFFBEF,bg=#FCECED]#[fg=#FCECED,bg=#FFFBEF] "
 
-                command_git_branch_command    "sh -c 'git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null'"
+                command_git_branch_command    "sh -c 'b=$(git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); [ -n \"$b\" ] && { [ -n \"$(git status --porcelain 2>/dev/null)\" ] && echo \"$b ●\" || echo \"$b\"; }'"
                 command_git_branch_format     "{stdout}"
                 command_git_branch_rendermode "static"
                 command_git_branch_interval   "1"
@@ -72,8 +72,8 @@ layout {
                 tab_normal   "#[fg=#495156,bg=#272E33]#[bg=#495156,fg=#859289] {name} #[fg=#495156,bg=#272E33]#[fg=#495156,bg=#272E33] "
                 tab_active   "#[fg=#272E33]#[fg=#A7C080,bold] {name} #[fg=#272E33]#[fg=#495156,bg=#272E33] "
 
-                command_git_branch_command    "sh -c 'git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null'"
-                command_git_branch_format     "#[fg=#A7C080,bg=#272E33]#[bg=#A7C080,fg=#374145]  {stdout} "
+                command_git_branch_command    "sh -c 'b=$(git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); [ -n \"$b\" ] && { [ -n \"$(git status --porcelain 2>/dev/null)\" ] && echo \"$b ●\" || echo \"$b\"; }'"
+                command_git_branch_format     "#[fg=#DF69BA,bg=#272E33]#[bg=#DF69BA,fg=#374145]  {stdout} #[fg=#7FBBB3,bg=#DF69BA]"
                 command_git_branch_rendermode "static"
                 command_git_branch_interval   "1"
                 command_git_branch_cwd        "{focused_pane_cwd}"
