@@ -33,7 +33,7 @@ layout {
                 tab_normal   "#[fg=#F8F5E4,bg=#FFFBEF]#[bg=#F8F5E4,fg=#BEC5B2] {name} #[fg=#F8F5E4,bg=#FFFBEF]#[fg=#F8F5E4,bg=#FFFBEF] "
                 tab_active   "#[fg=#FFFBEF,bg=#FCECED]#[fg=#5C6A72,bg=#FCECED] {name} #[fg=#FFFBEF,bg=#FCECED]#[fg=#FCECED,bg=#FFFBEF] "
 
-                command_git_branch_command    "git branch --show-current"
+                command_git_branch_command    "sh -c 'git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null'"
                 command_git_branch_format     "{stdout}"
                 command_git_branch_rendermode "static"
                 command_git_branch_interval   "1"
@@ -72,7 +72,7 @@ layout {
                 tab_normal   "#[fg=#495156,bg=#272E33]#[bg=#495156,fg=#859289] {name} #[fg=#495156,bg=#272E33]#[fg=#495156,bg=#272E33] "
                 tab_active   "#[fg=#272E33]#[fg=#A7C080,bold] {name} #[fg=#272E33]#[fg=#495156,bg=#272E33] "
 
-                command_git_branch_command    "git branch --show-current"
+                command_git_branch_command    "sh -c 'git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null'"
                 command_git_branch_format     "#[fg=#A7C080,bg=#272E33]#[bg=#A7C080,fg=#374145]  {stdout} "
                 command_git_branch_rendermode "static"
                 command_git_branch_interval   "1"
