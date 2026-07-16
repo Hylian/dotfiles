@@ -6,13 +6,11 @@ $username\
 $character"""
 
 right_format = """
-$git_branch\
 $git_commit\
 $git_state\
 $cmd_duration\
 $jobs\
-$status\
-$hostname"""
+$status"""
 
 [directory]
 format = '[$path]($style)[$read_only]($read_only_style) '
