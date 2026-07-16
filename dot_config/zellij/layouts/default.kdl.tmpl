@@ -36,7 +36,7 @@ layout {
                 command_git_branch_command    "sh -c 'b=$(git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); [ -n \"$b\" ] && { [ -n \"$(git status --porcelain 2>/dev/null)\" ] && echo \"$b ●\" || echo \"$b\"; }'"
                 command_git_branch_format     "{stdout}"
                 command_git_branch_rendermode "static"
-                command_git_branch_interval   "1"
+                command_git_branch_interval   "10"
                 command_git_branch_cwd        "{focused_pane_cwd}"
 
                 datetime        "#[fg=#F2EFDF,bold] {format} "
