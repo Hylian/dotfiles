@@ -6,7 +6,7 @@ layout {
                 {{ if ne .theme "dark" -}}
                 format_left   "{mode}"
                 format_center "{tabs}"
-                format_right  "{command_git_branch}#[bg=#3A94C5,fg=#F2EFDF] {session} #[fg=#8DA101,bg=#3A94C5]{command_hostname}#[fg=#8DA101]"
+                format_right  "{command_git_branch}#[bg=#3A94C5,fg=#F2EFDF] {session} #[fg=#8DA101,bg=#3A94C5]#[bg=#8DA101,fg=#F2EFDF] {{ .chezmoi.fqdnHostname }} #[fg=#8DA101]"
                 format_space  "#[fg=#8DA101,bg=#FFFBEF]"
 
                 border_enabled  "false"
@@ -33,11 +33,6 @@ layout {
                 tab_normal   "#[fg=#F8F5E4,bg=#FFFBEF]#[bg=#F8F5E4,fg=#BEC5B2] {name} #[fg=#F8F5E4,bg=#FFFBEF]#[fg=#F8F5E4,bg=#FFFBEF] "
                 tab_active   "#[fg=#FFFBEF,bg=#FCECED]#[fg=#5C6A72,bg=#FCECED] {name} #[fg=#FFFBEF,bg=#FCECED]#[fg=#FCECED,bg=#FFFBEF] "
 
-                command_hostname_command  "hostname"
-                command_hostname_format "#[bg=#8DA101,fg=#F2EFDF] {stdout} "
-                command_hostname_rendermode  "static"
-                command_hostname_interval    "0"
-
                 command_git_branch_command    "git branch --show-current"
                 command_git_branch_format     "#[fg=#8DA101,bg=#FFFBEF]#[bg=#8DA101,fg=#F2EFDF]  {stdout} #[fg=#3A94C5,bg=#8DA101]"
                 command_git_branch_rendermode "static"
@@ -50,7 +45,7 @@ layout {
                 {{- else -}}
                 format_left   "{mode}"
                 format_center "{tabs}"
-                format_right  "{command_git_branch}#[bg=#7FBBB3,fg=#374145]{session} #[fg=#A7C080,bg=#7FBBB3]{command_hostname}#[fg=#A7C080]"
+                format_right  "{command_git_branch}#[bg=#7FBBB3,fg=#374145]{session} #[fg=#A7C080,bg=#7FBBB3]#[bg=#A7C080,fg=#374145] {{ .chezmoi.fqdnHostname }} #[fg=#A7C080]"
                 format_space  "#[fg=#A7C080,bg=#272E33]"
 
                 border_enabled  "false"
@@ -76,11 +71,6 @@ layout {
 
                 tab_normal   "#[fg=#495156,bg=#272E33]#[bg=#495156,fg=#859289] {name} #[fg=#495156,bg=#272E33]#[fg=#495156,bg=#272E33] "
                 tab_active   "#[fg=#272E33]#[fg=#A7C080,bold] {name} #[fg=#272E33]#[fg=#495156,bg=#272E33] "
-
-                command_hostname_command  "hostname"
-                command_hostname_format "#[bg=#A7C080,fg=#374145] {stdout} "
-                command_hostname_rendermode  "static"
-                command_hostname_interval    "0"
 
                 command_git_branch_command    "git branch --show-current"
                 command_git_branch_format     "#[fg=#A7C080,bg=#272E33]#[bg=#A7C080,fg=#374145]  {stdout} "
