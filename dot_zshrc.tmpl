@@ -127,13 +127,8 @@ zellij_tab_name_update() {
     command zellij action rename-tab "$current_dir" >/dev/null 2>&1 &!
 }
 
-zellij_status_update() {
-    command zellij pipe "zjstatus::rerun::command_git_branch" >/dev/null 2>&1 &!
-}
-
 if [[ -n $ZELLIJ ]]; then
-    chpwd_functions+=(zellij_tab_name_update zellij_status_update)
-    precmd_functions+=(zellij_status_update)
+    chpwd_functions+=(zellij_tab_name_update)
 fi
 
 
