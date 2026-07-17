@@ -139,6 +139,12 @@ if [[ -n $ZELLIJ ]]; then
         zellij_status_update
     }
     zle -N zle-focus-in 2>/dev/null
+
+    zle-focus-out() {
+        :
+    }
+    zle -N zle-focus-out 2>/dev/null
+
     printf '\e[?1004h'
 fi
 
