@@ -53,6 +53,7 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### Zellij
 * `Alt` is the primary modifier for pane, tab, and navigation management.
+* `Alt + \``: `ToggleTab` — quick switch back and forth between the two most recent tabs.
 * `Alt + e` (or `Ctrl + s` -> `e`): Instant `EditScrollback` — dumps active pane scrollback into Neovim.
 * `Alt + q` (in scroll/editor): Quick quit.
 
