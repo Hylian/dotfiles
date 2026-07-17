@@ -134,18 +134,6 @@ zellij_status_update() {
 if [[ -n $ZELLIJ ]]; then
     chpwd_functions+=(zellij_tab_name_update zellij_status_update)
     precmd_functions+=(zellij_status_update)
-
-    zle-focus-in() {
-        zellij_status_update
-    }
-    zle -N zle-focus-in 2>/dev/null
-
-    zle-focus-out() {
-        :
-    }
-    zle -N zle-focus-out 2>/dev/null
-
-    printf '\e[?1004h'
 fi
 
 
