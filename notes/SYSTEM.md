@@ -40,6 +40,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Shell Framework:** `zsh` + `antigen` with cached initialization in `$XDG_CACHE_HOME/zsh`.
 * **Prompt:** `starship` with active prompt character `❯` (U+276F).
 * **CLI Utilities:** `fzf` (with ripgrep/fd integration), `zoxide` (aliased to `j`), `bat`, `direnv`.
+* **Vi Mode Clipboard (OSC 52 Remote Copy):** `zsh-vi-mode` (`zvm`) configured with `zsh_clipboard_copy` to broadcast ANSI OSC 52 sequences directly to `/dev/tty` upon yanks (`y`, `yy`, `yw`, visual mode `y`, deletions). Updates macOS pasteboard over SSH and syncs to local display servers.
 
 ### E. Editor (Neovim 0.11.x) & Clipboard Stack
 * **Clipboard Mode:** `vim.opt.clipboard = 'unnamedplus'`.
