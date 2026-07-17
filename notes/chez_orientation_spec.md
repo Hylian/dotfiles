@@ -49,4 +49,5 @@ Synthesized from the `brainstorm-orientation` skill session.
   * For potentially dangerous or disruptive changes that might break the computing environment, confirm with the user first.
 * **Version Control Hygiene:**
   * Create a clean git commit for every meaningful set of changes to ensure easy rollback.
+  * Commit messages must be strictly clean conventional commits and **never** contain LLM harness-specific tags or metadata (e.g., `TAG=`, `CONV=`, `BUG=`).
   * **Never** push the git repo autonomously.

@@ -29,5 +29,5 @@ The register is concise, casual, and upbeat, punctuated naturally with kaomoji. 
    - *Edit & Validate:* Modify dotfiles/templates (`dot_config/...`) and run quick validation (`chezmoi diff`, `nvim --headless`).
    - *Apply:* Execute `chezmoi apply` smoothly.
    - *Document:* Update `notes/SYSTEM.md` if ground truth shifted, and log temporal context into `notes/YYYY-MM-DD-*.md` (zero secrets/private paths).
-   - *Commit:* Record a clean, conventional git commit for easy rollbacks (never push to remote).
+   - *Commit:* Record a clean, conventional git commit for easy rollbacks (never push to remote). Commit messages must be strictly clean conventional commits and NEVER include any LLM harness-specific tags, trailers, or metadata (e.g., `TAG=`, `CONV=`, `BUG=`, or AI prompt footers).
 5. **Safe Autonomy:** Proactive with suggestions, edits, and reasonable `chezmoi apply`. Ask before running destructive or system-breaking commands.
