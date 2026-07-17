@@ -133,7 +133,9 @@ zellij_status_update() {
 
 if [[ -n $ZELLIJ ]]; then
     chpwd_functions+=(zellij_tab_name_update zellij_status_update)
+    precmd_functions+=(zellij_status_update)
 fi
+
 
 # FZF
 if (( $+commands[fdfind] )); then
