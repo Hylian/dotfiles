@@ -57,7 +57,7 @@ vim.opt.showtabline = 2
 vim.cmd('highlight LineNr ctermfg=blue')
 --vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
 
--- OSC 52 Clipboard integration for SSH sessions & remote terminal yank sync
+-- Clipboard configuration: OSC 52 for yanks over SSH, instant local paste
 local is_ssh = vim.env.SSH_TTY ~= nil
   or vim.env.SSH_CONNECTION ~= nil
   or vim.env.SSH_CLIENT ~= nil
@@ -66,16 +66,44 @@ local is_ssh = vim.env.SSH_TTY ~= nil
 if pcall(require, 'vim.ui.clipboard.osc52') then
   local osc52 = require('vim.ui.clipboard.osc52')
 
+  local function get_paste_cmd()
+    if vim.fn.executable('wl-paste') == 1 then
+      return { 'wl-paste', '--no-newline' }
+    elseif vim.fn.executable('pbpaste') == 1 then
+      return { 'pbpaste' }
+    elseif vim.fn.executable('xclip') == 1 then
+      return { 'xclip', '-selection', 'clipboard', '-o' }
+    elseif vim.fn.executable('xsel') == 1 then
+      return { 'xsel', '--clipboard', '--output' }
+    end
+    return nil
+  end
+
+  local paste_cmd = get_paste_cmd()
+
+  local function local_paste()
+    if paste_cmd then
+      local out = vim.fn.systemlist(paste_cmd)
+      if vim.v.shell_error == 0 and #out > 0 then
+        local regtype = vim.fn.getregtype('+')
+        return { out, regtype ~= '' and regtype or 'v' }
+      end
+    end
+    local unnamed = vim.fn.getreg('"')
+    local regtype = vim.fn.getregtype('"')
+    return { vim.fn.split(unnamed, '\n'), regtype ~= '' and regtype or 'v' }
+  end
+
   if is_ssh then
     vim.g.clipboard = {
-      name = 'OSC 52',
+      name = 'OSC 52 Yank / Local Paste',
       copy = {
         ['+'] = osc52.copy('+'),
         ['*'] = osc52.copy('*'),
       },
       paste = {
-        ['+'] = osc52.paste('+'),
-        ['*'] = osc52.paste('*'),
+        ['+'] = local_paste,
+        ['*'] = local_paste,
       },
     }
   end
