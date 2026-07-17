@@ -111,6 +111,18 @@ map('n', 'yp', '<cmd>lua vim.fn.setreg("\\\"", vim.fn.expand("%:p:h"))<CR>')
 
 map('v', 'r', '"_dp')
 
+-- Prompt navigation motions (Zellij scrollback & terminal buffers)
+local function jump_prompt(backwards)
+  local flags = backwards and 'bW' or 'W'
+  local found = vim.fn.search([[❯]], flags)
+  if found == 0 then
+    vim.fn.search([[\v(^\s*[\$#%] |❯)]], flags)
+  end
+end
+
+vim.keymap.set({ 'n', 'v', 'o' }, '<C-k>', function() jump_prompt(true) end, { desc = 'Jump to previous prompt' })
+vim.keymap.set({ 'n', 'v', 'o' }, '<C-j>', function() jump_prompt(false) end, { desc = 'Jump to next prompt' })
+
 vim.keymap.set(
 	{ "n" },
 	"M",
