@@ -61,3 +61,12 @@ This document represents the current, living ground truth for this cross-platfor
 * `Alt + w` (`<A-w>`): `:w<CR>` (save).
 * `<C-k>`: Jump backwards to previous shell prompt line (`❯`).
 * `<C-j>`: Jump forwards to next shell prompt line (`❯`).
+
+### Zsh Interactive Widgets
+* Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.
+* `^k`: `zoxide-fzf-curdir` (interactive directory jump scoped to current directory subtree).
+* `^j`: `zoxide-fzf` (interactive global zoxide query and jump).
+* `^g`: `cd-fzf` (interactive directory navigator).
+* `^f`: `rg-fzf` (interactive ripgrep file/line search into Neovim).
+* `^v`: `vim-fzf` (interactive fd file search into Neovim).
+* `^l`: `git-pick-fzf` (interactive git commit picker).

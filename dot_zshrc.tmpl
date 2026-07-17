@@ -160,6 +160,7 @@ fi
 # Widgets
 if [[ -f "$HOME/.config/zsh/widgets" ]]; then
   source "$HOME/.config/zsh/widgets"
+  zvm_after_init_commands+=("source '$HOME/.config/zsh/widgets'")
 fi
 
 # Lazy NVM Sourcing

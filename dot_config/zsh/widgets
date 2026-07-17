@@ -86,9 +86,6 @@ cd-fzf() {
   zle push-line
   BUFFER="builtin cd -- ${(q)finaldir}"
   zle accept-line
-  if [[ -n $ZELLIJ ]]; then
-    zellij_status_update
-  fi
   local ret=$?
   return $ret
 }
@@ -106,9 +103,6 @@ zoxide-fzf() {
     result="$(command zoxide query -l | sed "s|^${HOME}|~|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
     if [[ -n "$result" ]]; then
       __zoxide_cd "${result/#\~/$HOME}"
-      if [[ -n $ZELLIJ ]]; then
-        zellij_status_update
-      fi
     fi
   } always {
     zle reset-prompt
@@ -127,9 +121,6 @@ zoxide-fzf-curdir() {
     result="$(command zoxide query -l -- "${PWD}" "/" | sed "s|^${PWD}/||; s|^${PWD}$|.|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
     if [[ -n "$result" ]]; then
       __zoxide_cd "${PWD}/${result}"
-      if [[ -n $ZELLIJ ]]; then
-        zellij_status_update
-      fi
     fi
   } always {
     zle reset-prompt
