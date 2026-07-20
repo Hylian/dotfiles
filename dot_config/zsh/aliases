@@ -65,6 +65,8 @@ if (( $+commands[fd] )); then
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
+alias zp='zellij a -c persist options --on-force-close detach'
+
 
 alias cdg='cd $(git rev-parse --show-toplevel 2>/dev/null)'
 alias cdr='cd $(repo --show-toplevel 2>/dev/null)'
