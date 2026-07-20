@@ -46,6 +46,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Clipboard Mode:** `vim.opt.clipboard = 'unnamedplus'`.
 * **Remote Yanks (OSC 52 Copy):** Over SSH (`SSH_TTY`, `SSH_CONNECTION`, `SSH_CLIENT`, `NVIM_SSH_OVERRIDE`), yanks broadcast OSC 52 sequences via `vim.ui.clipboard.osc52.copy('+')` and a `TextYankPost` autocommand. This immediately updates the connected macOS pasteboard over SSH.
 * **Instant Local Paste:** Paste operations are decoupled from OSC 52 read queries (`osc52.paste`) to prevent terminal query timeouts. Pasting queries local clipboard tools (`wl-paste`, `pbpaste`, `xclip`, `xsel`) and falls back immediately to Neovim's unnamed register (`"`).
+* **Long-Running & LSP Stability:** `clangd` is tuned for multi-day session stability with `--malloc-trim` (reclaims glibc heap memory back to OS), `--pch-storage=memory` (fast RAM preamble caching), `-j=8` (bounds indexing concurrency to 8 worker threads), `--background-index-priority=low`, bounded completion/reference limits, and `vim.lsp.set_log_level("warn")` to eliminate memory bloat and event-loop lag.
 
 ---
 

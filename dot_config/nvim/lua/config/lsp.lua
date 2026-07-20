@@ -1,5 +1,8 @@
 require('toggle_lsp_diagnostics').init({ start_on = false })
 
+-- Silence verbose LSP logging to prevent log file and memory bloat over days
+vim.lsp.set_log_level("warn")
+
 require('mason').setup({
   PATH = "append"
 })
@@ -10,8 +13,19 @@ vim.lsp.config('*', {
 })
 
 vim.lsp.config('clangd', {
-  cmd = {"clangd", "--header-insertion=never"}
+  cmd = {
+    "clangd",
+    "--header-insertion=never",
+    "--malloc-trim",
+    "--pch-storage=memory",
+    "-j=8",
+    "--background-index-priority=low",
+    "--limit-results=100",
+    "--limit-references=1000",
+    "--clang-tidy=false",
+  }
 })
 vim.lsp.enable('clangd')
 
 vim.lsp.enable('rust_analyzer')
+

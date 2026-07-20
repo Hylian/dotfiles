@@ -112,10 +112,9 @@ require('lualine').setup {
     always_divide_middle = true,
     globalstatus = true,
     refresh = {
-      statusline = 100,
+      statusline = 500,
       tabline = 1000,
       winbar = 1000,
-      refresh_time = 16
     }
   },
   sections = {
