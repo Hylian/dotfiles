@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-07-17*
+*Last Updated: 2026-07-21*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -8,6 +8,7 @@ This document represents the current, living ground truth for this cross-platfor
 
 ## 1. Host & Machine Matrix
 
+* **Collaborator / Engineer:** Rachel — Senior firmware engineer.
 * **Workstation (Linux):** `shined` — Primary Linux development machine.
 * **Secondary Linux:** `eterna` — Linux machine.
 * **Client (macOS):** Darwin machine — Client laptop / desktop.
