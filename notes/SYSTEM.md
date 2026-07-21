@@ -41,6 +41,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Shell Framework:** `zsh` + `antigen` with cached initialization in `$XDG_CACHE_HOME/zsh`.
 * **Prompt:** `starship` with active prompt character `❯` (U+276F).
 * **CLI Utilities & Themes:** `fzf` (with ripgrep/fd integration), `zoxide` (aliased to `j`), `bat`, `direnv`, and `delta` git previews (`gshow`, `^l` / `git-pick-fzf`) rendered via chezmoi templates (`aliases.tmpl`, `widgets.tmpl`) to match active `.theme` (e.g. Everforest light with `OneHalfLight` syntax highlighting).
+* **History Configuration:** `HISTFILE=~/.zsh_history`, `HISTSIZE=50000`, `SAVEHIST=50000` with `EXTENDED_HISTORY`, `SHARE_HISTORY`, duplicate pruning, and startup `fc -R` to instantly load existing history into session memory for fzf (`^R`).
 * **Vi Mode & Readkey Engine:** `zsh-vi-mode` (`zvm`) configured with `ZVM_READKEY_ENGINE=zle`, `ZVM_KEYTIMEOUT=0.01`, and `KEYTIMEOUT=1` (10ms) to delegate escape sequence handling to native ZLE, completely eliminating normal mode escape lag and key buffering issues when passing `Alt+Left` / `Alt+Right` tab switches to Zellij.
 * **Vi Mode Clipboard (OSC 52 Remote Copy):** `zsh-vi-mode` (`zvm`) configured with `zsh_clipboard_copy` to broadcast ANSI OSC 52 sequences directly to `/dev/tty` upon yanks (`y`, `yy`, `yw`, visual mode `y`, deletions). Updates macOS pasteboard over SSH and syncs to local display servers.
 

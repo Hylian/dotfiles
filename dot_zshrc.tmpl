@@ -6,6 +6,25 @@ ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$ZSH_CACHE_DIR/zcompcache"
 
+# History Configuration
+HISTFILE="${HISTFILE:-$HOME/.zsh_history}"
+HISTSIZE=50000
+SAVEHIST=50000
+
+setopt EXTENDED_HISTORY          # Write timestamp and elapsed time to history file
+setopt SHARE_HISTORY             # Share history between all active sessions in real time
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history
+setopt HIST_IGNORE_DUPS          # Do not record an entry that was just recorded
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found
+setopt HIST_IGNORE_SPACE         # Do not record an entry starting with a space
+setopt HIST_SAVE_NO_DUPS         # Do not write duplicate entries in the history file
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry
+setopt HIST_VERIFY               # Do not execute immediately upon history expansion
+
+# Read history from disk into memory immediately upon startup
+[[ -f "$HISTFILE" ]] && fc -R "$HISTFILE" 2>/dev/null
+
 # Setup Antigen
 ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
 ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
