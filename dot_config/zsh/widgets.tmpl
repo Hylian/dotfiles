@@ -99,7 +99,11 @@ zoxide-fzf() {
   local result
   {
     zle push-input
+{{ if ne .theme "dark" -}}
     local fzf_opts="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down,change:first --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987 --preview 'eval eza -G --color=always --group-directories-first -s modified {}'"
+{{- else -}}
+    local fzf_opts="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down,change:first --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --preview 'eval eza -G --color=always --group-directories-first -s modified {}'"
+{{- end }}
     result="$(command zoxide query -l | sed "s|^${HOME}|~|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
     if [[ -n "$result" ]]; then
       __zoxide_cd "${result/#\~/$HOME}"
@@ -117,7 +121,11 @@ zoxide-fzf-curdir() {
   local result
   {
     zle push-input
+{{ if ne .theme "dark" -}}
     local fzf_opts="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down,change:first --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987 --preview 'eval eza -G --color=always --group-directories-first -s modified {}'"
+{{- else -}}
+    local fzf_opts="--exact --no-sort --bind=ctrl-z:ignore,btab:up,tab:down,change:first --keep-right --height=45% --info=inline --layout=reverse --tabstop=1 --exit-0 --preview-window=down --preview 'eval eza -G --color=always --group-directories-first -s modified {}'"
+{{- end }}
     result="$(command zoxide query -l -- "${PWD}" "/" | sed "s|^${PWD}/||; s|^${PWD}$|.|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
     if [[ -n "$result" ]]; then
       __zoxide_cd "${PWD}/${result}"
