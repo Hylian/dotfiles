@@ -45,7 +45,12 @@ return {
   { 'bfrg/vim-cpp-modern' },
   { 'szw/vim-maximizer' },
   { 'Shougo/echodoc.vim' },
-  { 'nvim-treesitter/nvim-treesitter', build=':TSUpdate' },
+  {
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'master',
+    lazy = false,
+    build = ':TSUpdate',
+  },
   { 'nvim-treesitter/nvim-treesitter-context' },
   {
     'rcarriga/nvim-notify',

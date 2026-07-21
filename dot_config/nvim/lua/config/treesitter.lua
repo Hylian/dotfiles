@@ -1,19 +1,21 @@
-local ok_ts, ts_install = pcall(require, 'nvim-treesitter.install')
+local ok_ts, ts_configs = pcall(require, 'nvim-treesitter.configs')
 if ok_ts then
-  pcall(ts_install.install, { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" })
+  ts_configs.setup({
+    ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+    auto_install = true,
+    highlight = {
+      enable = true,
+      disable = function(lang, buf)
+        local max_filesize = 100 * 1024 -- 100 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+          return true
+        end
+      end,
+      additional_vim_regex_highlighting = false,
+    },
+  })
 end
-
-vim.api.nvim_create_autocmd("BufReadPost", {
-  callback = function(args)
-    local max_filesize = 100 * 1024 -- 100 KB
-    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(args.buf))
-    if ok and stats and stats.size > max_filesize then
-      vim.schedule(function()
-        pcall(vim.treesitter.stop, args.buf)
-      end)
-    end
-  end,
-})
 require('treesitter-context').setup{
   enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
