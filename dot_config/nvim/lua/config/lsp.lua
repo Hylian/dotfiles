@@ -15,8 +15,8 @@ vim.lsp.config('*', {
 vim.lsp.config('clangd', {
   cmd = {
     "clangd",
+    "--enable-config",
     "--header-insertion=never",
-    "--malloc-trim",
     "--pch-storage=memory",
     "-j=8",
     "--background-index-priority=low",
