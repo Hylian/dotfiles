@@ -232,6 +232,15 @@ git-pick-fzf() {
 }
 
 zle     -N            git-pick-fzf
+bindkey -M emacs '^i' git-pick-fzf
+bindkey -M vicmd '^i' git-pick-fzf
+bindkey -M viins '^i' git-pick-fzf
+bindkey -M emacs '^[[105;5u' git-pick-fzf
+bindkey -M vicmd '^[[105;5u' git-pick-fzf
+bindkey -M viins '^[[105;5u' git-pick-fzf
+bindkey -M emacs '^[[9;5u' git-pick-fzf
+bindkey -M vicmd '^[[9;5u' git-pick-fzf
+bindkey -M viins '^[[9;5u' git-pick-fzf
 bindkey -M emacs '^l' git-pick-fzf
 bindkey -M vicmd '^l' git-pick-fzf
 bindkey -M viins '^l' git-pick-fzf
