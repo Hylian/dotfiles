@@ -148,12 +148,21 @@ gsync() {
 fzf-git-branch() {
   git rev-parse HEAD > /dev/null 2>&1 || return
 
-  local branches=(
-    git branch
-    --color=always
-    --all
-    --sort=-committerdate
-  )
+  local current=$(git branch --show-current 2>/dev/null)
+  local branch_list=()
+  if [[ -n "$current" ]]; then
+    branch_list+=("$current")
+  fi
+
+  local local_branches=$(git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads/ 2>/dev/null | grep -v -Fx "$current")
+  if [[ -n "$local_branches" ]]; then
+    branch_list+=("${(f)local_branches}")
+  fi
+
+  local remote_branches=$(git for-each-ref --sort=-committerdate --format='%(refname:lstrip=2)' refs/remotes/ 2>/dev/null | grep -v '/HEAD$')
+  if [[ -n "$remote_branches" ]]; then
+    branch_list+=("${(f)remote_branches}")
+  fi
 
   local fzf=(
     fzf
@@ -169,7 +178,7 @@ fzf-git-branch() {
     --preview-window=right:65%
   )
 
-  echo $($branches | rg -v HEAD | $fzf | awk '{print $NF}')
+  echo $(printf "%s\n" "${branch_list[@]}" | $fzf | tr '\n' ' ')
 }
 
 fzf-git-checkout() {
