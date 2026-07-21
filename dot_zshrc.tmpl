@@ -87,11 +87,17 @@ zsh_clipboard_paste() {
   fi
 }
 
+ZVM_READKEY_ENGINE=zle
+ZVM_KEYTIMEOUT=0.01
+ZVM_ESCAPE_KEYTIMEOUT=0.01
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 ZVM_CLIPBOARD_COPY_CMD='zsh_clipboard_copy'
 ZVM_CLIPBOARD_PASTE_CMD='zsh_clipboard_paste'
 
 function zvm_config() {
+  ZVM_READKEY_ENGINE=zle
+  ZVM_KEYTIMEOUT=0.01
+  ZVM_ESCAPE_KEYTIMEOUT=0.01
   ZVM_SYSTEM_CLIPBOARD_ENABLED=true
   ZVM_CLIPBOARD_COPY_CMD='zsh_clipboard_copy'
   ZVM_CLIPBOARD_PASTE_CMD='zsh_clipboard_paste'
@@ -110,7 +116,7 @@ if [[ -d "$HOME/.fzf/bin" ]]; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 
-export KEYTIMEOUT=5
+export KEYTIMEOUT=1
 export WINEARCH=win32
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 export BAT_THEME="ansi"
