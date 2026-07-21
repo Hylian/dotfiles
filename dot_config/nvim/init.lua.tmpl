@@ -57,29 +57,68 @@ vim.opt.showtabline = 2
 vim.cmd('highlight LineNr ctermfg=blue')
 --vim.cmd('highlight MsgArea guibg=#edeada guifg=#5c6a72')
 
--- Clipboard configuration: OSC 52 for yanks over SSH, instant local paste
-local is_ssh = vim.env.SSH_TTY ~= nil
-  or vim.env.SSH_CONNECTION ~= nil
-  or vim.env.SSH_CLIENT ~= nil
-  or vim.env.NVIM_SSH_OVERRIDE ~= nil
-
+-- Clipboard configuration: Local clipboard, shared file cache, and OSC 52
 if pcall(require, 'vim.ui.clipboard.osc52') then
   local osc52 = require('vim.ui.clipboard.osc52')
 
-  local function get_paste_cmd()
-    if vim.fn.executable('wl-paste') == 1 then
-      return { 'wl-paste', '--no-newline' }
-    elseif vim.fn.executable('pbpaste') == 1 then
-      return { 'pbpaste' }
+  local clip_dir = vim.fn.expand(vim.env.XDG_CACHE_HOME and vim.env.XDG_CACHE_HOME ~= '' and vim.env.XDG_CACHE_HOME or '~/.cache')
+  local clip_file = clip_dir .. '/clipboard'
+
+  local function write_clip_cache(lines)
+    if vim.fn.isdirectory(clip_dir) == 0 then
+      vim.fn.mkdir(clip_dir, 'p')
+    end
+    local f = io.open(clip_file, 'w')
+    if f then
+      if type(lines) == 'table' then
+        f:write(table.concat(lines, '\n'))
+      else
+        f:write(tostring(lines))
+      end
+      f:close()
+    end
+  end
+
+  local function get_copy_cmd()
+    if vim.env.WAYLAND_DISPLAY and vim.fn.executable('wl-copy') == 1 then
+      return { 'wl-copy' }
+    elseif vim.fn.executable('pbcopy') == 1 then
+      return { 'pbcopy' }
+    elseif vim.env.DISPLAY and vim.fn.executable('xclip') == 1 then
+      return { 'xclip', '-selection', 'clipboard' }
+    elseif vim.fn.executable('wl-copy') == 1 then
+      return { 'wl-copy' }
     elseif vim.fn.executable('xclip') == 1 then
-      return { 'xclip', '-selection', 'clipboard', '-o' }
-    elseif vim.fn.executable('xsel') == 1 then
-      return { 'xsel', '--clipboard', '--output' }
+      return { 'xclip', '-selection', 'clipboard' }
     end
     return nil
   end
 
+  local function get_paste_cmd()
+    if vim.env.WAYLAND_DISPLAY and vim.fn.executable('wl-paste') == 1 then
+      return { 'wl-paste', '--no-newline' }
+    elseif vim.fn.executable('pbpaste') == 1 then
+      return { 'pbpaste' }
+    elseif vim.env.DISPLAY and vim.fn.executable('xclip') == 1 then
+      return { 'xclip', '-selection', 'clipboard', '-o' }
+    elseif vim.fn.executable('wl-paste') == 1 then
+      return { 'wl-paste', '--no-newline' }
+    elseif vim.fn.executable('xclip') == 1 then
+      return { 'xclip', '-selection', 'clipboard', '-o' }
+    end
+    return nil
+  end
+
+  local copy_cmd = get_copy_cmd()
   local paste_cmd = get_paste_cmd()
+
+  local function local_copy(lines, regtype)
+    if copy_cmd then
+      vim.fn.system(copy_cmd, lines)
+    end
+    write_clip_cache(lines)
+    osc52.copy('+')(lines)
+  end
 
   local function local_paste()
     if paste_cmd then
@@ -89,29 +128,41 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
         return { out, regtype ~= '' and regtype or 'v' }
       end
     end
+    local f = io.open(clip_file, 'r')
+    if f then
+      local content = f:read('*a')
+      f:close()
+      if content and #content > 0 then
+        local lines = vim.fn.split(content, '\n', 1)
+        local regtype = vim.fn.getregtype('+')
+        return { lines, regtype ~= '' and regtype or 'v' }
+      end
+    end
     local unnamed = vim.fn.getreg('"')
     local regtype = vim.fn.getregtype('"')
     return { vim.fn.split(unnamed, '\n'), regtype ~= '' and regtype or 'v' }
   end
 
-  if is_ssh then
-    vim.g.clipboard = {
-      name = 'OSC 52 Yank / Local Paste',
-      copy = {
-        ['+'] = osc52.copy('+'),
-        ['*'] = osc52.copy('*'),
-      },
-      paste = {
-        ['+'] = local_paste,
-        ['*'] = local_paste,
-      },
-    }
-  end
+  vim.g.clipboard = {
+    name = 'Local & OSC 52 Clipboard',
+    copy = {
+      ['+'] = local_copy,
+      ['*'] = local_copy,
+    },
+    paste = {
+      ['+'] = local_paste,
+      ['*'] = local_paste,
+    },
+  }
 
   vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Sync yanked text to terminal clipboard via OSC 52',
+    desc = 'Sync yanked text to local clipboard, file cache, and terminal OSC 52',
     callback = function()
       if vim.v.event.operator == 'y' then
+        if copy_cmd then
+          vim.fn.system(copy_cmd, vim.v.event.regcontents)
+        end
+        write_clip_cache(vim.v.event.regcontents)
         osc52.copy('+')(vim.v.event.regcontents)
       end
     end,

@@ -66,10 +66,15 @@ VI_MODE_SET_CURSOR=true
 
 # Zsh Vi Mode Clipboard & OSC 52 Remote Copy
 zsh_clipboard_copy() {
-  local input b64
+  local input b64 clip_dir clip_file
   input="$(cat; print -n x)"
   input="${input%x}"
   [[ -z "$input" ]] && return 0
+
+  clip_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
+  [[ -d "$clip_dir" ]] || mkdir -p "$clip_dir" 2>/dev/null
+  clip_file="$clip_dir/clipboard"
+  printf "%s" "$input" > "$clip_file" 2>/dev/null
 
   if (( $+commands[base64] )); then
     b64=$(printf "%s" "$input" | base64 | tr -d '\r\n')
@@ -91,10 +96,16 @@ zsh_clipboard_copy() {
     printf "%s" "$input" | xsel --clipboard -i >/dev/null 2>&1
   elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbcopy] )); then
     printf "%s" "$input" | pbcopy >/dev/null 2>&1
+  elif (( $+commands[wl-copy] )); then
+    printf "%s" "$input" | wl-copy >/dev/null 2>&1
+  elif (( $+commands[xclip] )); then
+    printf "%s" "$input" | xclip -selection clipboard >/dev/null 2>&1
   fi
+  return 0
 }
 
 zsh_clipboard_paste() {
+  local clip_file="${XDG_CACHE_HOME:-$HOME/.cache}/clipboard"
   if [[ -n "$WAYLAND_DISPLAY" ]] && (( $+commands[wl-paste] )); then
     wl-paste -n 2>/dev/null
   elif [[ -n "$DISPLAY" ]] && (( $+commands[xclip] )); then
@@ -103,7 +114,25 @@ zsh_clipboard_paste() {
     xsel --clipboard -o 2>/dev/null
   elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbpaste] )); then
     pbpaste 2>/dev/null
+  elif (( $+commands[wl-paste] )); then
+    local out
+    out=$(wl-paste -n 2>/dev/null)
+    if [[ $? -eq 0 && -n "$out" ]]; then
+      printf "%s" "$out"
+      return 0
+    fi
+  elif (( $+commands[xclip] )); then
+    local out
+    out=$(xclip -selection clipboard -o 2>/dev/null)
+    if [[ $? -eq 0 && -n "$out" ]]; then
+      printf "%s" "$out"
+      return 0
+    fi
   fi
+  if [[ -f "$clip_file" ]]; then
+    cat "$clip_file" 2>/dev/null
+  fi
+  return 0
 }
 
 ZVM_READKEY_ENGINE=zle
@@ -112,6 +141,14 @@ ZVM_ESCAPE_KEYTIMEOUT=0.01
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 ZVM_CLIPBOARD_COPY_CMD='zsh_clipboard_copy'
 ZVM_CLIPBOARD_PASTE_CMD='zsh_clipboard_paste'
+{{ if ne .theme "dark" -}}
+ZVM_VI_HIGHLIGHT_BACKGROUND="#e5e8c5"
+ZVM_VI_HIGHLIGHT_FOREGROUND="#5c6a72"
+{{- else -}}
+ZVM_VI_HIGHLIGHT_BACKGROUND="#374145"
+ZVM_VI_HIGHLIGHT_FOREGROUND="#d3c6aa"
+{{- end }}
+ZVM_VI_HIGHLIGHT_EXTRASTYLE="bold"
 
 function zvm_config() {
   ZVM_READKEY_ENGINE=zle
@@ -120,7 +157,22 @@ function zvm_config() {
   ZVM_SYSTEM_CLIPBOARD_ENABLED=true
   ZVM_CLIPBOARD_COPY_CMD='zsh_clipboard_copy'
   ZVM_CLIPBOARD_PASTE_CMD='zsh_clipboard_paste'
+{{ if ne .theme "dark" -}}
+  ZVM_VI_HIGHLIGHT_BACKGROUND="#e5e8c5"
+  ZVM_VI_HIGHLIGHT_FOREGROUND="#5c6a72"
+{{- else -}}
+  ZVM_VI_HIGHLIGHT_BACKGROUND="#374145"
+  ZVM_VI_HIGHLIGHT_FOREGROUND="#d3c6aa"
+{{- end }}
+  ZVM_VI_HIGHLIGHT_EXTRASTYLE="bold"
 }
+
+zvm_after_init_commands+=(
+  "zvm_bindkey vicmd 'p' zvm_paste_clipboard_after"
+  "zvm_bindkey vicmd 'P' zvm_paste_clipboard_before"
+  "zvm_bindkey visual 'p' zvm_visual_paste_clipboard"
+  "zvm_bindkey visual 'P' zvm_visual_paste_clipboard"
+)
 
 if [[ -d "/opt/homebrew/opt/ccache/libexec" ]]; then
   export PATH="/opt/homebrew/opt/ccache/libexec:$PATH"
