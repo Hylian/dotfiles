@@ -245,4 +245,25 @@ bindkey -M emacs '^l' git-pick-fzf
 bindkey -M vicmd '^l' git-pick-fzf
 bindkey -M viins '^l' git-pick-fzf
 
+# git branch picker
+git-branch-fzf() {
+  local branch
+  {
+    branch="$(fzf-git-branch)"
+  } always {
+    zle reset-prompt
+  }
+  if [[ -n "$branch" ]]; then
+    LBUFFER+="$branch "
+  fi
+}
+
+zle     -N            git-branch-fzf
+bindkey -M emacs '^b' git-branch-fzf
+bindkey -M vicmd '^b' git-branch-fzf
+bindkey -M viins '^b' git-branch-fzf
+bindkey -M emacs '^[[98;5u' git-branch-fzf
+bindkey -M vicmd '^[[98;5u' git-branch-fzf
+bindkey -M viins '^[[98;5u' git-branch-fzf
+
 # vim: ft=zsh

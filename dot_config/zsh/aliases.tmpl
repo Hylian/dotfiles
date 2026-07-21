@@ -148,11 +148,28 @@ gsync() {
 fzf-git-branch() {
   git rev-parse HEAD > /dev/null 2>&1 || return
 
-  git branch --color=always --all --sort=-committerdate |
-    rg -v HEAD |
-    fzf --height 50% --ansi --no-multi --preview-window right:65% \
-        --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
-    sed "s/.* //"
+  local branches=(
+    git branch
+    --color=always
+    --all
+    --sort=-committerdate
+  )
+
+  local fzf=(
+    fzf
+    -m
+    --ansi --no-sort --reverse --tiebreak=index
+    --preview 'f() { local b=$(echo "$1" | awk "{print \$NF}"); git log -n 50 --color=always --graph --date=relative --pretty="format:%C(yellow)%h%C(reset) %C(auto)%d%C(reset) %s %C(green)(%cr)%C(reset) %C(bold blue)<%an>%C(reset)" "$b"; }; f {}'
+    --bind "change:first"
+    --bind "pgup:preview-half-page-up"
+    --bind "pgdn:preview-half-page-down"
+    --bind "ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down"
+    --bind "ctrl-q:abort"
+    --bind "enter:accept"
+    --preview-window=right:65%
+  )
+
+  echo $($branches | rg -v HEAD | $fzf | awk '{print $NF}')
 }
 
 fzf-git-checkout() {

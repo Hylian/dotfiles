@@ -75,3 +75,4 @@ This document represents the current, living ground truth for this cross-platfor
 * `^f`: `rg-fzf` (interactive ripgrep file/line search into Neovim).
 * `^v`: `vim-fzf` (interactive fd file search into Neovim).
 * `^i` / `^l`: `git-pick-fzf` (interactive git commit picker with delta preview, pastes/appends selected commit SHA(s) to current line).
+* `^b`: `git-branch-fzf` (interactive git branch picker with pretty short log preview, pastes/appends selected branch name to current line).
