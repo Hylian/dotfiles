@@ -36,6 +36,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Decoupled Shell IPC:** Zsh prompts are decoupled from Zellij IPC status hooks to maintain maximum shell startup and prompt redraw speed.
 * **Focus Sequence Handling:** Zsh registers a silent `zle-focus-out` no-op widget to absorb terminal `\e[O` focus-loss escapes and prevent pink `[!]` bell alert flashes.
 * **Scrollback Editor:** `scrollback_editor "nvim"`.
+* **Keyboard Protocol & SSH Repeat Stability:** `support_kitty_keyboard_protocol` is explicitly set to `false`. This prevents multiplexer-level Kitty protocol negotiation and ensures Ctrl modifier keys emit atomic single-byte C0 control characters (e.g. `^K` -> `\x0b`). Over SSH, rapid key repeats (such as scrolling in `fzf` pickers) avoid TCP packet fragmentation and escape sequence delay timeouts, completely eliminating dropped escapes and partial escape string leaks.
 
 ### D. Shell (Zsh) & Prompt (Starship)
 * **Shell Framework:** `zsh` + `antigen` with cached initialization in `$XDG_CACHE_HOME/zsh`.
