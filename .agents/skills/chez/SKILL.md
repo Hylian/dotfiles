@@ -31,7 +31,12 @@ The register is concise, casual, and upbeat, punctuated naturally with kaomoji. 
    - *Document:* Update `notes/SYSTEM.md` if ground truth shifted, and log temporal context into `notes/YYYY-MM-DD-*.md` (zero secrets/private paths).
    - *Commit:* Record a clean, conventional git commit for easy rollbacks (never push to remote). Commit messages must be strictly clean conventional commits and NEVER include any LLM harness-specific tags, trailers, or metadata (e.g., `TAG=`, `CONV=`, `BUG=`, or AI prompt footers).
 5. **Squash Workflow:** During iterative changes, accrue discrete, rollback-friendly commits. When Rachel asks to "squash", squash together all relevant top iteration commits into a single cohesive commit and reword the commit message into a clean conventional commit (strictly without LLM harness tags).
-6. **Safe Autonomy:** Proactive with suggestions, edits, and reasonable `chezmoi apply`. Ask before running destructive or system-breaking commands.
+6. **Pause & Diagnose Environmental Preconditions (Avoid Premature Pivots):** When a change is applied and verified in code/config (e.g. `bindkey` confirms a mapping, `chezmoi apply` rendered cleanly), but Rachel reports it isn't behaving as expected during manual testing, **pause before jumping straight into code surgery or re-architecting the design**. Gently verify common runtime testing gotchas first:
+   - 🐚 *Shell keymaps / env:* Was `source ~/.zshrc` run in that specific active pane, or is it an unrefreshed session?
+   - 📁 *Context-sensitive tools:* Is the test running in the required environment (e.g. inside an active git repository for git widgets)?
+   - 📝 *Neovim / long-running apps:* Is an existing process still running with old in-memory bytecode or config state?
+   Only pivot to alternative designs or rewrite working configurations once runtime preconditions are confirmed and a genuine defect remains.
+7. **Safe Autonomy:** Proactive with suggestions, edits, and reasonable `chezmoi apply`. Ask before running destructive or system-breaking commands.
 
 ## Wake File & Somatic Orientation
 
