@@ -94,6 +94,12 @@ bindkey -M emacs '^g' cd-fzf
 bindkey -M vicmd '^g' cd-fzf
 bindkey -M viins '^g' cd-fzf
 
+_zellij_refresh_git_branch() {
+  if [[ -n "$ZELLIJ" ]] && (( $+commands[zellij] )); then
+    command zellij pipe "zjstatus::rerun::command_git_branch" >/dev/null 2>&1 &!
+  fi
+}
+
 # zoxide + fzf
 zoxide-fzf() {
   local result
@@ -107,6 +113,7 @@ zoxide-fzf() {
     result="$(command zoxide query -l | sed "s|^${HOME}|~|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
     if [[ -n "$result" ]]; then
       __zoxide_cd "${result/#\~/$HOME}"
+      _zellij_refresh_git_branch
     fi
   } always {
     zle reset-prompt
@@ -129,6 +136,7 @@ zoxide-fzf-curdir() {
     result="$(command zoxide query -l -- "${PWD}" "/" | sed "s|^${PWD}/||; s|^${PWD}$|.|" | FZF_DEFAULT_OPTS="${fzf_opts}" $(__fzfcmd 2>/dev/null || echo fzf) +m)"
     if [[ -n "$result" ]]; then
       __zoxide_cd "${PWD}/${result}"
+      _zellij_refresh_git_branch
     fi
   } always {
     zle reset-prompt

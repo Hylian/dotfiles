@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-07-22*
+*Last Updated: 2026-07-23*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -73,8 +73,8 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### Zsh Interactive Widgets
 * Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.
-* `^k`: `zoxide-fzf-curdir` (interactive directory jump scoped to current directory subtree).
-* `^j`: `zoxide-fzf` (interactive global zoxide query and jump).
+* `^k`: `zoxide-fzf-curdir` (interactive directory jump scoped to current directory subtree; dispatches `zjstatus::rerun::command_git_branch` for instant branch status refresh).
+* `^j`: `zoxide-fzf` (interactive global zoxide query and jump; dispatches `zjstatus::rerun::command_git_branch` for instant branch status refresh).
 * `^g`: `cd-fzf` (interactive directory navigator).
 * `^f`: `rg-fzf` (interactive ripgrep file/line search into Neovim).
 * `^v`: `vim-fzf` (interactive fd file search into Neovim).
