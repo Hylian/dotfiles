@@ -15,9 +15,8 @@
    Added `_zellij_osc7_cwd()` to `chpwd_functions` and `precmd_functions` in `dot_zshrc.tmpl` when `$ZELLIJ` is present:
    ```zsh
    _zellij_osc7_cwd() {
-       local host="${HOST:-localhost}"
        local url_path="$(printf '%s' "${PWD}" | sed 's/ /%20/g')"
-       printf '\e]7;file://%s%s\a' "${host}" "${url_path}"
+       printf '\e]7;file://%s\a' "${url_path}"
    }
    ```
    Emitting ANSI OSC 7 (`\e]7;file://...`) forces Zellij's PTY parser to update the pane's CWD in server memory synchronously. On `Event::PaneUpdate`, `get_pane_cwd` returns the CWD **instantly (0ms)**, causing `zjstatus` to invalidate and re-run `git_branch` immediately without waiting for background polling.

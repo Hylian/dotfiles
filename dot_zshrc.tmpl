@@ -247,10 +247,8 @@ function preexec {
 }
 
 _zellij_osc7_cwd() {
-    local host="${HOST:-localhost}"
-    local url_path
-    url_path="$(printf '%s' "${PWD}" | sed 's/ /%20/g')"
-    printf '\e]7;file://%s%s\a' "${host}" "${url_path}"
+    local url_path="$(printf '%s' "${PWD}" | sed 's/ /%20/g')"
+    printf '\e]7;file://%s\a' "${url_path}"
 }
 
 zellij_tab_name_update() {
