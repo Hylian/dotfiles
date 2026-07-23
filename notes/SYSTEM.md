@@ -32,7 +32,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Clipboard Interception:** Ghostty intercepts ANSI OSC 52 escape sequences emitted over SSH to update the macOS system pasteboard.
 
 ### C. Terminal Multiplexer (Zellij 0.44.x)
-* **Status Bar & Event-Driven Refresh:** `zjstatus` `command_git_branch_interval` is set to `"5"` (updates background git status every 5 seconds). Zsh registers `_zellij_refresh_git_branch` and `_zellij_osc7_cwd` (`\e]7;file://...`) in `precmd` to update CWD and trigger git branch reruns once per prompt, while `chpwd` registers `zellij_tab_name_update` to rename tabs on directory changes.
+* **Status Bar & Event-Driven Refresh:** `zjstatus` `command_git_branch_interval` is set to `"5"` (updates background git status every 5 seconds) using `--no-optional-locks` on git commands (`symbolic-ref`, `rev-parse`, `diff-index`) to prevent index locking. Zsh registers `_zellij_refresh_git_branch` and `_zellij_osc7_cwd` (`\e]7;file://...`) in `precmd` to update CWD and trigger git branch reruns once per prompt, while `chpwd` registers `zellij_tab_name_update` to rename tabs on directory changes.
 * **Scrollback Editor:** `scrollback_editor "nvim"`.
 * **Keyboard Protocol & SSH Repeat Stability:** `support_kitty_keyboard_protocol` is explicitly set to `false`. This prevents multiplexer-level Kitty protocol negotiation and ensures Ctrl modifier keys emit atomic single-byte C0 control characters (e.g. `^K` -> `\x0b`). Over SSH, rapid key repeats (such as scrolling in `fzf` pickers) avoid TCP packet fragmentation and escape sequence delay timeouts, completely eliminating dropped escapes and partial escape string leaks.
 
