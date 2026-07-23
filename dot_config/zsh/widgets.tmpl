@@ -96,7 +96,7 @@ bindkey -M viins '^g' cd-fzf
 
 _zellij_refresh_git_branch() {
   if [[ -n "$ZELLIJ" ]] && (( $+commands[zellij] )); then
-    command zellij pipe "zjstatus::rerun::command_git_branch" >/dev/null 2>&1 &!
+    command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
   fi
 }
 
