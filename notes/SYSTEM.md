@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-07-21*
+*Last Updated: 2026-07-22*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -42,6 +42,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Shell Framework:** `zsh` + `antigen` with cached initialization in `$XDG_CACHE_HOME/zsh`.
 * **Prompt:** `starship` with active prompt character `❯` (U+276F).
 * **CLI Utilities & Themes:** `fzf` (with ripgrep/fd integration), `zoxide` (aliased to `j`), `bat`, `direnv`, and `delta` git previews (`gshow`, `^l` / `git-pick-fzf`) rendered via chezmoi templates (`aliases.tmpl`, `widgets.tmpl`) to match active `.theme` (e.g. Everforest light with `OneHalfLight` syntax highlighting). See [notes/EVERFOREST.md](EVERFOREST.md) for canonical palette tables.
+* **Chezmoi Source Navigation:** `czcd` changes the current shell directly to `chezmoi source-path`, avoiding the nested `chezmoi cd` shell whose parent-process CWD confuses Zellij's `{focused_pane_cwd}` tracking.
 * **History Configuration:** `HISTFILE=~/.zsh_history`, `HISTSIZE=50000`, `SAVEHIST=50000` with `EXTENDED_HISTORY`, `SHARE_HISTORY`, duplicate pruning, and startup `fc -R` to instantly load existing history into session memory for fzf (`^R`).
 * **Vi Mode & Readkey Engine:** `zsh-vi-mode` (`zvm`) configured with `ZVM_READKEY_ENGINE=zle`, `ZVM_KEYTIMEOUT=0.01`, and `KEYTIMEOUT=1` (10ms) to delegate escape sequence handling to native ZLE, completely eliminating normal mode escape lag and key buffering issues when passing `Alt+Left` / `Alt+Right` tab switches to Zellij.
 * **Vi Mode Clipboard & Visual Selection Highlight:** `zsh-vi-mode` (`zvm`) configured with `zsh_clipboard_copy` to broadcast ANSI OSC 52 sequences directly to `/dev/tty` upon yanks (`y`, `yy`, `yw`, visual mode `y`, deletions) AND persist to `~/.cache/clipboard`. `zvm` rebinds `vicmd` / `visual` mode `p` and `P` to `zvm_paste_clipboard_after` and `zvm_paste_clipboard_before`, querying local display servers (`wl-paste`, `xclip`, `pbpaste`) and falling back to `~/.cache/clipboard` so normal-mode `p` seamlessly pastes Neovim and workstation yanks. Visual selection highlights are themed with Everforest Light (`#e5e8c5` soft sage background, `#5c6a72` foreground, `bold`) to eliminate harsh red highlight defaults.
