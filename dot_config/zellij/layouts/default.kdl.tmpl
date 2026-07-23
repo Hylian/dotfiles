@@ -36,7 +36,7 @@ layout {
                 command_git_branch_command    "sh -c 'b=$(git branch --show-current 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); [ -n \"$b\" ] && { [ -n \"$(git status --porcelain=v1 -uno --ignore-submodules=dirty 2>/dev/null)\" ] && echo \"$b ●\" || echo \"$b\"; }'"
                 command_git_branch_format     "{stdout}"
                 command_git_branch_rendermode "static"
-                command_git_branch_interval   "0"
+                command_git_branch_interval   "1"
                 command_git_branch_cwd        "{focused_pane_cwd}"
 
                 datetime        "#[fg=#F2EFDF,bold] {format} "
@@ -75,7 +75,7 @@ layout {
                 command_git_branch_command    "sh -c 'b=$(git branch --show-current 2>/dev/null || git rev-parse --short HEAD 2>/dev/null); [ -n \"$b\" ] && { [ -n \"$(git status --porcelain=v1 -uno --ignore-submodules=dirty 2>/dev/null)\" ] && echo \"$b ●\" || echo \"$b\"; }'"
                 command_git_branch_format     "#[fg=#DF69BA,bg=#272E33]#[bg=#DF69BA,fg=#374145]  {stdout} #[fg=#7FBBB3,bg=#DF69BA]"
                 command_git_branch_rendermode "static"
-                command_git_branch_interval   "0"
+                command_git_branch_interval   "1"
                 command_git_branch_cwd        "{focused_pane_cwd}"
 
                 datetime        "#[fg=#374145,bold] {format} "

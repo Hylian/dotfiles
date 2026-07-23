@@ -36,6 +36,7 @@
    }
    ```
    Explicitly bound `^[[O` (`zle-focus-out`) and added `unsetopt BEEP` to prevent ZLE from treating focus-out escape sequences as unhandled keypresses, completely eliminating terminal bell (`BEL` / `[!]`) alerts on the pane being left.
-3. **Disabled Background Timer & Event-Driven Prompt Refresh:**
-   Updated `dot_config/zellij/layouts/default.kdl.tmpl` to set `command_git_branch_interval "0"`, completely disabling `zjstatus` periodic timer polling.
-   Added `_zellij_refresh_git_branch` (`command zellij pipe "zjstatus::rerun::git_branch" &!`) to `precmd_functions` in `dot_zshrc.tmpl`. Now `git_branch` updates strictly once per new Zsh prompt, directory switch (`cd`, `^j`, `^k`), or pane focus event (`zle-focus-in`), with zero background polling overhead.
+3. **Prompt-Driven Refresh via Active Invalidation (`interval 1`):**
+   Inspection of `run_command_if_needed` in `zjstatus` (`command.rs:181`) revealed that `interval "0"` explicitly causes `zjstatus` to execute commands *only once* at startup and hard-blocks all subsequent pipe reruns. 
+   Maintained `command_git_branch_interval "1"` in `default.kdl.tmpl` while wiring `_zellij_refresh_git_branch` (`command zellij pipe "zjstatus::rerun::git_branch" &!`) to `precmd_functions`, `chpwd_functions`, and `zle-focus-in` in `dot_zshrc.tmpl`.
+   Pipe reruns instantly backdate the stored timestamp by 1 day (`Duration::try_days(1)`), causing `zjstatus` to invalidate and re-run `git_branch` immediately upon every Zsh prompt, directory switch (`cd`, `^j`, `^k`), or pane focus event.
