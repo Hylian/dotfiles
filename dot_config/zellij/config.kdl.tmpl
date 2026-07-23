@@ -3,18 +3,18 @@ keybinds clear-defaults=true {
         bind "Alt z" { SwitchToMode "normal"; }
     }
     pane {
-        bind "left" { MoveFocus "left"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "down" { MoveFocus "down"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "up" { MoveFocus "up"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "right" { MoveFocus "right"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
+        bind "left" { MoveFocus "left"; }
+        bind "down" { MoveFocus "down"; }
+        bind "up" { MoveFocus "up"; }
+        bind "right" { MoveFocus "right"; }
         bind "c" { SwitchToMode "renamepane"; PaneNameInput 0; }
         bind "d" { NewPane "down"; SwitchToMode "normal"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "normal"; }
         bind "f" { ToggleFocusFullscreen; SwitchToMode "normal"; }
-        bind "h" { MoveFocus "left"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "j" { MoveFocus "down"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "k" { MoveFocus "up"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "l" { MoveFocus "right"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
+        bind "h" { MoveFocus "left"; }
+        bind "j" { MoveFocus "down"; }
+        bind "k" { MoveFocus "up"; }
+        bind "l" { MoveFocus "right"; }
         bind "n" { NewPane; SwitchToMode "normal"; }
         bind "p" { SwitchFocus; }
         bind "Alt p" { SwitchToMode "normal"; }
@@ -164,10 +164,10 @@ keybinds clear-defaults=true {
                 floating true
             }
         }
-        bind "Alt h" { MoveFocus "left"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "Alt j" { MoveFocus "down"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "Alt k" { MoveFocus "up"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
-        bind "Alt l" { MoveFocus "right"; MessagePlugin { name "zjstatus::rerun::git_branch"; }; }
+        bind "Alt h" { MoveFocus "left"; }
+        bind "Alt j" { MoveFocus "down"; }
+        bind "Alt k" { MoveFocus "up"; }
+        bind "Alt l" { MoveFocus "right"; }
         bind "Alt n" { NewTab; }
         bind "Ctrl q" { Quit; }
         bind "Ctrl Alt s" {
