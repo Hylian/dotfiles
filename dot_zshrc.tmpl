@@ -277,7 +277,11 @@ _zellij_refresh_git_branch() {
 
 _zellij_focus_in() {
     _zellij_osc7_cwd
-    _zellij_refresh_git_branch
+    local now=$SECONDS
+    if (( now - ${_ZELLIJ_LAST_FOCUS_RERUN:-0} >= 2 )); then
+        _ZELLIJ_LAST_FOCUS_RERUN=$now
+        _zellij_refresh_git_branch
+    fi
     return 0
 }
 
