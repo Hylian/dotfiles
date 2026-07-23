@@ -32,8 +32,8 @@ This document represents the current, living ground truth for this cross-platfor
 * **Clipboard Interception:** Ghostty intercepts ANSI OSC 52 escape sequences emitted over SSH to update the macOS system pasteboard.
 
 ### C. Terminal Multiplexer (Zellij 0.44.x)
-* **Status Bar:** `zjstatus` WASM plugin configured with 1s interval polling.
-* **Decoupled Shell IPC:** Zsh prompts are decoupled from Zellij IPC status hooks to maintain maximum shell startup and prompt redraw speed.
+* **Status Bar & Instant Refresh:** `zjstatus` WASM plugin configured with 1s interval polling. Pane navigation keybindings (`Alt+h/j/k/l`) fire `PipeMessage "zjstatus::rerun::command_git_branch"` and Zsh `chpwd` hooks (`zellij_tab_name_update`, `_zellij_refresh_git_branch`) fire disowned background pipe triggers to eliminate latency on pane and directory switches.
+* **Decoupled Shell IPC:** Zsh prompts are decoupled from blocking Zellij IPC status hooks to maintain maximum shell startup and prompt redraw speed.
 * **Focus Sequence Handling:** Zsh registers a silent `zle-focus-out` no-op widget to absorb terminal `\e[O` focus-loss escapes and prevent pink `[!]` bell alert flashes.
 * **Scrollback Editor:** `scrollback_editor "nvim"`.
 * **Keyboard Protocol & SSH Repeat Stability:** `support_kitty_keyboard_protocol` is explicitly set to `false`. This prevents multiplexer-level Kitty protocol negotiation and ensures Ctrl modifier keys emit atomic single-byte C0 control characters (e.g. `^K` -> `\x0b`). Over SSH, rapid key repeats (such as scrolling in `fzf` pickers) avoid TCP packet fragmentation and escape sequence delay timeouts, completely eliminating dropped escapes and partial escape string leaks.

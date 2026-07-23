@@ -254,6 +254,7 @@ zellij_tab_name_update() {
         current_dir=${current_dir##*/}
     fi
     command zellij action rename-tab "$current_dir" >/dev/null 2>&1 &!
+    command zellij pipe "zjstatus::rerun::command_git_branch" >/dev/null 2>&1 &!
 }
 
 if [[ -n $ZELLIJ ]]; then
