@@ -21,6 +21,7 @@ setopt HIST_IGNORE_SPACE         # Do not record an entry starting with a space
 setopt HIST_SAVE_NO_DUPS         # Do not write duplicate entries in the history file
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry
 setopt HIST_VERIFY               # Do not execute immediately upon history expansion
+unsetopt BEEP                    # Never ring the bell on ZLE syntax errors or escape sequences
 
 # Read history from disk into memory immediately upon startup
 [[ -f "$HISTFILE" ]] && fc -R "$HISTFILE" 2>/dev/null
@@ -174,6 +175,12 @@ zvm_after_init_commands+=(
   "zvm_bindkey visual 'P' zvm_visual_paste_clipboard"
   "zle -N zle-focus-in _zellij_focus_in"
   "zle -N zle-focus-out _zellij_focus_out"
+  "zvm_bindkey viins '^[[I' zle-focus-in"
+  "zvm_bindkey vicmd '^[[I' zle-focus-in"
+  "zvm_bindkey visual '^[[I' zle-focus-in"
+  "zvm_bindkey viins '^[[O' zle-focus-out"
+  "zvm_bindkey vicmd '^[[O' zle-focus-out"
+  "zvm_bindkey visual '^[[O' zle-focus-out"
 )
 
 if [[ -d "/opt/homebrew/opt/ccache/libexec" ]]; then
@@ -267,10 +274,11 @@ zellij_tab_name_update() {
 _zellij_focus_in() {
     _zellij_osc7_cwd
     command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
+    return 0
 }
 
 _zellij_focus_out() {
-    :
+    return 0
 }
 
 if [[ -n $ZELLIJ ]]; then
@@ -279,6 +287,14 @@ if [[ -n $ZELLIJ ]]; then
     precmd_functions+=(_zellij_osc7_cwd)
     zle -N zle-focus-in _zellij_focus_in
     zle -N zle-focus-out _zellij_focus_out
+    bindkey '^[[I' zle-focus-in
+    bindkey '^[[O' zle-focus-out
+    bindkey -M vicmd '^[[I' zle-focus-in
+    bindkey -M vicmd '^[[O' zle-focus-out
+    bindkey -M viins '^[[I' zle-focus-in
+    bindkey -M viins '^[[O' zle-focus-out
+    bindkey -M emacs '^[[I' zle-focus-in
+    bindkey -M emacs '^[[O' zle-focus-out
 fi
 
 

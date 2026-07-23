@@ -21,16 +21,20 @@
    ```
    Emitting ANSI OSC 7 (`\e]7;file://...`) forces Zellij's PTY parser to update the pane's CWD in server memory synchronously.
 
-2. **Terminal Focus-In Event Hook (`zle-focus-in`):**
+2. **Terminal Focus Event Hooks & Silent Focus-Loss (`zle-focus-in` / `zle-focus-out`):**
    When switching to an idle pane, no `precmd` or `chpwd` hooks execute because Zsh is sitting idle at the prompt.
-   Enabled terminal focus reporting (`printf '\e[?1004h'`) and bound `zle-focus-in()` in `dot_zshrc.tmpl` (and `zvm_after_init_commands`):
+   Enabled terminal focus reporting (`printf '\e[?1004h'`) and bound `^[[I` (`zle-focus-in`) and `^[[O` (`zle-focus-out`) across all Zsh and `zsh-vi-mode` (`zvm`) keymaps (`main`, `viins`, `vicmd`, `visual`, `emacs`):
    ```zsh
    _zellij_focus_in() {
        _zellij_osc7_cwd
        command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
+       return 0
+   }
+
+   _zellij_focus_out() {
+       return 0
    }
    ```
-   The exact instant a pane gains focus (`Alt+h/j/k/l` or click), terminal focus reporting sends `\e[I` to the PTY, Zsh executes `_zellij_focus_in()`, emits OSC 7, and dispatches `zjstatus::rerun::git_branch`. This updates the focused pane's git branch in ~30ms without waiting for background CWD polling.
-
+   Explicitly bound `^[[O` (`zle-focus-out`) and added `unsetopt BEEP` to prevent ZLE from treating focus-out escape sequences as unhandled keypresses, completely eliminating terminal bell (`BEL` / `[!]`) alerts on the pane being left.
 3. **Instant Directory Switch Refresh (Zsh `chpwd` & Widgets):**
    Targeted internal widget identifier `git_branch`. Updated `zellij_tab_name_update()` in `dot_zshrc.tmpl` and `_zellij_refresh_git_branch()` in `dot_config/zsh/widgets.tmpl` to send `command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!`, giving instant `^j`, `^k`, and `cd` branch updates.
