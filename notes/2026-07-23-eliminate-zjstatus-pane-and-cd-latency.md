@@ -36,5 +36,6 @@
    }
    ```
    Explicitly bound `^[[O` (`zle-focus-out`) and added `unsetopt BEEP` to prevent ZLE from treating focus-out escape sequences as unhandled keypresses, completely eliminating terminal bell (`BEL` / `[!]`) alerts on the pane being left.
-3. **Instant Directory Switch Refresh (Zsh `chpwd` & Widgets):**
-   Targeted internal widget identifier `git_branch`. Updated `zellij_tab_name_update()` in `dot_zshrc.tmpl` and `_zellij_refresh_git_branch()` in `dot_config/zsh/widgets.tmpl` to send `command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!`, giving instant `^j`, `^k`, and `cd` branch updates.
+3. **Disabled Background Timer & Event-Driven Prompt Refresh:**
+   Updated `dot_config/zellij/layouts/default.kdl.tmpl` to set `command_git_branch_interval "0"`, completely disabling `zjstatus` periodic timer polling.
+   Added `_zellij_refresh_git_branch` (`command zellij pipe "zjstatus::rerun::git_branch" &!`) to `precmd_functions` in `dot_zshrc.tmpl`. Now `git_branch` updates strictly once per new Zsh prompt, directory switch (`cd`, `^j`, `^k`), or pane focus event (`zle-focus-in`), with zero background polling overhead.

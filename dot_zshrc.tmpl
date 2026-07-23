@@ -268,12 +268,16 @@ zellij_tab_name_update() {
         current_dir=${current_dir##*/}
     fi
     command zellij action rename-tab "$current_dir" >/dev/null 2>&1 &!
+    _zellij_refresh_git_branch
+}
+
+_zellij_refresh_git_branch() {
     command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
 }
 
 _zellij_focus_in() {
     _zellij_osc7_cwd
-    command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
+    _zellij_refresh_git_branch
     return 0
 }
 
@@ -284,7 +288,7 @@ _zellij_focus_out() {
 if [[ -n $ZELLIJ ]]; then
     printf '\e[?1004h' >/dev/tty 2>/dev/null
     chpwd_functions+=(_zellij_osc7_cwd zellij_tab_name_update)
-    precmd_functions+=(_zellij_osc7_cwd)
+    precmd_functions+=(_zellij_osc7_cwd _zellij_refresh_git_branch)
     zle -N zle-focus-in _zellij_focus_in
     zle -N zle-focus-out _zellij_focus_out
     bindkey '^[[I' zle-focus-in
