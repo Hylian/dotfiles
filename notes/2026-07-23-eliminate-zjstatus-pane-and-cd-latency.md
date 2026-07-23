@@ -9,7 +9,7 @@
 ## Solution
 
 1. **Instant Pane Focus Refresh (Zellij Config):**
-   Updated `dot_config/zellij/config.kdl.tmpl` pane focus keybindings (`Alt h`, `Alt j`, `Alt k`, `Alt l`, and arrow keys) to issue `PipeMessage "zjstatus::rerun::command_git_branch"` alongside `MoveFocus`. When switching panes, Zellij immediately notifies `zjstatus` to re-run the git branch command for the newly focused pane.
+   Updated `dot_config/zellij/config.kdl.tmpl` pane focus keybindings (`Alt h`, `Alt j`, `Alt k`, `Alt l`, and arrow keys) to issue `MessagePlugin { name "zjstatus::rerun::command_git_branch"; };` alongside `MoveFocus`. When switching panes, Zellij immediately notifies `zjstatus` to re-run the git branch command for the newly focused pane.
 
 2. **Instant Directory Switch Refresh (Zsh `chpwd`):**
    Updated `zellij_tab_name_update()` in `dot_zshrc.tmpl` to dispatch `command zellij pipe "zjstatus::rerun::command_git_branch" >/dev/null 2>&1 &!` as a disowned background job upon every `chpwd` event.
