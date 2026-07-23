@@ -260,7 +260,6 @@ zellij_tab_name_update() {
         current_dir=${current_dir##*/}
     fi
     command zellij action rename-tab "$current_dir" >/dev/null 2>&1 &!
-    _zellij_refresh_git_branch
 }
 
 _zellij_refresh_git_branch() {
@@ -268,7 +267,7 @@ _zellij_refresh_git_branch() {
 }
 
 if [[ -n $ZELLIJ ]]; then
-    chpwd_functions+=(_zellij_osc7_cwd zellij_tab_name_update)
+    chpwd_functions+=(zellij_tab_name_update)
     precmd_functions+=(_zellij_osc7_cwd _zellij_refresh_git_branch)
 fi
 
