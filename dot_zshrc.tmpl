@@ -172,6 +172,8 @@ zvm_after_init_commands+=(
   "zvm_bindkey vicmd 'P' zvm_paste_clipboard_before"
   "zvm_bindkey visual 'p' zvm_visual_paste_clipboard"
   "zvm_bindkey visual 'P' zvm_visual_paste_clipboard"
+  "zle -N zle-focus-in _zellij_focus_in"
+  "zle -N zle-focus-out _zellij_focus_out"
 )
 
 if [[ -d "/opt/homebrew/opt/ccache/libexec" ]]; then
@@ -262,9 +264,21 @@ zellij_tab_name_update() {
     command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
 }
 
+_zellij_focus_in() {
+    _zellij_osc7_cwd
+    command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
+}
+
+_zellij_focus_out() {
+    :
+}
+
 if [[ -n $ZELLIJ ]]; then
+    printf '\e[?1004h' >/dev/tty 2>/dev/null
     chpwd_functions+=(_zellij_osc7_cwd zellij_tab_name_update)
     precmd_functions+=(_zellij_osc7_cwd)
+    zle -N zle-focus-in _zellij_focus_in
+    zle -N zle-focus-out _zellij_focus_out
 fi
 
 

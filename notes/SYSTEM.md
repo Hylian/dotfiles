@@ -32,9 +32,8 @@ This document represents the current, living ground truth for this cross-platfor
 * **Clipboard Interception:** Ghostty intercepts ANSI OSC 52 escape sequences emitted over SSH to update the macOS system pasteboard.
 
 ### C. Terminal Multiplexer (Zellij 0.44.x)
-* **Status Bar & OSC 7 CWD Sync:** `zjstatus` WASM plugin configured with 1s interval polling. Zsh registers `_zellij_osc7_cwd` (`\e]7;file://...`) in `chpwd` and `precmd` to synchronously sync pane CWDs to Zellij server memory. On pane switches (`Alt+h/j/k/l`), `Event::PaneUpdate` instantly resolves `get_pane_cwd` and invalidates `git_branch` (0ms latency), while `_zellij_refresh_git_branch` handles directory switches (`cd`, `^j`, `^k`).
-* **Decoupled Shell IPC:** Zsh prompts are decoupled from blocking Zellij IPC status hooks to maintain maximum shell startup and prompt redraw speed.
-* **Focus Sequence Handling:** Zsh registers a silent `zle-focus-out` no-op widget to absorb terminal `\e[O` focus-loss escapes and prevent pink `[!]` bell alert flashes.
+* **Status Bar & OSC 7 CWD Sync:** `zjstatus` WASM plugin configured with 1s interval polling. Zsh registers `_zellij_osc7_cwd` (`\e]7;file://...`) in `chpwd`, `precmd`, and `zle-focus-in` to synchronously sync pane CWDs to Zellij server memory.
+* **Decoupled Shell IPC & Focus Reporting:** `\e[?1004h` enables terminal focus reporting inside Zellij. `zle-focus-in` emits OSC 7 and dispatches disowned `zjstatus::rerun::git_branch` the instant a pane gains focus, while `zle-focus-out` absorbs `\e[O` escapes to prevent pink `[!]` bell alert flashes.
 * **Scrollback Editor:** `scrollback_editor "nvim"`.
 * **Keyboard Protocol & SSH Repeat Stability:** `support_kitty_keyboard_protocol` is explicitly set to `false`. This prevents multiplexer-level Kitty protocol negotiation and ensures Ctrl modifier keys emit atomic single-byte C0 control characters (e.g. `^K` -> `\x0b`). Over SSH, rapid key repeats (such as scrolling in `fzf` pickers) avoid TCP packet fragmentation and escape sequence delay timeouts, completely eliminating dropped escapes and partial escape string leaks.
 

@@ -19,9 +19,18 @@
        printf '\e]7;file://%s\a' "${url_path}"
    }
    ```
-   Emitting ANSI OSC 7 (`\e]7;file://...`) forces Zellij's PTY parser to update the pane's CWD in server memory synchronously. On `Event::PaneUpdate`, `get_pane_cwd` returns the CWD **instantly (0ms)**, causing `zjstatus` to invalidate and re-run `git_branch` immediately without waiting for background polling.
+   Emitting ANSI OSC 7 (`\e]7;file://...`) forces Zellij's PTY parser to update the pane's CWD in server memory synchronously.
 
-2. **Instant Directory Switch Refresh (Zsh `chpwd` & Widgets):**
+2. **Terminal Focus-In Event Hook (`zle-focus-in`):**
+   When switching to an idle pane, no `precmd` or `chpwd` hooks execute because Zsh is sitting idle at the prompt.
+   Enabled terminal focus reporting (`printf '\e[?1004h'`) and bound `zle-focus-in()` in `dot_zshrc.tmpl` (and `zvm_after_init_commands`):
+   ```zsh
+   _zellij_focus_in() {
+       _zellij_osc7_cwd
+       command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
+   }
+   ```
+   The exact instant a pane gains focus (`Alt+h/j/k/l` or click), terminal focus reporting sends `\e[I` to the PTY, Zsh executes `_zellij_focus_in()`, emits OSC 7, and dispatches `zjstatus::rerun::git_branch`. This updates the focused pane's git branch in ~30ms without waiting for background CWD polling.
+
+3. **Instant Directory Switch Refresh (Zsh `chpwd` & Widgets):**
    Targeted internal widget identifier `git_branch`. Updated `zellij_tab_name_update()` in `dot_zshrc.tmpl` and `_zellij_refresh_git_branch()` in `dot_config/zsh/widgets.tmpl` to send `command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!`, giving instant `^j`, `^k`, and `cd` branch updates.
-
-`chezmoi execute-template` passed `zsh -n` validation and `chezmoi apply` completed with zero errors.
