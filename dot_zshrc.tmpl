@@ -246,6 +246,13 @@ function preexec {
   refresh
 }
 
+_zellij_osc7_cwd() {
+    local host="${HOST:-localhost}"
+    local url_path
+    url_path="$(printf '%s' "${PWD}" | sed 's/ /%20/g')"
+    printf '\e]7;file://%s%s\a' "${host}" "${url_path}"
+}
+
 zellij_tab_name_update() {
     local current_dir=$PWD
     if [[ $current_dir == $HOME ]]; then
@@ -258,7 +265,8 @@ zellij_tab_name_update() {
 }
 
 if [[ -n $ZELLIJ ]]; then
-    chpwd_functions+=(zellij_tab_name_update)
+    chpwd_functions+=(_zellij_osc7_cwd zellij_tab_name_update)
+    precmd_functions+=(_zellij_osc7_cwd)
 fi
 
 
