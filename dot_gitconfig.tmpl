@@ -1,0 +1,64 @@
+[core]
+	pager = delta
+	fsmonitor = false
+	untrackedCache = false
+	splitIndex = false
+
+[interactive]
+	diffFilter = delta --color-only
+
+[add.interactive]
+	useBuiltin = false
+
+[delta "everforest"]
+	light = true
+	pink = "#ffe7de"
+	dark-pink = "#f4bfb9"
+	green = "#f3f5d9"
+	dark-green = "#d7dea4"
+	dark-green-2 = "#8da101"
+	minus-style = normal everforest.pink
+	minus-emph-style = normal everforest.dark-pink
+	minus-non-emph-style = minus-style
+	plus-style = syntax everforest.green
+	plus-emph-style = syntax everforest.dark-green
+	plus-non-emph-style = plus-style
+	minus-empty-line-marker-style = minus-style
+	plus-empty-line-marker-style = plus-style
+	commit-decoration-style = blue ol
+	commit-style = raw
+	file-style = omit
+	hunk-header-decoration-style = bold
+	hunk-header-file-style = red bold ul
+	hunk-header-line-number-style = everforest.dark-green-2
+	hunk-header-style = file line-number syntax
+	syntax-theme = Monokai Extended Light
+	zero-style = syntax
+
+[delta]
+	navigate = true
+{{- if ne .theme "dark" }}
+	dark = false
+	syntax-theme = "OneHalfLight"
+{{- else }}
+	dark = true
+	syntax-theme = "OneHalfDark"
+{{- end }}
+	side-by-side = false
+	line-numbers-left-format = "{nm} "
+	line-numbers-right-format = " {np} "
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+
+[feature]
+	manyFiles = true
+
+[status]
+	submoduleSummary = false
+
+[include]
+	path = .gitconfig.local

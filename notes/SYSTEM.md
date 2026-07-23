@@ -38,7 +38,7 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### D. Shell (Zsh) & Prompt (Starship)
 * **Shell Framework:** `zsh` + `antigen` with cached initialization in `$XDG_CACHE_HOME/zsh`.
-* **Prompt:** `starship` with active prompt character `❯` (U+276F).
+* **Git Configuration:** Managed via `dot_gitconfig.tmpl` with `splitIndex = false`, `untrackedCache = false`, and `fsmonitor = false` under `[core]` to guarantee read-only index operations across all hosts and prevent lock contention with background prompt/status bar reruns. Delta syntax highlighting templates dynamically adapt to `.theme`.
 * **CLI Utilities & Themes:** `fzf` (with ripgrep/fd integration), `zoxide` (aliased to `j`), `bat`, `direnv`, and `delta` git previews (`gshow`, `^l` / `git-pick-fzf`) rendered via chezmoi templates (`aliases.tmpl`, `widgets.tmpl`) to match active `.theme` (e.g. Everforest light with `OneHalfLight` syntax highlighting). See [notes/EVERFOREST.md](EVERFOREST.md) for canonical palette tables.
 * **Chezmoi Source Navigation:** `czcd` changes the current shell directly to `chezmoi source-path`, avoiding the nested `chezmoi cd` shell whose parent-process CWD confuses Zellij's `{focused_pane_cwd}` tracking.
 * **History Configuration:** `HISTFILE=~/.zsh_history`, `HISTSIZE=50000`, `SAVEHIST=50000` with `EXTENDED_HISTORY`, `SHARE_HISTORY`, duplicate pruning, and startup `fc -R` to instantly load existing history into session memory for fzf (`^R`).
