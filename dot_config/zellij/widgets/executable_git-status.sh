@@ -61,11 +61,15 @@ emit() {
 	printf '%s\t%s\n' "$PWD" "$1" >"$memo" 2>/dev/null
 	printf '%s\n' "$1"
 
-	# zjstatus stores a command result without scheduling a repaint (its
+	# Stock zjstatus stores a command result without scheduling a repaint (its
 	# Event::RunCommandResult arm never sets should_render), so a changed value
-	# would sit invisible until the next render tick -- measured at a median of
-	# 784 ms after a pane switch. Any recognised pipe message forces a render, and
-	# a pipe name no format string references has no other effect.
+	# sits invisible until the next render tick -- measured at a median of 784 ms
+	# after a pane switch. Any recognised pipe message forces a render, and a pipe
+	# name no format string references has no other effect, so we kick one.
+	#
+	# ZELLIJ_PLUGIN_AUTORENDER marks a zellij that renders a plugin as soon as its
+	# command result lands, making the kick pure overhead; the workaround then
+	# switches itself off. Absent the marker we are on a stock build and keep it.
 	#
 	# Fire only when the value or the directory actually moved, which is at most
 	# once per pane switch and nothing at all on a settled bar. The cwd clause also
@@ -78,14 +82,18 @@ emit() {
 	# client holds a socket. Unbounded, that turns a stalled server into file
 	# descriptor exhaustion. Give it /dev/null on stdin and cap it with a plain-sh
 	# watchdog -- macOS has no timeout(1) -- so no kick can outlive two seconds.
-	if [ "$1" != "$memo_out" ] || [ "$memo_cwd" != "$PWD" ]; then
+	if [ -z "${ZELLIJ_PLUGIN_AUTORENDER:-}" ] &&
+		{ [ "$1" != "$memo_out" ] || [ "$memo_cwd" != "$PWD" ]; }; then
+		# The watchdog must not inherit our stdout: zellij reads the command's
+		# output to EOF, so a grandchild holding that pipe open would stall the
+		# result -- and the whole point of this branch -- for the full two seconds.
 		(
 			zellij pipe "zjstatus::pipe::zjs_render_kick::-" \
 				</dev/null >/dev/null 2>&1 &
 			kicker=$!
 			sleep 2
 			kill "$kicker" 2>/dev/null
-		) &
+		) </dev/null >/dev/null 2>&1 &
 	fi
 
 	exit 0
