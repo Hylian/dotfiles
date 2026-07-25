@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-07-23*
+*Last Updated: 2026-07-24*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -11,7 +11,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Collaborator / Engineer:** Rachel — Senior firmware engineer.
 * **Workstation (Linux):** `shined` — Primary Linux development machine.
 * **Secondary Linux:** `eterna` — Linux machine.
-* **Client (macOS):** Darwin machine — Client laptop / desktop.
+* **Client (macOS):** `baumkuchen` — Apple silicon laptop running macOS 27 (Ghostty + aerospace/sketchybar/borders).
 * **Primary Remote Workflow:** macOS Client running **Ghostty** -> SSH into Linux Workstation (`shined`) -> **Zellij** multiplexer session.
 
 ### Privacy & Security Policy
