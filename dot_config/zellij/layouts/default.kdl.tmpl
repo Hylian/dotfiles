@@ -1,8 +1,13 @@
+{{- /* A locally built zjstatus is assumed to carry the patch that repaints on a
+       command result change; ZJSTATUS_AUTORENDER tells the git widget to skip its
+       own repaint kick. Hosts without a local build fall back to the release. */ -}}
+{{- $zjstatus := printf "%s/.config/zellij/plugins/zjstatus.wasm" .chezmoi.homeDir -}}
+{{- $patched := stat $zjstatus -}}
 layout {
     cwd "~"
     default_tab_template {
         pane size=1 borderless=true {
-            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+            plugin location="{{ if $patched }}file:{{ $zjstatus }}{{ else }}https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm{{ end }}" {
                 {{ if ne .theme "dark" -}}
                 format_left   "{mode}"
                 format_center "{tabs}"
@@ -38,6 +43,7 @@ layout {
                 command_git_branch_rendermode "static"
                 command_git_branch_interval   "5"
                 command_git_branch_cwd        "{focused_pane_cwd}"
+                {{ if $patched }}command_git_branch_env        "ZJSTATUS_AUTORENDER \"1\""{{ end }}
 
                 datetime        "#[fg=#F2EFDF,bold] {format} "
                 datetime_format "%A, %d %b %Y %H:%M"
@@ -77,6 +83,7 @@ layout {
                 command_git_branch_rendermode "static"
                 command_git_branch_interval   "5"
                 command_git_branch_cwd        "{focused_pane_cwd}"
+                {{ if $patched }}command_git_branch_env        "ZJSTATUS_AUTORENDER \"1\""{{ end }}
 
                 datetime        "#[fg=#374145,bold] {format} "
                 datetime_format "%A, %d %b %Y %H:%M"

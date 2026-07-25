@@ -1,0 +1,38 @@
+#!/bin/sh
+# Grant the locally built zjstatus the permissions it already holds as a release.
+#
+# Zellij keys its plugin permission cache by plugin location, so pointing the
+# layout at a local build introduces an unknown plugin that must be granted
+# RunCommands before it can drive the git widget. The grant prompt is drawn
+# inside the plugin's own pane, and the status bar is one row tall -- there is
+# nowhere for it to appear and no way to answer it. The bar just renders empty.
+#
+# So seed the entry instead, with exactly the permissions the release build was
+# already granted. Hosts with no local build have nothing to do here: the layout
+# falls back to the release URL, whose entry is already in the cache.
+
+set -eu
+
+wasm="{{ .chezmoi.homeDir }}/.config/zellij/plugins/zjstatus.wasm"
+{{ if eq .chezmoi.os "darwin" -}}
+cache="{{ .chezmoi.homeDir }}/Library/Caches/org.Zellij-Contributors.Zellij/permissions.kdl"
+{{- else -}}
+cache="{{ if .chezmoi.env.XDG_CACHE_HOME }}{{ .chezmoi.env.XDG_CACHE_HOME }}{{ else }}{{ .chezmoi.homeDir }}/.cache{{ end }}/zellij/permissions.kdl"
+{{- end }}
+
+[ -f "$wasm" ] || exit 0
+
+# The cache is only read at server start, so writing it here is safe. Appending
+# a key that is already present would duplicate it, so check first.
+if [ -f "$cache" ] && grep -qF "\"$wasm\"" "$cache"; then
+	exit 0
+fi
+
+mkdir -p "$(dirname "$cache")"
+cat >>"$cache" <<EOF
+"$wasm" {
+    ReadApplicationState
+    ChangeApplicationState
+    RunCommands
+}
+EOF
