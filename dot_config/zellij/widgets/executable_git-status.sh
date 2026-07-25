@@ -34,14 +34,22 @@ git="git --no-optional-locks"
 # focused-cwd widget and receiving its result, and throws away results that land
 # after the cwd moved on again. One pane switch therefore costs ~18 invocations at
 # a human switching rate, all for the same directory. Collapse that burst with a
-# single-entry memo -- zjstatus only ever asks about the focused pane, so one slot
-# is all the cache that is needed. Zsh's precmd hook deletes it, so the memo never
-# stands between an interactive command and the bar.
-memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo
+# single-entry memo -- a session only ever has one focused pane, so one slot is all
+# the cache that is needed. Zsh's precmd hook deletes it, so the memo never stands
+# between an interactive command and the bar.
+#
+# The slot MUST be per session. A shared slot makes concurrent sessions invalidate
+# each other's entry on every render, and with the repaint kick below that becomes
+# a feedback loop between their status bars.
+memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo.${ZELLIJ_SESSION_NAME:-nosession}
 
-if [ -f "$memo" ] && [ -n "$(find "$memo" -newermt '-1 seconds' 2>/dev/null)" ]; then
-	IFS='	' read -r memo_cwd memo_out <"$memo" 2>/dev/null || memo_cwd=''
-	if [ "$memo_cwd" = "$PWD" ]; then
+memo_cwd=''
+memo_out=''
+
+if [ -f "$memo" ]; then
+	IFS='	' read -r memo_cwd memo_out <"$memo" 2>/dev/null || { memo_cwd=''; memo_out=''; }
+	if [ "$memo_cwd" = "$PWD" ] &&
+		[ -n "$(find "$memo" -newermt '-1 seconds' 2>/dev/null)" ]; then
 		printf '%s\n' "$memo_out"
 		exit 0
 	fi
@@ -52,6 +60,34 @@ fi
 emit() {
 	printf '%s\t%s\n' "$PWD" "$1" >"$memo" 2>/dev/null
 	printf '%s\n' "$1"
+
+	# zjstatus stores a command result without scheduling a repaint (its
+	# Event::RunCommandResult arm never sets should_render), so a changed value
+	# would sit invisible until the next render tick -- measured at a median of
+	# 784 ms after a pane switch. Any recognised pipe message forces a render, and
+	# a pipe name no format string references has no other effect.
+	#
+	# Fire only when the value or the directory actually moved, which is at most
+	# once per pane switch and nothing at all on a settled bar. The cwd clause also
+	# covers results zjstatus discards as stale, where the memo has advanced but
+	# the plugin never stored anything.
+	#
+	# `zellij pipe` is a streaming client, not a fire-and-forget one: it exits once
+	# the plugin has handled the message (~40 ms measured), but blocks indefinitely
+	# when the session it targets is gone or its server is wedged, and each blocked
+	# client holds a socket. Unbounded, that turns a stalled server into file
+	# descriptor exhaustion. Give it /dev/null on stdin and cap it with a plain-sh
+	# watchdog -- macOS has no timeout(1) -- so no kick can outlive two seconds.
+	if [ "$1" != "$memo_out" ] || [ "$memo_cwd" != "$PWD" ]; then
+		(
+			zellij pipe "zjstatus::pipe::zjs_render_kick::-" \
+				</dev/null >/dev/null 2>&1 &
+			kicker=$!
+			sleep 2
+			kill "$kicker" 2>/dev/null
+		) &
+	fi
+
 	exit 0
 }
 

@@ -271,7 +271,7 @@ zellij_tab_name_update() {
 # changes reach the bar at once and the widget's TTLs only have to cover changes
 # made outside this shell. The repo path is resolved on chpwd so the per-prompt
 # hook stays fork-free.
-_zellij_git_memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo
+_zellij_git_memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo.${ZELLIJ_SESSION_NAME:-nosession}
 _zellij_git_dirty_cache=''
 
 _zellij_track_git_dirty_cache() {
