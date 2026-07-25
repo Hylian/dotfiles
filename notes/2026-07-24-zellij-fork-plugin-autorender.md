@@ -94,3 +94,41 @@ still fires per switch — that one is a separate upstream issue.
    subdirectory and non-repo cases; `dash -n` clean.
 5. Idle unchanged: memo per session, no kicks fired while idle.
 6. All test sessions deleted, no leftover zellij processes.
+
+## Follow-up: `hylian/latency` Cleanup
+
+Reviewed the three pre-existing patches on the branch and rebuilt it. Backup of the
+previous state is the local branch `hylian/latency-pre-cleanup`. The branch now needs a
+force push, since three of its commits were rewritten.
+
+**`close_range` → raw syscall.** The original used `libc::close_range`, which libc only
+declares for glibc targets. Compile-verified in an isolated crate against the pinned
+toolchain:
+
+| | musl | gnu |
+|---|---|---|
+| `libc::close_range` (before) | `E0425: cannot find function close_range in crate libc` | builds |
+| `libc::syscall(libc::SYS_close_range, …)` (after) | builds | builds |
+
+`x86_64-unknown-linux-musl` is listed in `rust-toolchain.toml` and is what the e2e docker
+tests build, so this was a real break. The wrapper would also have raised the binary's
+minimum to glibc 2.34; the syscall number is defined for both libcs.
+
+**Cached-cwd patch dropped.** It preferred `terminal_cwds` over querying the OS when
+opening a split or tab. That cache is refreshed by OSC 7, by `capture_initial_cwd`, and
+otherwise only by a 1s ticker (`UPDATE_AND_REPORT_CWDS_INTERVAL_MS`), so a `cd` followed
+quickly by a split could inherit the previous directory. Our own shells emit OSC 7 every
+prompt and so never saw it; a default bash user would. The `/proc` patch had already made
+the OS query cheap on Linux, which was the original motivation. Verified after reverting:
+splitting 0.4s after a `cd` inherits the new directory.
+
+**Trailers stripped.** Two commits carried `TAG=`/`CONV=` harness metadata. Also fixed two
+rustfmt violations in those commits that `cargo xtask format --check` would have failed on.
+
+Left alone, flagged only: both added "tests" are benchmarks with no assertions (200k
+iterations, pure `println!`), and the `/proc` commit's subject still says "potentially",
+whose high-core-count hypothesis is unverified.
+
+**macOS gotcha:** `cargo xtask install` overwrites the binary in place, which invalidates
+the cached code signature and gets the next exec killed with SIGKILL (exit 137). Fix with
+`codesign -s - --force ~/.local/bin/zellij`, or remove the old binary before installing.
