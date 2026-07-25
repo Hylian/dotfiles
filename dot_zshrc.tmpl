@@ -247,9 +247,11 @@ function preexec {
   refresh
 }
 
+# Tell Zellij the pane's cwd synchronously, so zjstatus can invalidate its
+# focused-cwd widgets the instant we switch panes instead of waiting for the
+# server's background cwd poll. Pure parameter expansion: no subprocess.
 _zellij_osc7_cwd() {
-    local url_path="$(printf '%s' "${PWD}" | sed 's/ /%20/g')"
-    printf '\e]7;file://%s\a' "${url_path}"
+    printf '\e]7;file://%s\a' "${PWD// /%20}"
 }
 
 zellij_tab_name_update() {
@@ -262,12 +264,38 @@ zellij_tab_name_update() {
     command zellij action rename-tab "$current_dir" >/dev/null 2>&1 &!
 }
 
+# The zjstatus git widget keeps two caches: a one-slot memo of its last rendered
+# output, which absorbs the burst of re-spawns zjstatus fires per pane switch, and
+# a per-repository memo of the O(worktree) dirty check. Dropping both makes the
+# next widget run recompute from scratch, so our own commands and directory
+# changes reach the bar at once and the widget's TTLs only have to cover changes
+# made outside this shell. The repo path is resolved on chpwd so the per-prompt
+# hook stays fork-free.
+_zellij_git_memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo
+_zellij_git_dirty_cache=''
+
+_zellij_track_git_dirty_cache() {
+    local gitdir
+    if gitdir=$(command git --no-optional-locks rev-parse --absolute-git-dir 2>/dev/null); then
+        _zellij_git_dirty_cache="$gitdir/zjstatus-dirty"
+    else
+        _zellij_git_dirty_cache=''
+    fi
+}
+
+# Sole definition: the fzf widgets in ~/.config/zsh/widgets call this directly, so
+# it carries its own guard rather than relying on the registration below.
 _zellij_refresh_git_branch() {
+    [[ -n $ZELLIJ ]] && (( $+commands[zellij] )) || return 0
+    zf_rm -f -- "$_zellij_git_memo"
+    [[ -n $_zellij_git_dirty_cache ]] && zf_rm -f -- "$_zellij_git_dirty_cache"
     command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
 }
 
 if [[ -n $ZELLIJ ]]; then
-    chpwd_functions+=(zellij_tab_name_update)
+    zmodload -F zsh/files b:zf_rm
+    _zellij_track_git_dirty_cache
+    chpwd_functions+=(zellij_tab_name_update _zellij_track_git_dirty_cache)
     precmd_functions+=(_zellij_osc7_cwd _zellij_refresh_git_branch)
 fi
 

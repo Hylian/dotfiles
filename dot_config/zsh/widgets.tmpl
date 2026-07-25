@@ -94,12 +94,6 @@ bindkey -M emacs '^g' cd-fzf
 bindkey -M vicmd '^g' cd-fzf
 bindkey -M viins '^g' cd-fzf
 
-_zellij_refresh_git_branch() {
-  if [[ -n "$ZELLIJ" ]] && (( $+commands[zellij] )); then
-    command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
-  fi
-}
-
 # zoxide + fzf
 zoxide-fzf() {
   local result
