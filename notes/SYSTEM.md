@@ -11,7 +11,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Collaborator / Engineer:** Rachel — Senior firmware engineer.
 * **Workstation (Linux):** `shined` — Primary Linux development machine.
 * **Secondary Linux:** `eterna` — Linux machine.
-* **Client (macOS):** `baumkuchen` — Apple silicon laptop running macOS 27 (Ghostty + aerospace/sketchybar/borders).
+* **Clients (macOS):** `baumkuchen` and `midnight-future` — Apple silicon laptops running macOS 27 (Ghostty + aerospace/sketchybar/borders). Both carry per-host `aerospace.toml.tmpl` blocks; `midnight-future` runs stock Homebrew zellij with the release zjstatus (no local fork build), so the layout falls back to the release plugin URL and the git widget keeps its repaint-kick path.
 * **Primary Remote Workflow:** macOS Client running **Ghostty** -> SSH into Linux Workstation (`shined`) -> **Zellij** multiplexer session.
 
 ### Privacy & Security Policy
