@@ -17,7 +17,7 @@ wasm="{{ .chezmoi.homeDir }}/.config/zellij/plugins/zjstatus.wasm"
 {{ if eq .chezmoi.os "darwin" -}}
 cache="{{ .chezmoi.homeDir }}/Library/Caches/org.Zellij-Contributors.Zellij/permissions.kdl"
 {{- else -}}
-cache="{{ if .chezmoi.env.XDG_CACHE_HOME }}{{ .chezmoi.env.XDG_CACHE_HOME }}{{ else }}{{ .chezmoi.homeDir }}/.cache{{ end }}/zellij/permissions.kdl"
+cache="{{ with env "XDG_CACHE_HOME" }}{{ . }}{{ else }}{{ $.chezmoi.homeDir }}/.cache{{ end }}/zellij/permissions.kdl"
 {{- end }}
 
 [ -f "$wasm" ] || exit 0
