@@ -233,6 +233,17 @@ fi
 if [[ -d "$HOME/.fzf/bin" ]]; then
   export PATH="$HOME/.fzf/bin:$PATH"
 fi
+
+# rustup is keg-only under Homebrew, so its shims (cargo, rustc, clippy) are not
+# linked into /opt/homebrew/bin; ~/.cargo/bin holds whatever `cargo install` puts
+# there, e.g. mandown for zellij's xtask.
+if [[ -d "/opt/homebrew/opt/rustup/bin" ]]; then
+  export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+fi
+
+if [[ -d "$HOME/.cargo/bin" ]]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
 export PATH="$HOME/.local/bin:$PATH"
 
 export KEYTIMEOUT=1
