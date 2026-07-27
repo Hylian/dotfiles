@@ -261,7 +261,7 @@ zellij_tab_name_update() {
     else
         current_dir=${current_dir##*/}
     fi
-    command zellij action rename-tab "$current_dir" >/dev/null 2>&1 &!
+    command zellij action rename-tab "$current_dir" </dev/null >/dev/null 2>&1 &!
 }
 
 # The zjstatus git widget keeps two caches: a one-slot memo of its last rendered
@@ -289,7 +289,7 @@ _zellij_refresh_git_branch() {
     [[ -n $ZELLIJ ]] && (( $+commands[zellij] )) || return 0
     zf_rm -f -- "$_zellij_git_memo"
     [[ -n $_zellij_git_dirty_cache ]] && zf_rm -f -- "$_zellij_git_dirty_cache"
-    command zellij pipe "zjstatus::rerun::git_branch" >/dev/null 2>&1 &!
+    command zellij pipe "zjstatus::rerun::git_branch" </dev/null >/dev/null 2>&1 &!
 }
 
 if [[ -n $ZELLIJ ]]; then
