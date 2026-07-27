@@ -114,9 +114,19 @@ zoxide-fzf() {
   }
 }
 zle     -N            zoxide-fzf
-bindkey -M emacs '^j' zoxide-fzf
-bindkey -M vicmd '^j' zoxide-fzf
-bindkey -M viins '^j' zoxide-fzf
+# NOT '^j': the tty line discipline is in cooked mode with ICRNL between
+# accept-line and the next ZLE read, so an Enter autorepeated into that window
+# is enqueued as LF and dispatched as ^J. Enter and Ctrl-J are then the same
+# byte, and a held Enter opens this picker and accepts a result. Widening the
+# window widens the race: with hooks disabled it misfired on 1 of 40 held
+# Enters, with one external fork in precmd on 21 of 40. This is why zsh binds
+# both ^M and ^J to accept-line by default; keep ^j that way.
+bindkey -M emacs '^j' accept-line
+bindkey -M vicmd '^j' accept-line
+bindkey -M viins '^j' accept-line
+bindkey -M emacs '^o' zoxide-fzf
+bindkey -M vicmd '^o' zoxide-fzf
+bindkey -M viins '^o' zoxide-fzf
 
 zoxide-fzf-curdir() {
   local result

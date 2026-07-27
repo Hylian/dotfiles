@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-07-25*
+*Last Updated: 2026-07-26*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -77,7 +77,8 @@ This document represents the current, living ground truth for this cross-platfor
 ### Zsh Interactive Widgets
 * Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.
 * `^k`: `zoxide-fzf-curdir` (interactive directory jump scoped to current directory subtree; calls `_zellij_refresh_git_branch`, which drops the widget memos and pipes `zjstatus::rerun::git_branch`, for instant branch status refresh).
-* `^j`: `zoxide-fzf` (interactive global zoxide query and jump; same instant refresh path as `^k`).
+* `^o`: `zoxide-fzf` (interactive global zoxide query and jump; same instant refresh path as `^k`).
+* **`^j` is reserved for `accept-line` and MUST NOT be bound to a widget.** `^J` is LF, and the tty line discipline runs in cooked mode with `ICRNL` between `accept-line` and the next ZLE read — an Enter autorepeated into that window is enqueued as LF and dispatched as `^J`, making Enter and Ctrl-J the same byte with no way to distinguish them. A held Enter therefore fires whatever `^j` is bound to; widening the window (hook forks on `chpwd`) widens the race. `widgets.tmpl` rebinds `^j` to `accept-line` explicitly in all three keymaps so re-sourcing it in a live shell cannot leave a stale binding. See [2026-07-26-held-enter-triggers-zoxide-widget.md](2026-07-26-held-enter-triggers-zoxide-widget.md). No other control key in this set has a CR relationship.
 * `^g`: `cd-fzf` (interactive directory navigator).
 * `^f`: `rg-fzf` (interactive ripgrep file/line search into Neovim).
 * `^v`: `vim-fzf` (interactive fd file search into Neovim).
