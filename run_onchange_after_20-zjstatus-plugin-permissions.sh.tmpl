@@ -1,3 +1,4 @@
+{{- $wasm := printf "%s/.config/zellij/plugins/zjstatus.wasm" .chezmoi.homeDir -}}
 #!/bin/sh
 # Grant the locally built zjstatus the permissions it already holds as a release.
 #
@@ -10,10 +11,19 @@
 # So seed the entry instead, with exactly the permissions the release build was
 # already granted. Hosts with no local build have nothing to do here: the layout
 # falls back to the release URL, whose entry is already in the cache.
+#
+# chezmoi decides whether to re-run a run_onchange_ script by hashing its
+# rendered contents, so the state this script depends on has to appear in them:
+# a host that builds the plugin *after* its first apply would otherwise never
+# re-run this and would come up with an empty bar. Presence is the right
+# granularity -- the cache keys on path, not on plugin contents, so a rebuild in
+# place needs no new grant.
+#
+# local plugin present: {{ if stat $wasm }}yes{{ else }}no{{ end }}
 
 set -eu
 
-wasm="{{ .chezmoi.homeDir }}/.config/zellij/plugins/zjstatus.wasm"
+wasm="{{ $wasm }}"
 {{ if eq .chezmoi.os "darwin" -}}
 cache="{{ .chezmoi.homeDir }}/Library/Caches/org.Zellij-Contributors.Zellij/permissions.kdl"
 {{- else -}}
