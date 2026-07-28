@@ -97,10 +97,6 @@ zsh_clipboard_copy() {
     printf "%s" "$input" | xsel --clipboard -i >/dev/null 2>&1
   elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbcopy] )); then
     printf "%s" "$input" | pbcopy >/dev/null 2>&1
-  elif (( $+commands[wl-copy] )); then
-    printf "%s" "$input" | wl-copy >/dev/null 2>&1
-  elif (( $+commands[xclip] )); then
-    printf "%s" "$input" | xclip -selection clipboard >/dev/null 2>&1
   fi
   return 0
 }
@@ -115,20 +111,6 @@ zsh_clipboard_paste() {
     xsel --clipboard -o 2>/dev/null
   elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbpaste] )); then
     pbpaste 2>/dev/null
-  elif (( $+commands[wl-paste] )); then
-    local out
-    out=$(wl-paste -n 2>/dev/null)
-    if [[ $? -eq 0 && -n "$out" ]]; then
-      printf "%s" "$out"
-      return 0
-    fi
-  elif (( $+commands[xclip] )); then
-    local out
-    out=$(xclip -selection clipboard -o 2>/dev/null)
-    if [[ $? -eq 0 && -n "$out" ]]; then
-      printf "%s" "$out"
-      return 0
-    fi
   fi
   if [[ -f "$clip_file" ]]; then
     cat "$clip_file" 2>/dev/null

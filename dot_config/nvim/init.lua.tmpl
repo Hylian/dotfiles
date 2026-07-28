@@ -80,30 +80,22 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
   end
 
   local function get_copy_cmd()
-    if vim.env.WAYLAND_DISPLAY and vim.fn.executable('wl-copy') == 1 then
+    if vim.env.WAYLAND_DISPLAY and vim.env.WAYLAND_DISPLAY ~= '' and vim.fn.executable('wl-copy') == 1 then
       return { 'wl-copy' }
     elseif vim.fn.executable('pbcopy') == 1 then
       return { 'pbcopy' }
-    elseif vim.env.DISPLAY and vim.fn.executable('xclip') == 1 then
-      return { 'xclip', '-selection', 'clipboard' }
-    elseif vim.fn.executable('wl-copy') == 1 then
-      return { 'wl-copy' }
-    elseif vim.fn.executable('xclip') == 1 then
+    elseif vim.env.DISPLAY and vim.env.DISPLAY ~= '' and vim.fn.executable('xclip') == 1 then
       return { 'xclip', '-selection', 'clipboard' }
     end
     return nil
   end
 
   local function get_paste_cmd()
-    if vim.env.WAYLAND_DISPLAY and vim.fn.executable('wl-paste') == 1 then
+    if vim.env.WAYLAND_DISPLAY and vim.env.WAYLAND_DISPLAY ~= '' and vim.fn.executable('wl-paste') == 1 then
       return { 'wl-paste', '--no-newline' }
     elseif vim.fn.executable('pbpaste') == 1 then
       return { 'pbpaste' }
-    elseif vim.env.DISPLAY and vim.fn.executable('xclip') == 1 then
-      return { 'xclip', '-selection', 'clipboard', '-o' }
-    elseif vim.fn.executable('wl-paste') == 1 then
-      return { 'wl-paste', '--no-newline' }
-    elseif vim.fn.executable('xclip') == 1 then
+    elseif vim.env.DISPLAY and vim.env.DISPLAY ~= '' and vim.fn.executable('xclip') == 1 then
       return { 'xclip', '-selection', 'clipboard', '-o' }
     end
     return nil
