@@ -6,8 +6,6 @@ $username\
 $character"""
 
 right_format = """
-$git_commit\
-$git_state\
 $cmd_duration\
 $jobs\
 $status"""
@@ -44,13 +42,7 @@ style = 'fg:cyan'
 disabled = true
 format = '([$all_status$ahead_behind]($style))'
 
-[git_state]
-disabled = false
-style = 'fg:blue'
 
-[git_commit]
-disabled = false
-style = 'fg:blue'
 
 [golang]
 format = '[$symbol($version)]($style)'
