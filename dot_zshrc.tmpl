@@ -48,6 +48,7 @@ if [[ "$has_antigen" == true ]]; then
   if [[ ! -f "$ANTIGEN_INIT" || "$HOME/.zshrc" -nt "$ANTIGEN_INIT" ]]; then
     antigen use oh-my-zsh
 
+    antigen bundle robbyrussell/oh-my-zsh lib/directories.zsh
     antigen bundle direnv
     antigen bundle fd
     antigen bundle pip
