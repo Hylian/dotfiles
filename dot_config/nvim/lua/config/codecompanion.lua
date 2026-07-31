@@ -30,38 +30,40 @@ require("codecompanion").setup({
     --log_level = "TRACE",
   },
   adapters = {
-    anthropic = function()
-      return require("codecompanion.adapters").extend("anthropic", {
-        schema = {
-          model = {
-            default = "claude-3-opus-latest",
+    http = {
+      anthropic = function()
+        return require("codecompanion.adapters").extend("anthropic", {
+          schema = {
+            model = {
+              default = "claude-3-opus-latest",
+            },
           },
-        },
-        env = {
-          api_key = "cmd:cat ~/.anthropic",
-        },
-      })
-    end,
-    gemini = function()
-      return require("codecompanion.adapters").extend("gemini", {
-        schema = {
-          model = {
-            --default = "gemini-2.0-flash-exp",
-            default = "gemini-1.5-pro"
+          env = {
+            api_key = "cmd:cat ~/.anthropic",
           },
-        },
-        env = {
-          api_key = "cmd:cat ~/.gemini",
-        },
-        handlers = {
-          form_parameters = function(self, params, messages)
-            return {
-              tools = {google_search = {}}
-            }
-          end,
-        }
-      })
-    end,
+        })
+      end,
+      gemini = function()
+        return require("codecompanion.adapters").extend("gemini", {
+          schema = {
+            model = {
+              --default = "gemini-2.0-flash-exp",
+              default = "gemini-1.5-pro"
+            },
+          },
+          env = {
+            api_key = "cmd:cat ~/.gemini",
+          },
+          handlers = {
+            form_parameters = function(self, params, messages)
+              return {
+                tools = {google_search = {}}
+              }
+            end,
+          }
+        })
+      end,
+    },
   },
 })
 

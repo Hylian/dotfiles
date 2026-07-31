@@ -1,7 +1,7 @@
 require('toggle_lsp_diagnostics').init({ start_on = false })
 
 -- Silence verbose LSP logging to prevent log file and memory bloat over days
-vim.lsp.set_log_level("warn")
+vim.lsp.log.set_level(vim.log.levels.WARN)
 
 require('mason').setup({
   PATH = "append"
