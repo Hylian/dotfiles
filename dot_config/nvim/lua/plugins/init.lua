@@ -144,19 +144,7 @@ return {
     end,
   },
   { 'declancm/maximize.nvim', lazy = true, config = true },
-  {
-    "olimorris/codecompanion.nvim",
-    cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
-    event = "VeryLazy",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    config = function()
-      require('config.codecompanion')
-    end,
-  },
-  { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } },
+  { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown" } },
   {
     'https://github.com/fresh2dev/zellij.vim',
     lazy = false,

@@ -15,9 +15,6 @@ require('telescope').setup {
     find_files = {
       theme = "dropdown",
     },
-    codecompanion = {
-      theme = "ivy",
-    },
   },
 }
 
