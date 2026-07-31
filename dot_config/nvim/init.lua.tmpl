@@ -146,19 +146,6 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
       ['*'] = local_paste,
     },
   }
-
-  vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Sync yanked text to local clipboard, file cache, and terminal OSC 52',
-    callback = function()
-      if vim.v.event.operator == 'y' then
-        if copy_cmd then
-          vim.fn.system(copy_cmd, vim.v.event.regcontents)
-        end
-        write_clip_cache(vim.v.event.regcontents)
-        osc52.copy('+')(vim.v.event.regcontents)
-      end
-    end,
-  })
 end
 
 --local function update_wayland_display()

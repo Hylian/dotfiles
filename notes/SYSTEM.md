@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-07-28*
+*Last Updated: 2026-07-31*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -52,10 +52,10 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### E. Editor (Neovim 0.11.x) & Clipboard Stack
 * **Clipboard Mode:** `vim.opt.clipboard = 'unnamedplus'`.
-* **Universal Clipboard & Headless Sync:** Neovim yanks and deletes (`y`, `yy`, `d`, `dw`, `cw`, etc.) copy to local display servers ONLY when display envvars (`WAYLAND_DISPLAY`, `DISPLAY`) are present (preventing `wl-copy`/`xclip` from hanging in headless/SSH sessions), persist to `~/.cache/clipboard`, AND broadcast ANSI OSC 52 sequences to `/dev/tty` for terminal pasteboard sync (Ghostty on macOS).
+* **Universal Clipboard & Headless Sync:** Neovim yanks and deletes (`y`, `yy`, `d`, `dw`, `cw`, etc.) copy to local display servers ONLY when display envvars (`WAYLAND_DISPLAY`, `DISPLAY`) are present (preventing `wl-copy`/`xclip` from hanging in headless/SSH sessions), persist to `~/.cache/clipboard`, AND broadcast ANSI OSC 52 sequences to `/dev/tty` for terminal pasteboard sync (Ghostty on macOS). Handled directly via `vim.g.clipboard` register overrides without redundant `TextYankPost` hooks.
 * **Instant Local & Headless Paste:** Paste operations query local display tools (`wl-paste`, `pbpaste`, `xclip`) when display envvars are set, fall back to `~/.cache/clipboard`, and then to Neovim's unnamed register (`"`), guaranteeing seamless interoperability with `zsh-vi-mode` (`p` in `zvm`) across headless SSH and GUI environments.
 * **Long-Running & LSP Stability:** `clangd` is configured with `--enable-config` (reads project/user `.clangd` configs), `--pch-storage=memory` (fast RAM preamble caching), `-j=8` (bounds indexing concurrency to 8 worker threads), `--background-index-priority=low`, bounded completion/reference limits, and `vim.lsp.set_log_level("warn")` to eliminate memory bloat and event-loop lag.
-* **Treesitter & Syntax Engine:** `nvim-treesitter` is pinned to the stable `master` branch with `lazy = false` for Neovim 0.11 compatibility, configured via `nvim-treesitter.configs` with `auto_install = true`, baseline `ensure_installed` parsers (`c`, `lua`, `vim`, `vimdoc`, `query`, `markdown`, `markdown_inline`), and a 100KB buffer size guard.
+* **Treesitter & Syntax Engine:** `nvim-treesitter` is pinned to the stable `master` branch with `lazy = false` for Neovim 0.11 compatibility, configured via `nvim-treesitter.configs` with `auto_install = true`, baseline `ensure_installed` parsers (`c`, `lua`, `vim`, `vimdoc`, `query`, `markdown`, `markdown_inline`), and a 100KB buffer size guard using Neovim 0.10+ `vim.uv.fs_stat`.
 
 ---
 
