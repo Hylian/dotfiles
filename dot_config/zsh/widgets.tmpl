@@ -46,7 +46,7 @@ cd-fzf-helper() {
   dir="$2/${ret[2]}"
 
   if [[ ${ret[1]} = "continue" ]]; then
-    local numdirs=$(fd -I -d 1 -td --base-directory $dir | wc -l)
+    local numdirs=$(${FD_COMMAND:-fd} -I -d 1 -td --base-directory $dir | wc -l)
     if [[ $numdirs = "0" ]]; then
       # No-Op
       #cd-fzf-helper $1 $2
@@ -200,7 +200,7 @@ if (( $+commands[batcat] )); then
 fi
 local file_path
 {
-  file_path=$(fd --type f | fzf --ansi \
+  file_path=$(${FD_COMMAND:-fd} --type f | fzf --ansi \
       --color prompt:green \
       --prompt "nvim> " \
       --header "" \

@@ -3,6 +3,7 @@ ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 [[ -d "$ZSH_CACHE_DIR" ]] || mkdir -p "$ZSH_CACHE_DIR"
 
 # Zsh Completion Caching
+ZSH_DISABLE_COMPFIX="true"
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$ZSH_CACHE_DIR/zcompcache"
 
@@ -57,6 +58,7 @@ if [[ "$has_antigen" == true ]]; then
     antigen bundle fzf
 
     antigen apply
+    antigen cache-gen
   fi
   source "$ANTIGEN_INIT"
 fi
@@ -255,6 +257,7 @@ zellij_tab_name_update() {
 # hook stays fork-free.
 _zellij_git_memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo.${ZELLIJ_SESSION_NAME:-nosession}
 _zellij_git_dirty_cache=''
+_zellij_git_dirty_checked=0
 
 _zellij_track_git_dirty_cache() {
     local gitdir
@@ -263,12 +266,16 @@ _zellij_track_git_dirty_cache() {
     else
         _zellij_git_dirty_cache=''
     fi
+    _zellij_git_dirty_checked=1
 }
 
 # Sole definition: the fzf widgets in ~/.config/zsh/widgets call this directly, so
 # it carries its own guard rather than relying on the registration below.
 _zellij_refresh_git_branch() {
     [[ -n $ZELLIJ ]] && (( $+commands[zellij] )) || return 0
+    if (( ! _zellij_git_dirty_checked )); then
+        _zellij_track_git_dirty_cache
+    fi
     zf_rm -f -- "$_zellij_git_memo"
     [[ -n $_zellij_git_dirty_cache ]] && zf_rm -f -- "$_zellij_git_dirty_cache"
     command zellij pipe "zjstatus::rerun::git_branch" </dev/null >/dev/null 2>&1 &!
@@ -276,7 +283,6 @@ _zellij_refresh_git_branch() {
 
 if [[ -n $ZELLIJ ]]; then
     zmodload -F zsh/files b:zf_rm
-    _zellij_track_git_dirty_cache
     chpwd_functions+=(zellij_tab_name_update _zellij_track_git_dirty_cache)
     precmd_functions+=(_zellij_osc7_cwd _zellij_refresh_git_branch)
 fi
