@@ -266,4 +266,7 @@ bindkey -M emacs '^b' git-branch-fzf
 bindkey -M vicmd '^b' git-branch-fzf
 bindkey -M viins '^b' git-branch-fzf
 
+# git squash update into HEAD
+alias gsqu='git add -u && git commit --amend --no-edit'
+
 # vim: ft=zsh
