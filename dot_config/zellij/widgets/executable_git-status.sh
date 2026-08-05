@@ -43,13 +43,22 @@ git="git --no-optional-locks"
 # a feedback loop between their status bars.
 memo=${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zjstatus-git-memo.${ZELLIJ_SESSION_NAME:-nosession}
 
+# Resolve current clock: use /proc/uptime directly on Linux (0 subprocesses),
+# or fall back to date +%s on systems without /proc (1 subprocess).
+if [ -r /proc/uptime ]; then
+	read -r _now_s _ </proc/uptime
+	now=${_now_s%.*}
+else
+	now=$(date +%s 2>/dev/null)
+fi
+
+memo_exp=0
 memo_cwd=''
 memo_out=''
 
 if [ -f "$memo" ]; then
-	IFS='	' read -r memo_cwd memo_out <"$memo" 2>/dev/null || { memo_cwd=''; memo_out=''; }
-	if [ "$memo_cwd" = "$PWD" ] &&
-		[ -n "$(find "$memo" -newermt '-1 seconds' 2>/dev/null)" ]; then
+	IFS='	' read -r memo_exp memo_cwd memo_out <"$memo" 2>/dev/null || { memo_exp=0; memo_cwd=''; memo_out=''; }
+	if [ "$memo_cwd" = "$PWD" ] && [ -n "$memo_exp" ] && [ "$memo_exp" -ge "$now" ] 2>/dev/null; then
 		printf '%s\n' "$memo_out"
 		exit 0
 	fi
@@ -58,7 +67,7 @@ fi
 # Every exit path goes through emit so that leaving a repository is memoised too,
 # otherwise non-repo directories would storm on every render.
 emit() {
-	printf '%s\t%s\n' "$PWD" "$1" >"$memo" 2>/dev/null
+	printf '%s\t%s\t%s\n' "$(( now + 1 ))" "$PWD" "$1" >"$memo" 2>/dev/null
 	printf '%s\n' "$1"
 
 	# A zjstatus that stores a command result without scheduling a repaint leaves
@@ -116,21 +125,25 @@ esac
 [ -n "$branch" ] || emit ''
 
 cache=$gitdir/zjstatus-dirty
+dirty_exp=0
+dirty_marker=''
 
-# Recompute when the cache is missing or older than the TTL. A find that lacks
-# -newermt yields empty here, which degrades to recomputing on every call.
-if [ ! -f "$cache" ] || [ -z "$(find "$cache" -newermt "-$ttl seconds" 2>/dev/null)" ]; then
+# Recompute when the cache is missing or expired. Storing the expiration epoch
+# avoids forking find on every check.
+if [ -f "$cache" ]; then
+	IFS='	' read -r dirty_exp dirty_marker <"$cache" 2>/dev/null || dirty_exp=0
+fi
+
+if [ -z "$dirty_exp" ] || [ "$dirty_exp" -lt "$now" ] 2>/dev/null; then
 	# diff-index exits 0 clean, 1 with differences, 128 when HEAD is unborn or
 	# unreadable. Only 1 means dirty; anything else renders as clean.
 	$git diff-index --quiet HEAD -- 2>/dev/null
 	if [ $? -eq 1 ]; then
-		printf ' ●' >"$cache" 2>/dev/null
+		dirty_marker=' ●'
 	else
-		: >"$cache" 2>/dev/null
+		dirty_marker=''
 	fi
+	printf '%s\t%s\n' "$(( now + ttl ))" "$dirty_marker" >"$cache" 2>/dev/null
 fi
 
-marker=''
-[ -r "$cache" ] && IFS= read -r marker <"$cache"
-
-emit "$branch$marker"
+emit "$branch$dirty_marker"
