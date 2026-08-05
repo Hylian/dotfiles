@@ -106,7 +106,8 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
 
   local function local_copy(lines, regtype)
     if copy_cmd then
-      vim.fn.system(copy_cmd, lines)
+      local text = type(lines) == 'table' and table.concat(lines, '\n') or tostring(lines)
+      vim.system(copy_cmd, { stdin = text, stdout = false, stderr = false })
     end
     write_clip_cache(lines)
     osc52.copy('+')(lines)
