@@ -99,9 +99,9 @@ zsh_clipboard_copy() {
 }
 
 zsh_clipboard_paste() {
-  local clip_file="${XDG_CACHE_HOME:-$HOME/.cache}/clipboard"
+  local out clip_file="${XDG_CACHE_HOME:-$HOME/.cache}/clipboard"
   if [[ -n "$WAYLAND_DISPLAY" ]] && (( $+commands[wl-paste] )); then
-    wl-paste -n 2>/dev/null
+    out=$(wl-paste -n 2>/dev/null)
   elif [[ -n "$DISPLAY" ]] && (( $+commands[xclip] )); then
     xclip -selection clipboard -o 2>/dev/null
   elif [[ -n "$DISPLAY" ]] && (( $+commands[xsel] )); then
@@ -109,7 +109,9 @@ zsh_clipboard_paste() {
   elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbpaste] )); then
     pbpaste 2>/dev/null
   fi
-  if [[ -f "$clip_file" ]]; then
+  if [[ -n "$out" ]]; then
+    printf "%s" "$out"
+  elif [[ -f "$clip_file" ]]; then
     cat "$clip_file" 2>/dev/null
   fi
   return 0
