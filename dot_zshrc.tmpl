@@ -62,6 +62,31 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
+_zsh_resolve_clipboard_env() {
+  local env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
+  local env_file="$env_dir/${ZELLIJ_SESSION_NAME:-client}"
+  [[ -f "$env_file" ]] || env_file="$env_dir/client"
+
+  _ZSH_CLIP_IS_SSH=0
+  _ZSH_CLIP_WAYLAND="$WAYLAND_DISPLAY"
+  _ZSH_CLIP_DISPLAY="$DISPLAY"
+
+  if [[ -n "$ZELLIJ" && -f "$env_file" ]]; then
+    local k v
+    while IFS='=' read -r k v; do
+      case "$k" in
+        SSH) _ZSH_CLIP_IS_SSH="$v" ;;
+        WAYLAND_DISPLAY) _ZSH_CLIP_WAYLAND="$v" ;;
+        DISPLAY) _ZSH_CLIP_DISPLAY="$v" ;;
+      esac
+    done < "$env_file"
+  elif [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+    _ZSH_CLIP_IS_SSH=1
+    _ZSH_CLIP_WAYLAND=""
+    _ZSH_CLIP_DISPLAY=""
+  fi
+}
+
 # Zsh Vi Mode Clipboard & OSC 52 Remote Copy
 zsh_clipboard_copy() {
   local input b64 clip_dir clip_file
@@ -86,29 +111,40 @@ zsh_clipboard_copy() {
     fi
   fi
 
-  if [[ -n "$WAYLAND_DISPLAY" ]] && (( $+commands[wl-copy] )); then
-    printf "%s" "$input" | wl-copy >/dev/null 2>&1
-  elif [[ -n "$DISPLAY" ]] && (( $+commands[xclip] )); then
-    printf "%s" "$input" | xclip -selection clipboard >/dev/null 2>&1
-  elif [[ -n "$DISPLAY" ]] && (( $+commands[xsel] )); then
-    printf "%s" "$input" | xsel --clipboard -i >/dev/null 2>&1
-  elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbcopy] )); then
-    printf "%s" "$input" | pbcopy >/dev/null 2>&1
+  local _ZSH_CLIP_IS_SSH _ZSH_CLIP_WAYLAND _ZSH_CLIP_DISPLAY
+  _zsh_resolve_clipboard_env
+
+  if [[ "$_ZSH_CLIP_IS_SSH" != "1" ]]; then
+    if [[ -n "$_ZSH_CLIP_WAYLAND" ]] && (( $+commands[wl-copy] )); then
+      WAYLAND_DISPLAY="$_ZSH_CLIP_WAYLAND" printf "%s" "$input" | wl-copy >/dev/null 2>&1
+    elif [[ -n "$_ZSH_CLIP_DISPLAY" ]] && (( $+commands[xclip] )); then
+      DISPLAY="$_ZSH_CLIP_DISPLAY" printf "%s" "$input" | xclip -selection clipboard >/dev/null 2>&1
+    elif [[ -n "$_ZSH_CLIP_DISPLAY" ]] && (( $+commands[xsel] )); then
+      DISPLAY="$_ZSH_CLIP_DISPLAY" printf "%s" "$input" | xsel --clipboard -i >/dev/null 2>&1
+    elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbcopy] )); then
+      printf "%s" "$input" | pbcopy >/dev/null 2>&1
+    fi
   fi
   return 0
 }
 
 zsh_clipboard_paste() {
   local out clip_file="${XDG_CACHE_HOME:-$HOME/.cache}/clipboard"
-  if [[ -n "$WAYLAND_DISPLAY" ]] && (( $+commands[wl-paste] )); then
-    out=$(wl-paste -n 2>/dev/null)
-  elif [[ -n "$DISPLAY" ]] && (( $+commands[xclip] )); then
-    xclip -selection clipboard -o 2>/dev/null
-  elif [[ -n "$DISPLAY" ]] && (( $+commands[xsel] )); then
-    xsel --clipboard -o 2>/dev/null
-  elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbpaste] )); then
-    pbpaste 2>/dev/null
+  local _ZSH_CLIP_IS_SSH _ZSH_CLIP_WAYLAND _ZSH_CLIP_DISPLAY
+  _zsh_resolve_clipboard_env
+
+  if [[ "$_ZSH_CLIP_IS_SSH" != "1" ]]; then
+    if [[ -n "$_ZSH_CLIP_WAYLAND" ]] && (( $+commands[wl-paste] )); then
+      out=$(WAYLAND_DISPLAY="$_ZSH_CLIP_WAYLAND" wl-paste -n 2>/dev/null)
+    elif [[ -n "$_ZSH_CLIP_DISPLAY" ]] && (( $+commands[xclip] )); then
+      out=$(DISPLAY="$_ZSH_CLIP_DISPLAY" xclip -selection clipboard -o 2>/dev/null)
+    elif [[ -n "$_ZSH_CLIP_DISPLAY" ]] && (( $+commands[xsel] )); then
+      out=$(DISPLAY="$_ZSH_CLIP_DISPLAY" xsel --clipboard -o 2>/dev/null)
+    elif [[ "$OSTYPE" == "darwin"* ]] && (( $+commands[pbpaste] )); then
+      out=$(pbpaste 2>/dev/null)
+    fi
   fi
+
   if [[ -n "$out" ]]; then
     printf "%s" "$out"
   elif [[ -f "$clip_file" ]]; then
@@ -192,6 +228,29 @@ fi
 
 # Cached Tool Initializations
 if (( $+commands[zellij] )); then
+  _zellij_sync_client_env() {
+    local session="${ZELLIJ_SESSION_NAME:-$1}"
+    local env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
+    mkdir -p "$env_dir" 2>/dev/null
+    local content
+    if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+      content="SSH=1\nWAYLAND_DISPLAY=\nDISPLAY=\n"
+    else
+      content="SSH=0\nWAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}\nDISPLAY=${DISPLAY:-}\n"
+    fi
+    printf "%b" "$content" > "$env_dir/${session:-client}" 2>/dev/null
+    printf "%b" "$content" > "$env_dir/client" 2>/dev/null
+  }
+
+  zellij() {
+    _zellij_sync_client_env "$@"
+    command zellij "$@"
+  }
+
+  if [[ -z "$ZELLIJ" ]]; then
+    _zellij_sync_client_env
+  fi
+
   if [[ ! -f "$ZSH_CACHE_DIR/zellij.zsh" || "$commands[zellij]" -nt "$ZSH_CACHE_DIR/zellij.zsh" ]]; then
     zellij setup --generate-auto-start zsh >! "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
     zcompile "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
@@ -214,19 +273,6 @@ if (( $+commands[starship] )); then
   fi
   source "$ZSH_CACHE_DIR/starship.zsh"
 fi
-
-# Zsh Hooks
-function refresh {
-  if [ -n "$TMUX" ] && [ -n "$SSH_TTY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
-    export $(tmux show-env WAYLAND_DISPLAY 2> /dev/null)
-  elif [ -n "$ZELLIJ" ] && [ -f /tmp/wayland_display ]; then
-    export WAYLAND_DISPLAY=$(< /tmp/wayland_display)
-  fi
-}
-
-function preexec {
-  refresh
-}
 
 # Tell Zellij the pane's cwd synchronously, so zjstatus can invalidate its
 # focused-cwd widgets the instant we switch panes instead of waiting for the

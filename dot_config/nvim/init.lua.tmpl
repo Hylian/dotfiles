@@ -79,48 +79,106 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
     end
   end
 
-  local function get_copy_cmd()
-    if vim.env.WAYLAND_DISPLAY and vim.env.WAYLAND_DISPLAY ~= '' and vim.fn.executable('wl-copy') == 1 then
-      return { 'wl-copy' }
-    elseif vim.fn.executable('pbcopy') == 1 then
-      return { 'pbcopy' }
-    elseif vim.env.DISPLAY and vim.env.DISPLAY ~= '' and vim.fn.executable('xclip') == 1 then
-      return { 'xclip', '-selection', 'clipboard' }
+  local function resolve_client_env()
+    local env_dir = vim.fn.expand(vim.env.XDG_RUNTIME_DIR and (vim.env.XDG_RUNTIME_DIR .. '/zellij-env') or '/tmp/zellij-env')
+    local session = vim.env.ZELLIJ_SESSION_NAME
+    local env_file = env_dir .. '/' .. (session and session ~= '' and session or 'client')
+    local f = io.open(env_file, 'r')
+    if not f and session and session ~= '' then
+      f = io.open(env_dir .. '/client', 'r')
     end
-    return nil
-  end
 
-  local function get_paste_cmd()
-    if vim.env.WAYLAND_DISPLAY and vim.env.WAYLAND_DISPLAY ~= '' and vim.fn.executable('wl-paste') == 1 then
-      return { 'wl-paste', '--no-newline' }
-    elseif vim.fn.executable('pbpaste') == 1 then
-      return { 'pbpaste' }
-    elseif vim.env.DISPLAY and vim.env.DISPLAY ~= '' and vim.fn.executable('xclip') == 1 then
-      return { 'xclip', '-selection', 'clipboard', '-o' }
+    local is_ssh = false
+    local wayland = vim.env.WAYLAND_DISPLAY
+    local display = vim.env.DISPLAY
+
+    if f then
+      local content = f:read('*a')
+      f:close()
+      if content then
+        local ssh_flag = content:match('SSH=([^\n]+)')
+        if ssh_flag == '1' then
+          is_ssh = true
+          wayland = nil
+          display = nil
+        else
+          local w = content:match('WAYLAND_DISPLAY=([^\n]*)')
+          local d = content:match('DISPLAY=([^\n]*)')
+          if w and w ~= '' then wayland = w end
+          if d and d ~= '' then display = d end
+        end
+      end
+    elseif vim.env.SSH_CONNECTION or vim.env.SSH_CLIENT or vim.env.SSH_TTY then
+      is_ssh = true
+      wayland = nil
+      display = nil
     end
-    return nil
-  end
 
-  local copy_cmd = get_copy_cmd()
-  local paste_cmd = get_paste_cmd()
+    return is_ssh, wayland, display
+  end
 
   local function local_copy(lines, regtype)
-    if copy_cmd then
-      local text = type(lines) == 'table' and table.concat(lines, '\n') or tostring(lines)
-      vim.system(copy_cmd, { stdin = text, stdout = false, stderr = false })
+    local is_ssh, wayland, display = resolve_client_env()
+
+    if not is_ssh then
+      local copy_cmd = nil
+      local env = nil
+      if wayland and wayland ~= '' and vim.fn.executable('wl-copy') == 1 then
+        copy_cmd = { 'wl-copy' }
+        env = { WAYLAND_DISPLAY = wayland }
+      elseif vim.fn.executable('pbcopy') == 1 then
+        copy_cmd = { 'pbcopy' }
+      elseif display and display ~= '' and vim.fn.executable('xclip') == 1 then
+        copy_cmd = { 'xclip', '-selection', 'clipboard' }
+        env = { DISPLAY = display }
+      end
+
+      if copy_cmd then
+        local text = type(lines) == 'table' and table.concat(lines, '\n') or tostring(lines)
+        vim.system(copy_cmd, { stdin = text, stdout = false, stderr = false, env = env })
+      end
     end
+
     write_clip_cache(lines)
     osc52.copy('+')(lines)
   end
 
   local function local_paste()
-    if paste_cmd then
-      local out = vim.fn.systemlist(paste_cmd)
-      if vim.v.shell_error == 0 and #out > 0 then
-        local regtype = vim.fn.getregtype('+')
-        return { out, regtype ~= '' and regtype or 'v' }
+    local is_ssh, wayland, display = resolve_client_env()
+
+    if not is_ssh then
+      local paste_cmd = nil
+      local env = nil
+      if wayland and wayland ~= '' and vim.fn.executable('wl-paste') == 1 then
+        paste_cmd = { 'wl-paste', '--no-newline' }
+        env = { WAYLAND_DISPLAY = wayland }
+      elseif vim.fn.executable('pbpaste') == 1 then
+        paste_cmd = { 'pbpaste' }
+      elseif display and display ~= '' and vim.fn.executable('xclip') == 1 then
+        paste_cmd = { 'xclip', '-selection', 'clipboard', '-o' }
+        env = { DISPLAY = display }
+      end
+
+      if paste_cmd then
+        local out = nil
+        if env then
+          local obj = vim.system(paste_cmd, { env = env, text = true }):wait()
+          if obj.code == 0 and obj.stdout and #obj.stdout > 0 then
+            out = vim.fn.split(obj.stdout, '\n')
+          end
+        else
+          local list = vim.fn.systemlist(paste_cmd)
+          if vim.v.shell_error == 0 and #list > 0 then
+            out = list
+          end
+        end
+        if out and #out > 0 then
+          local regtype = vim.fn.getregtype('+')
+          return { out, regtype ~= '' and regtype or 'v' }
+        end
       end
     end
+
     local f = io.open(clip_file, 'r')
     if f then
       local content = f:read('*a')
@@ -148,29 +206,6 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
     },
   }
 end
-
---local function update_wayland_display()
---  --if os.getenv("ZELLIJ") ~= nil and os.getenv("SSH_TTY") ~= nil then
---  if vim.env.ZELLIJ ~= nil then
---    local file = io.open("/tmp/wayland_display", "r")
---    if file then
---      local wayland_display = file:read("*l")
---      file:close()
---      if wayland_display then
---        vim.env.WAYLAND_DISPLAY = wayland_display
---        --print(wayland_display)
---      end
---    else
---      print("Error: Could not open /tmp/wayland_display")
---    end
---  end
---end
-
---vim.api.nvim_create_autocmd({'BufEnter', 'FocusGained'}, {
---  desc = 'Update WAYLAND_DISPLAY envvar',
---  pattern = '*',
---  callback = update_wayland_display,
---})
 
 vim.api.nvim_create_autocmd({'BufWinEnter'}, {
   desc = 'Cursor history across file opens',
