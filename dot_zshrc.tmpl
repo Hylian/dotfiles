@@ -185,11 +185,41 @@ function zvm_config() {
   ZVM_VI_HIGHLIGHT_EXTRASTYLE="bold"
 }
 
+zvm_visual_yank_whole_line() {
+  zvm_yank $ZVM_MODE_VISUAL_LINE
+  zvm_exit_visual_mode true
+}
+
+zvm_yank_whole_line() {
+  local bpos=$CURSOR epos=$CURSOR
+  for ((bpos=$bpos-1; $bpos>=0; bpos--)); do
+    if [[ "${BUFFER:$bpos:1}" == $'\n' ]]; then
+      bpos=$((bpos+1))
+      break
+    fi
+  done
+  (( bpos < 0 )) && bpos=0
+
+  for ((epos=$epos; $epos<$#BUFFER; epos++)); do
+    if [[ "${BUFFER:$epos:1}" == $'\n' ]]; then
+      break
+    fi
+  done
+
+  CUTBUFFER="${BUFFER:$bpos:$((epos-bpos))}"$'\n'
+  zvm_clipboard_copy_buffer
+}
+
+zvm_define_widget zvm_visual_yank_whole_line
+zvm_define_widget zvm_yank_whole_line
+
 zvm_after_init_commands+=(
   "zvm_bindkey vicmd 'p' zvm_paste_clipboard_after"
   "zvm_bindkey vicmd 'P' zvm_paste_clipboard_before"
   "zvm_bindkey visual 'p' zvm_visual_paste_clipboard"
   "zvm_bindkey visual 'P' zvm_visual_paste_clipboard"
+  "zvm_bindkey visual 'Y' zvm_visual_yank_whole_line"
+  "zvm_bindkey vicmd 'Y' zvm_yank_whole_line"
 )
 
 if [[ -d "/opt/homebrew/opt/ccache/libexec" ]]; then
