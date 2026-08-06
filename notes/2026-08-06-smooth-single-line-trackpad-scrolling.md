@@ -8,7 +8,7 @@ When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS cl
 2. **Ghostty Linux GTK/Wayland Event Rate:** GTK4 reports trackpad scroll deltas in high-resolution pixels (~30-40px per gesture notch), which with Ghostty's default multiplier produces bursts of ~3 SGR wheel events per notch.
 3. **Neovim Editor Dispatch:** Neovim defaults `mousescroll` to `ver:3,hor:6`, causing 3-line viewport jumps per wheel event inside Neovim buffers.
 
-The goal: have every single trackpad scroll event animate strictly **one line at a time** across all layers (Zellij multiplexer scrollback, panes, and Neovim editor).
+The goal: have every single trackpad scroll event animate strictly **one line at a time** across all layers (Zellij multiplexer scrollback, panes, and Neovim editor), while allowing terminal-scoped sensitivity tuning without affecting high-precision GUI apps like Chrome.
 
 ## Mechanism & Changes
 
@@ -22,16 +22,19 @@ The goal: have every single trackpad scroll event animate strictly **one line at
   - Plugin panes receive discrete single-count scroll events.
 * **Verification:** Integration tests pass. Binary compiled in release mode and installed to `~/.local/bin/zellij` and `~/.cargo/bin/zellij`.
 
-### 2. Ghostty Event Rate Normalization (`dot_config/ghostty/config.tmpl`)
+### 2. Ghostty Scoped Sensitivity Tuning (`dot_config/ghostty/config.tmpl`)
 * **Configuration:**
   ```ini
   {{ if eq .chezmoi.os "darwin" -}}
-  mouse-scroll-multiplier = precision:0.33,discrete:1
+  mouse-scroll-multiplier = precision:0.75,discrete:1
   {{- else -}}
-  mouse-scroll-multiplier = 0.33333333
+  mouse-scroll-multiplier = 0.75
   {{- end }}
   ```
-* **Impact:** Scales GTK/Wayland high-resolution touchpad pixel deltas down by 1/3, converting the standard 3-event burst per notch into exactly **1 single SGR wheel event**.
+* **Impact:**
+  - Adjusting `mouse-scroll-multiplier` scales the rate/frequency of SGR mouse events specifically inside Ghostty without modifying system-wide Sway or Wayland trackpad settings.
+  - Chrome, browsers, and other GUI applications continue to receive untouched native Wayland high-precision pixel scrolling deltas.
+  - Combined with Zellij's 1-line event processing, increasing the multiplier increases finger-travel responsiveness while rendering every intermediate frame 1 line at a time.
 
 ### 3. Neovim Single-Line Mouse Scroll (`dot_config/nvim/init.lua.tmpl`)
 * **File:** `dot_config/nvim/init.lua.tmpl`
