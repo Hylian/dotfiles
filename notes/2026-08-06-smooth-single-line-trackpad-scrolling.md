@@ -12,16 +12,18 @@ The goal: have every single trackpad scroll event animate strictly **one line at
 
 ## Mechanism & Changes
 
-### 1. Zellij Single-Line Mouse Scroll Event Handling & Frame Rate-Limiting (`Hylian/zellij`)
+### 1. Zellij Frame-by-Frame Multi-Line Smooth Scroll Animation (`Hylian/zellij`)
 * **Files:**
-  - `zellij-server/src/tab/mouse_handler.rs`: Changed `MouseAction::ScrollUp` and `MouseAction::ScrollDown` line counts from hardcoded `lines: 3` to `lines: 1`. Added a 15ms frame-interval rate limiter in `handle_scrollwheel_up` and `handle_scrollwheel_down` using `tab.last_mouse_scroll_time`.
-  - `zellij-server/src/screen.rs`: Changed `ScreenInstruction::ScrollUpAt` and `ScreenInstruction::ScrollDownAt` line counts from `3` to `1`.
-  - `zellij-server/src/tab/mod.rs`: Added `last_mouse_scroll_time` state to `Tab`.
+  - `zellij-server/src/background_jobs.rs`: Added `BackgroundJob::SmoothScrollSteps { client_id, point, direction, remaining_steps }` to asynchronously dispatch remaining scroll steps at ~14ms intervals (~70fps).
+  - `zellij-server/src/screen.rs`: Added `ScreenInstruction::SmoothScrollStep(ClientId, Position, isize)` to execute single-line scroll steps and render individual frames.
+  - `zellij-server/src/tab/mouse_handler.rs`: Separated single-line execution (`execute_scroll_step_up` / `execute_scroll_step_down`) from event dispatch (`handle_scrollwheel_up` / `handle_scrollwheel_down`).
+  - `zellij-server/src/tab/mod.rs`: Added `step_smooth_scroll` dispatch method on `Tab`.
+  - `zellij-utils/src/errors.rs`: Added `ScreenContext::SmoothScrollStep` and `BackgroundJobContext::SmoothScrollSteps`.
 * **Impact:**
-  - Standard terminal panes scroll exactly 1 row per SGR mouse wheel event.
-  - Sub-15ms burst duplicates caused by trackpad speed spikes or libinput acceleration are coalesced, ensuring the viewport advances at most **1 line per display refresh frame** (~66 fps max animation rate).
-  - Multi-line jumping is physically impossible regardless of finger scrolling velocity.
-* **Verification:** Integration tests pass. Binary compiled in release mode and installed to `~/.local/bin/zellij` and `~/.cargo/bin/zellij`.
+  - When a 3-line scroll event arrives, step 1 executes **immediately** (0ms latency, frame 0).
+  - Steps 2 and 3 are scheduled across subsequent frames (+14ms and +28ms), rendering strictly **1 line per frame**.
+  - No scroll distance is lost or capped, and multi-line jumps are eliminated. The viewport smoothly cascades line by line into place.
+* **Verification:** Integration tests pass. Binary compiled in release mode with LTO and installed to `~/.local/bin/zellij` and `~/.cargo/bin/zellij`.
 
 ### 2. Ghostty Scoped Sensitivity Tuning (`dot_config/ghostty/config.tmpl`)
 * **Configuration:**
@@ -35,7 +37,7 @@ The goal: have every single trackpad scroll event animate strictly **one line at
 * **Impact:**
   - Adjusting `mouse-scroll-multiplier` scales the rate/frequency of SGR mouse events specifically inside Ghostty without modifying system-wide Sway or Wayland trackpad settings.
   - Chrome, browsers, and other GUI applications continue to receive untouched native Wayland high-precision pixel scrolling deltas.
-  - Combined with Zellij's 15ms single-line rate limiter, high sensitivity yields instant response with zero 2+ line frame jumps.
+  - Combined with Zellij's frame-by-frame smooth scroll animation, high sensitivity yields responsive finger travel while animating every single line sequentially.
 
 ### 3. Neovim Single-Line Mouse Scroll (`dot_config/nvim/init.lua.tmpl`)
 * **File:** `dot_config/nvim/init.lua.tmpl`
