@@ -3,9 +3,11 @@
 **Date:** 2026-08-06
 
 ## Context & Motivation
-When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`) connected over Ghostty, incoming mouse wheel events caused viewport jumps of multiple lines at a time because Zellij had hardcoded `lines: 3` in its mouse event dispatch handler.
+When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`), multiple layers defaulted to 3-line scroll increments:
+1. **Zellij Server Dispatch:** Hardcoded to `lines: 3` in `mouse_handler.rs`.
+2. **Neovim Editor Dispatch:** Neovim defaults `mousescroll` to `ver:3,hor:6`, causing 3-line viewport jumps per wheel event inside Neovim buffers.
 
-The goal: have every single trackpad scroll event animate strictly **one line at a time** (`lines: 1`) without artificial multipliers, giving smooth, fluid single-row viewport stepping.
+The goal: have every single trackpad scroll event animate strictly **one line at a time** across all layers (Zellij multiplexer and Neovim editor).
 
 ## Mechanism & Changes
 
@@ -18,6 +20,11 @@ The goal: have every single trackpad scroll event animate strictly **one line at
   - Plugin panes receive discrete single-count scroll events.
 * **Verification:** Integration tests (`test_scroll_wheel_up_scrolls_pane` and `test_scroll_wheel_down_scrolls_pane`) verify clean 1-line viewport shifts per event. Binary compiled in release mode and installed to `~/.local/bin/zellij`.
 
-### 2. Ghostty Native 1:1 Event Reporting (`dot_config/ghostty/config.tmpl`)
-* **Ghostty Configuration:** Standard 1:1 event reporting without artificial multipliers (no `mouse-scroll-multiplier`), ensuring Ghostty emits discrete single-tick SGR events as the trackpad scrolls rather than multi-event bursts.
-* **Combined Result:** Each trackpad scroll tick translates to exactly 1 SGR wheel event, which Zellij renders as exactly 1 line of viewport movement.
+### 2. Neovim Single-Line Mouse Scroll (`dot_config/nvim/init.lua.tmpl`)
+* **File:** `dot_config/nvim/init.lua.tmpl`
+* **Configuration:** `vim.opt.mousescroll = 'ver:1,hor:1'`.
+* **Impact:** Eliminates Neovim's default 3-line vertical scroll jump (`ver:3`), ensuring mouse scroll events inside editor buffers advance exactly 1 line at a time.
+
+### 3. Sway & Ghostty Layer Clarifications
+* **Sway:** Sway manages continuous `wl_pointer.axis` events in pixels via `scroll_factor` (scaling libinput deltas). It does not impose 3-line step quantization.
+* **Ghostty:** Emits 1 SGR scroll event per line-height delta threshold without artificial multi-event bursts.
