@@ -3,28 +3,30 @@
 **Date:** 2026-08-06
 
 ## Context & Motivation
-When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`), high-velocity gestures or libinput acceleration emit clusters of single-line SGR mouse events in rapid succession (e.g. 3–5 events in under 5ms). Because terminal multiplexers receive these in the same socket batch, unpaced event processing causes multi-line viewport jumps in a single rendered display frame.
+When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`), gestures generate streams of SGR mouse events. Slow, precise movements emit 1–3 events, while fast flings emit dozens of events in rapid succession.
 
-The goal: queue incoming scroll events and pace them frame-by-frame (~70fps) so that any burst of scroll events (such as 3 events from a trackpad swipe) smoothly animates strictly **one line per frame**, with zero dropped lines and zero latency on the initial event.
+The requirements:
+1. **Zero-Latency Response:** Slow, precise finger movements scroll strictly **1 line per event** with **0ms latency** on touch.
+2. **Dynamic Logarithmic Scaling:** The lines scrolled per frame scale with the number of queued events ($\propto \ln(Q)$), providing organic velocity during large swipes.
+3. **Hard 200ms Maximum Completion Deadline:** Any volume of accumulated scroll input (even 50–100+ lines from an aggressive trackpad fling) is guaranteed to completely resolve and come to rest within **at most 200ms**.
 
-## Mechanism & Changes
+## Mechanism & Implementation
 
-### 1. Zellij Frame-Paced Smooth Scroll Animation Queue (`Hylian/zellij`)
+### 1. Dynamic Logarithmic Pacing & Time-Budgeted Drainage (`Hylian/zellij`)
 * **Files:**
-  - `zellij-server/src/tab/mod.rs`: Added `SmoothScrollQueue` struct (`pending_steps`, `last_position`, `last_step_time`, `is_draining`) per client on `Tab`. Added `drain_smooth_scroll_step` method.
-  - `zellij-server/src/tab/mouse_handler.rs`: In `handle_scrollwheel_up` and `handle_scrollwheel_down`, if the queue is idle and `>= 14ms` elapsed, execute Step 1 immediately (0ms touch latency). Otherwise, enqueue subsequent steps into `pending_steps` (capped to 25 to prevent overshoot) and start the drain loop.
-  - `zellij-server/src/background_jobs.rs`: Added `BackgroundJob::DrainSmoothScrollQueue { client_id }` with a 14ms async timer tick.
-  - `zellij-server/src/screen.rs`: Added `ScreenInstruction::DrainSmoothScrollQueue(ClientId)` to pop 1 pending step, scroll 1 line, render the frame, and reschedule if additional steps remain.
-  - `zellij-utils/src/errors.rs`: Added `ScreenContext::DrainSmoothScrollQueue` and `BackgroundJobContext::DrainSmoothScrollQueue`.
+  - `zellij-server/src/tab/mod.rs`:
+    - `SmoothScrollQueue` struct records `pending_steps: isize`, `last_position: Position`, `last_step_time: Instant`, `drain_start_time: Instant`, and `is_draining: bool`.
+    - In `drain_smooth_scroll_step`: Computes the remaining time window $T_{\text{remaining}} = \max(0, 200\text{ms} - (t - t_{\text{start}}))$ and remaining frame budget $F_{\text{remaining}} = \lceil T_{\text{remaining}} / 14\text{ms} \rceil$.
+    - Step size for each frame is calculated as:
+      $$\text{lines\_this\_frame} = \min\left(Q, \max\left(1, \left\lceil \frac{Q}{F_{\text{remaining}}} \right\rceil, \text{round}\left(1 + 1.8 \cdot \ln\left(\frac{Q}{2}\right)\right)\right)\right)$$
+    - When $Q \le 3$: Drains strictly 1 line per frame (14ms per line).
+    - When $Q$ is large: Ramps initial velocity logarithmically, decelerates smoothly, and guarantees $100\%$ drainage at $t = 200\text{ms}$.
+  - `zellij-server/src/tab/mouse_handler.rs`:
+    - `execute_scroll_step_up` and `execute_scroll_step_down` accept `lines: usize` to execute multi-line viewport updates and SGR sequences in a single unified frame render.
+    - `handle_scrollwheel_up` and `handle_scrollwheel_down` stamp `drain_start_time = now` upon entering the drain state and allow deep burst queuing (up to 500 lines).
 * **Impact:**
-  - When Ghostty sends 3 scroll events in 2ms:
-    - **Event 1 (t=0ms):** Executes immediately, renders Frame 0 (+1 line).
-    - **Events 2 & 3 (t=1-2ms):** Enqueued into `pending_steps`.
-    - **Frame 1 (+14ms):** Drains step 2, renders Frame 1 (+1 line).
-    - **Frame 2 (+28ms):** Drains step 3, renders Frame 2 (+1 line).
-  - Slow scrolling retains 0ms instantaneous response.
-  - Fast gestures glide with silky smooth 70fps cascading animation strictly one row per display frame.
-* **Verification:** Unit and integration tests pass cleanly. Release binary built with LTO and installed to `~/.local/bin/zellij` and `~/.cargo/bin/zellij`.
+  - Small swipes: 1 line per frame.
+  - Large flings: Rapid logarithmic deceleration that naturally stops within 200ms without abrupt clipping or sluggish overshoot.
 
 ### 2. Ghostty Scoped Sensitivity Tuning (`dot_config/ghostty/config.tmpl`)
 * **Configuration:**
@@ -36,11 +38,8 @@ The goal: queue incoming scroll events and pace them frame-by-frame (~70fps) so 
   {{- end }}
   ```
 * **Impact:**
-  - Adjusting `mouse-scroll-multiplier` scales the frequency of SGR mouse events inside Ghostty without modifying system-wide Sway or Wayland trackpad settings.
-  - Chrome, browsers, and GUI applications retain native Wayland continuous pixel scrolling deltas.
-  - Paired with Zellij's frame-paced queue, high multiplier produces rich event streams that animate continuously across frames.
+  - Scales Wayland/GTK pixel deltas into high-resolution discrete mouse wheel events inside Ghostty without altering system-wide trackpad sensitivity in GUI applications like Chrome.
 
 ### 3. Neovim Single-Line Mouse Scroll (`dot_config/nvim/init.lua.tmpl`)
-* **File:** `dot_config/nvim/init.lua.tmpl`
 * **Configuration:** `vim.opt.mousescroll = 'ver:1,hor:1'`.
-* **Impact:** Eliminates Neovim's default 3-line vertical jump, ensuring mouse scroll events inside editor buffers step 1 line at a time.
+* **Impact:** Ensures Neovim editor buffers step 1 line at a time rather than jumping 3 lines.
