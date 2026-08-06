@@ -3,9 +3,9 @@
 **Date:** 2026-08-06
 
 ## Context & Motivation
-When scrolling in Zellij using the Apple Magic Trackpad on macOS clients (`baumkuchen`) or Linux workstations (`shined`) connected over Ghostty, scroll events caused viewport jumps of multiple lines at a time (hardcoded to 3 lines in Zellij, or perceived as 4 lines), creating choppy visual jumps rather than fluid single-line viewport motion.
+When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`) connected over Ghostty, incoming mouse wheel events caused viewport jumps of multiple lines at a time because Zellij had hardcoded `lines: 3` in its mouse event dispatch handler.
 
-The goal: maintain the exact same physical trackpad gesture sensitivity (finger travel distance per page scrolled), but have all scroll events animate strictly **one line at a time**.
+The goal: have every single trackpad scroll event animate strictly **one line at a time** (`lines: 1`) without artificial multipliers, giving smooth, fluid single-row viewport stepping.
 
 ## Mechanism & Changes
 
@@ -18,17 +18,6 @@ The goal: maintain the exact same physical trackpad gesture sensitivity (finger 
   - Plugin panes receive discrete single-count scroll events.
 * **Verification:** Integration tests (`test_scroll_wheel_up_scrolls_pane` and `test_scroll_wheel_down_scrolls_pane`) verify clean 1-line viewport shifts per event. Binary compiled in release mode and installed to `~/.local/bin/zellij`.
 
-### 2. Ghostty Trackpad Multiplier Scaling (`dot_config/ghostty/config.tmpl`)
-* **File:** `dot_config/ghostty/config.tmpl`
-* **Configuration:**
-  ```ini
-  {{ if eq .chezmoi.os "darwin" -}}
-  mouse-scroll-multiplier = precision:4,discrete:3
-  {{- else -}}
-  mouse-scroll-multiplier = 4
-  {{- end }}
-  ```
-* **Impact:**
-  - `precision:4` (macOS Ghostty 1.2+) / `4` (Linux Ghostty 1.1+): Scales trackpad precision scrolling deltas to generate 4x higher-frequency SGR mouse wheel events during continuous gestures.
-  - Combined with Zellij's 1-line event processing, `4 events * 1 line = 4 lines`, matching the user's natural finger travel sensitivity while rendering every intermediate 1-line step for silky smooth scrolling animations.
-  - `discrete:3`: Preserves standard 3-line scroll increments for physical notched mouse wheels where supported.
+### 2. Ghostty Native 1:1 Event Reporting (`dot_config/ghostty/config.tmpl`)
+* **Ghostty Configuration:** Standard 1:1 event reporting without artificial multipliers (no `mouse-scroll-multiplier`), ensuring Ghostty emits discrete single-tick SGR events as the trackpad scrolls rather than multi-event bursts.
+* **Combined Result:** Each trackpad scroll tick translates to exactly 1 SGR wheel event, which Zellij renders as exactly 1 line of viewport movement.
