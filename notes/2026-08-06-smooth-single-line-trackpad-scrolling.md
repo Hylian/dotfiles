@@ -3,27 +3,28 @@
 **Date:** 2026-08-06
 
 ## Context & Motivation
-When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`), multiple layers defaulted to 3-line scroll increments:
-1. **Zellij Server Dispatch:** Hardcoded to `lines: 3` in `mouse_handler.rs` and in `screen.rs` (`ScreenInstruction::ScrollUpAt` / `ScrollDownAt`).
-2. **Ghostty Linux GTK/Wayland Event Rate:** GTK4 reports trackpad scroll deltas in high-resolution pixels (~30-40px per gesture notch), which with Ghostty's default multiplier produces bursts of ~3 SGR wheel events per notch.
-3. **Neovim Editor Dispatch:** Neovim defaults `mousescroll` to `ver:3,hor:6`, causing 3-line viewport jumps per wheel event inside Neovim buffers.
+When scrolling in Zellij using the Apple Magic Trackpad or trackpads on macOS clients (`baumkuchen`) or Linux workstations (`shined`), high-velocity gestures or libinput acceleration emit clusters of single-line SGR mouse events in rapid succession (e.g. 3–5 events in under 5ms). Because terminal multiplexers receive these in the same socket batch, unpaced event processing causes multi-line viewport jumps in a single rendered display frame.
 
-The goal: have every single trackpad scroll event animate strictly **one line at a time** across all layers (Zellij multiplexer scrollback, panes, and Neovim editor), while allowing terminal-scoped sensitivity tuning without multi-line jumping or affecting high-precision GUI apps like Chrome.
+The goal: queue incoming scroll events and pace them frame-by-frame (~70fps) so that any burst of scroll events (such as 3 events from a trackpad swipe) smoothly animates strictly **one line per frame**, with zero dropped lines and zero latency on the initial event.
 
 ## Mechanism & Changes
 
-### 1. Zellij Frame-by-Frame Multi-Line Smooth Scroll Animation (`Hylian/zellij`)
+### 1. Zellij Frame-Paced Smooth Scroll Animation Queue (`Hylian/zellij`)
 * **Files:**
-  - `zellij-server/src/background_jobs.rs`: Added `BackgroundJob::SmoothScrollSteps { client_id, point, direction, remaining_steps }` to asynchronously dispatch remaining scroll steps at ~14ms intervals (~70fps).
-  - `zellij-server/src/screen.rs`: Added `ScreenInstruction::SmoothScrollStep(ClientId, Position, isize)` to execute single-line scroll steps and render individual frames.
-  - `zellij-server/src/tab/mouse_handler.rs`: Separated single-line execution (`execute_scroll_step_up` / `execute_scroll_step_down`) from event dispatch (`handle_scrollwheel_up` / `handle_scrollwheel_down`).
-  - `zellij-server/src/tab/mod.rs`: Added `step_smooth_scroll` dispatch method on `Tab`.
-  - `zellij-utils/src/errors.rs`: Added `ScreenContext::SmoothScrollStep` and `BackgroundJobContext::SmoothScrollSteps`.
+  - `zellij-server/src/tab/mod.rs`: Added `SmoothScrollQueue` struct (`pending_steps`, `last_position`, `last_step_time`, `is_draining`) per client on `Tab`. Added `drain_smooth_scroll_step` method.
+  - `zellij-server/src/tab/mouse_handler.rs`: In `handle_scrollwheel_up` and `handle_scrollwheel_down`, if the queue is idle and `>= 14ms` elapsed, execute Step 1 immediately (0ms touch latency). Otherwise, enqueue subsequent steps into `pending_steps` (capped to 25 to prevent overshoot) and start the drain loop.
+  - `zellij-server/src/background_jobs.rs`: Added `BackgroundJob::DrainSmoothScrollQueue { client_id }` with a 14ms async timer tick.
+  - `zellij-server/src/screen.rs`: Added `ScreenInstruction::DrainSmoothScrollQueue(ClientId)` to pop 1 pending step, scroll 1 line, render the frame, and reschedule if additional steps remain.
+  - `zellij-utils/src/errors.rs`: Added `ScreenContext::DrainSmoothScrollQueue` and `BackgroundJobContext::DrainSmoothScrollQueue`.
 * **Impact:**
-  - When a 3-line scroll event arrives, step 1 executes **immediately** (0ms latency, frame 0).
-  - Steps 2 and 3 are scheduled across subsequent frames (+14ms and +28ms), rendering strictly **1 line per frame**.
-  - No scroll distance is lost or capped, and multi-line jumps are eliminated. The viewport smoothly cascades line by line into place.
-* **Verification:** Integration tests pass. Binary compiled in release mode with LTO and installed to `~/.local/bin/zellij` and `~/.cargo/bin/zellij`.
+  - When Ghostty sends 3 scroll events in 2ms:
+    - **Event 1 (t=0ms):** Executes immediately, renders Frame 0 (+1 line).
+    - **Events 2 & 3 (t=1-2ms):** Enqueued into `pending_steps`.
+    - **Frame 1 (+14ms):** Drains step 2, renders Frame 1 (+1 line).
+    - **Frame 2 (+28ms):** Drains step 3, renders Frame 2 (+1 line).
+  - Slow scrolling retains 0ms instantaneous response.
+  - Fast gestures glide with silky smooth 70fps cascading animation strictly one row per display frame.
+* **Verification:** Unit and integration tests pass cleanly. Release binary built with LTO and installed to `~/.local/bin/zellij` and `~/.cargo/bin/zellij`.
 
 ### 2. Ghostty Scoped Sensitivity Tuning (`dot_config/ghostty/config.tmpl`)
 * **Configuration:**
@@ -35,11 +36,11 @@ The goal: have every single trackpad scroll event animate strictly **one line at
   {{- end }}
   ```
 * **Impact:**
-  - Adjusting `mouse-scroll-multiplier` scales the rate/frequency of SGR mouse events specifically inside Ghostty without modifying system-wide Sway or Wayland trackpad settings.
-  - Chrome, browsers, and other GUI applications continue to receive untouched native Wayland high-precision pixel scrolling deltas.
-  - Combined with Zellij's frame-by-frame smooth scroll animation, high sensitivity yields responsive finger travel while animating every single line sequentially.
+  - Adjusting `mouse-scroll-multiplier` scales the frequency of SGR mouse events inside Ghostty without modifying system-wide Sway or Wayland trackpad settings.
+  - Chrome, browsers, and GUI applications retain native Wayland continuous pixel scrolling deltas.
+  - Paired with Zellij's frame-paced queue, high multiplier produces rich event streams that animate continuously across frames.
 
 ### 3. Neovim Single-Line Mouse Scroll (`dot_config/nvim/init.lua.tmpl`)
 * **File:** `dot_config/nvim/init.lua.tmpl`
 * **Configuration:** `vim.opt.mousescroll = 'ver:1,hor:1'`.
-* **Impact:** Eliminates Neovim's default 3-line vertical scroll jump (`ver:3`), ensuring mouse scroll events inside editor buffers advance exactly 1 line at a time.
+* **Impact:** Eliminates Neovim's default 3-line vertical jump, ensuring mouse scroll events inside editor buffers step 1 line at a time.
