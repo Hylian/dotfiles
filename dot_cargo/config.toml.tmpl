@@ -1,4 +1,6 @@
 [build]
+{{ if lookPath "sccache" -}}
 rustc-wrapper = "sccache"
-jobs = 64
+{{ end -}}
+jobs = {{ output "getconf" "_NPROCESSORS_ONLN" | trim }}
 incremental = false
