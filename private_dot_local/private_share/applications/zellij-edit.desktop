@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Zellij Neovim Opener
+Exec=sh -c 'PATH="$HOME/.local/bin:$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:$PATH" exec zellij-edit "$@"' -- %u
+Terminal=false
+Type=Application
+Icon=nvim
+Comment=Open files and file URIs in Neovim in a new pane in the current Zellij tab
+MimeType=x-scheme-handler/file;text/plain;
+Categories=Utility;Development;
+NoDisplay=true

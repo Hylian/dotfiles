@@ -1,0 +1,159 @@
+#!/usr/bin/env python3
+"""Open files and file:// URIs in Neovim in a new pane in the current Zellij tab."""
+
+import os
+import re
+import sys
+import shutil
+import subprocess
+import urllib.parse
+
+# Ensure standard user bin directories are in PATH
+user_paths = [
+    os.path.expanduser("~/.local/bin"),
+    os.path.expanduser("~/.cargo/bin"),
+    "/opt/homebrew/bin",
+    "/usr/local/bin",
+    "/usr/bin",
+    "/bin",
+]
+current_path = os.environ.get("PATH", "")
+os.environ["PATH"] = os.pathsep.join(
+    [p for p in user_paths if p not in current_path.split(os.pathsep)] + [current_path]
+)
+
+
+def parse_target(target):
+    """Parse a raw target string into a file path and optional line number."""
+    target = target.strip()
+    if not target:
+        return None, None
+
+    # Handle file:// scheme
+    if target.startswith("file://"):
+        parsed = urllib.parse.urlparse(target)
+        path = urllib.parse.unquote(parsed.path)
+        fragment = parsed.fragment
+    else:
+        path = target
+        fragment = ""
+        if "#" in path:
+            path, fragment = path.split("#", 1)
+
+    # Extract line number from fragment (#L123, #L123-L145, #123, #line123)
+    line_number = None
+    if fragment:
+        m = re.search(r"(?:[Ll](?:ine)?)?(\d+)", fragment)
+        if m:
+            line_number = int(m.group(1))
+
+    # Also check if path has :line(:col)? suffix (e.g. /path/to/file:123 or :123:45)
+    if not line_number:
+        m = re.search(r":(\d+)(?::\d+)?$", path)
+        if m:
+            line_number = int(m.group(1))
+            path = path[: m.start()]
+
+    path = os.path.expanduser(path)
+    return path, line_number
+
+
+def find_zellij_session():
+    """Find the active or current Zellij session name."""
+    if os.environ.get("ZELLIJ_SESSION_NAME"):
+        return os.environ["ZELLIJ_SESSION_NAME"]
+
+    zellij_bin = shutil.which("zellij")
+    if not zellij_bin:
+        return None
+
+    try:
+        res = subprocess.run(
+            [zellij_bin, "list-sessions", "-n"],
+            capture_output=True,
+            text=True,
+            timeout=2,
+        )
+        if res.returncode != 0:
+            return None
+        lines = [l.strip() for l in res.stdout.splitlines() if l.strip()]
+        # Prefer session marked (current)
+        for line in lines:
+            if "EXITED" in line:
+                continue
+            if "(current)" in line:
+                return line.split()[0]
+        # Otherwise first active non-exited session
+        for line in lines:
+            if "EXITED" not in line:
+                return line.split()[0]
+    except Exception:
+        pass
+    return None
+
+
+def open_in_zellij(session, path, line_number=None):
+    """Open file in Neovim in a new pane in the current Zellij tab."""
+    zellij_bin = shutil.which("zellij")
+    if not zellij_bin:
+        return False
+
+    cmd = [zellij_bin]
+    if session:
+        cmd.extend(["--session", session])
+    cmd.extend(["action", "edit"])
+    if line_number:
+        cmd.extend(["-l", str(line_number)])
+
+    # If parent directory exists, set working directory
+    parent_dir = os.path.dirname(os.path.abspath(path))
+    if os.path.isdir(parent_dir):
+        cmd.extend(["--cwd", parent_dir])
+
+    cmd.append(path)
+
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        return res.returncode == 0
+    except Exception:
+        return False
+
+
+def open_fallback(path, line_number=None):
+    """Fallback if Zellij is not running: spawn Ghostty with Neovim or run nvim directly."""
+    ghostty_bin = shutil.which("ghostty")
+    nvim_bin = shutil.which("nvim") or shutil.which("vim") or "vi"
+
+    nvim_args = []
+    if line_number:
+        nvim_args.append(f"+{line_number}")
+    nvim_args.append(path)
+
+    if ghostty_bin and ("DISPLAY" in os.environ or "WAYLAND_DISPLAY" in os.environ):
+        subprocess.Popen([ghostty_bin, "-e", nvim_bin] + nvim_args)
+    else:
+        subprocess.Popen([nvim_bin] + nvim_args)
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: zellij-edit <file://... | path[:line]> [...]", file=sys.stderr)
+        sys.exit(1)
+
+    session = find_zellij_session()
+
+    for target in sys.argv[1:]:
+        path, line_number = parse_target(target)
+        if not path:
+            continue
+
+        opened = False
+        if session:
+            opened = open_in_zellij(session, path, line_number)
+
+        if not opened:
+            open_fallback(path, line_number)
+
+
+if __name__ == "__main__":
+    main()

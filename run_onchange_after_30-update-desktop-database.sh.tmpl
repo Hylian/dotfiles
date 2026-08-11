@@ -1,0 +1,7 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+# Update desktop database for ~/.local/share/applications so desktop environments recognize new MIME handlers
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "{{ .chezmoi.homeDir }}/.local/share/applications" 2>/dev/null || true
+fi
+{{- end }}
