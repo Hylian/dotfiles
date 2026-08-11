@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Zellij Neovim Opener
-Exec=sh -c 'PATH="$HOME/.local/bin:$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:$PATH" exec zellij-edit "$@"' -- %u
+Exec=zellij-edit %u
 Terminal=false
 Type=Application
 Icon=nvim
