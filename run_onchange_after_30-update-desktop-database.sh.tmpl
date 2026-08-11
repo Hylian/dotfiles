@@ -1,7 +1,15 @@
 {{- if eq .chezmoi.os "linux" -}}
 #!/bin/sh
-# Update desktop database for ~/.local/share/applications so desktop environments recognize new MIME handlers
+# Update desktop and mime databases so desktop environments recognize new MIME handlers
 if command -v update-desktop-database >/dev/null 2>&1; then
     update-desktop-database "{{ .chezmoi.homeDir }}/.local/share/applications" 2>/dev/null || true
+fi
+
+if command -v update-mime-database >/dev/null 2>&1; then
+    update-mime-database "{{ .chezmoi.homeDir }}/.local/share/mime" 2>/dev/null || true
+fi
+
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl --user restart xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr 2>/dev/null || true
 fi
 {{- end }}
