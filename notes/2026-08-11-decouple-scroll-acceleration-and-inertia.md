@@ -28,19 +28,21 @@ Trackpad scrolling in terminal environments requires precise motor feedback. Pre
 2. **Server & Tab Dispatch (`zellij-server`):**
    - Propagated `scroll_inertia: bool` across `Screen`, `ScreenInstruction::Reconfigure`, and `Tab`.
    - In `zellij-server/src/tab/mouse_handler.rs` (`handle_scrollwheel_up` and `handle_scrollwheel_down`):
-     - When `!tab.scroll_inertia`:
-       - Calculates instantaneous speed per 14ms frame: `instantaneous_speed = (lines * 14.0) / (dt.max(4))`.
-       - Computes dynamic speed scaling: `speed_scale = (instantaneous_speed / 0.25).clamp(1.0, tab.scroll_acceleration_factor)`.
-       - Accumulates fractional lines: `lines_to_step = (lines * speed_scale) + fractional_step`.
-       - Executes immediate scroll steps directly for integer lines.
-       - Suppresses background momentum and velocity queuing (`queue.velocity = 0.0; queue.is_draining = false`).
+     - Calculates swipe event frequency: for gentle or starting gestures (`dt >= 100ms` or rate <= 35 Hz), `speed_scale` firmly locks to `1.0` (single line per event).
+     - Ramps `speed_scale` smoothly up to `scroll_acceleration_factor` for sustained rapid continuous swipes.
+     - When accelerated or multi-line batches occur (`int_lines > 1`), executes the first line immediately for zero latency, and buffers remaining lines in `pending_lines`.
+     - Animates queued lines strictly **one line per 14ms frame** via `drain_smooth_scroll_step`.
+     - When `!tab.scroll_inertia`: zero post-gesture coasting momentum (`queue.velocity = 0.0`), stopping dead as soon as buffered swipe lines drain.
+     - Moving in opposing direction or slow grab halts and clears any active queue immediately.
 
 ### B. Verification & Benchmarking
 
-- Verified full workspace test suite (`cargo test --workspace`): 384 utils tests, 216 tab integration tests, 204 screen tests all passing cleanly.
-- Added dedicated unit test `test_scroll_inertia_disabled_no_momentum_drain` verifying zero momentum drain dispatch when `scroll_inertia` is disabled.
+- Verified full workspace test suite (`cargo test --workspace`): 384 utils tests, 217 tab integration tests, 204 screen tests all passing cleanly.
+- Added unit tests:
+  - `test_scroll_inertia_disabled_no_momentum_drain`: verifies zero coasting fling momentum when `scroll_inertia` is disabled.
+  - `test_multi_line_scroll_animates_one_line_at_a_time`: verifies queued multi-line scrolls step strictly 1 line per frame.
 - Built release binary and installed to `~/.local/bin/zellij`.
-- Committed to `Hylian/zellij` repository (commit `6609a5ef`).
+- Committed to `Hylian/zellij` repository (`hylian/latency`).
 
 ### C. Dotfiles Configuration (`chezmoi`)
 
