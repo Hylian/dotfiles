@@ -5,6 +5,6 @@ Terminal=false
 Type=Application
 Icon=nvim
 Comment=Open files and file URIs in Neovim in a new pane in the current Zellij tab
-MimeType=x-scheme-handler/file;text/plain;
+MimeType=x-scheme-handler/file;text/plain;text/x-c;text/x-csrc;text/x-chdr;text/x-c++;text/x-c++src;text/x-c++hdr;text/x-python;text/x-python3;text/x-rust;text/rust;text/x-go;text/x-java;text/x-lua;text/x-shellscript;text/x-makefile;text/x-cmake;text/x-meson;text/markdown;text/x-markdown;text/x-rst;text/x-tex;text/x-patch;text/x-diff;text/x-yaml;text/yaml;text/x-toml;text/toml;application/json;application/toml;application/yaml;application/x-yaml;application/xml;text/xml;application/javascript;text/javascript;text/typescript;application/typescript;text/x-zig;text/x-devicetree-source;text/x-systemd-unit;text/x-kdl;text/x-proto;text/x-protobuf;
 Categories=Utility;Development;
 NoDisplay=true
