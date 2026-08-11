@@ -30,17 +30,18 @@ Trackpad scrolling in terminal environments requires precise motor feedback. Pre
    - In `zellij-server/src/tab/mouse_handler.rs` (`handle_scrollwheel_up` and `handle_scrollwheel_down`):
      - Calculates swipe event frequency: for gentle or starting gestures (`dt >= 100ms` or rate <= 35 Hz), `speed_scale` firmly locks to `1.0` (single line per event).
      - Ramps `speed_scale` smoothly up to `scroll_acceleration_factor` for sustained rapid continuous swipes.
-     - When accelerated or multi-line batches occur (`int_lines > 1`), executes the first line immediately for zero latency, and buffers remaining lines in `pending_lines`.
-     - Animates queued lines strictly **one line per 14ms frame** via `drain_smooth_scroll_step`.
+     - When accelerated or multi-line batches occur (`int_lines > 1`), executes initial lines immediately for zero latency, and buffers remaining lines in `pending_lines`.
+     - Animates queued lines at 1 line per frame under normal speeds, and dynamically scales step size when the queue builds up (e.g. 2 lines for 4–7 pending, 3 lines for 8–12 pending) to ensure the queue drains within ~40ms max, eliminating any backlog or animation delay.
      - When `!tab.scroll_inertia`: zero post-gesture coasting momentum (`queue.velocity = 0.0`), stopping dead as soon as buffered swipe lines drain.
      - Moving in opposing direction or slow grab halts and clears any active queue immediately.
 
 ### B. Verification & Benchmarking
 
-- Verified full workspace test suite (`cargo test --workspace`): 384 utils tests, 217 tab integration tests, 204 screen tests all passing cleanly.
+- Verified full workspace test suite (`cargo test --workspace`): 384 utils tests, 218 tab integration tests, 204 screen tests all passing cleanly.
 - Added unit tests:
   - `test_scroll_inertia_disabled_no_momentum_drain`: verifies zero coasting fling momentum when `scroll_inertia` is disabled.
-  - `test_multi_line_scroll_animates_one_line_at_a_time`: verifies queued multi-line scrolls step strictly 1 line per frame.
+  - `test_multi_line_scroll_animates_one_line_at_a_time`: verifies queued multi-line scrolls step strictly 1 line per frame for low queue counts.
+  - `test_congested_scroll_queue_steps_multiple_lines_to_prevent_delay`: verifies queued multi-line scrolls scale step count dynamically to clear congestion.
 - Built release binary and installed to `~/.local/bin/zellij`.
 - Committed to `Hylian/zellij` repository (`hylian/latency`).
 
