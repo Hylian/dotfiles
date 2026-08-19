@@ -81,8 +81,21 @@ chezmoi status     # empty
   `scroll_inertia notabool` now fails with `Failed to parse Zellij configuration` / *Failed to
   deserialize KDL node* pointing at line 484, rc=1. The 2026-08-07 binary accepted that same file.
 
-## 5. Open Thread
+## 5. Resolved: Old Servers Retired, Cache Swept
 
-The two pre-existing servers still run the 2026-08-07 image. New scroll behavior lands in
-**newly started** sessions; those sessions need a server restart (detach and kill, or let them
-age out) before the decoupled acceleration is live in them.
+Both 2026-08-07 servers (`verdant-jellyfish`, `stellar-stegosaurus`) are gone; the only live server is
+`joyous-donkey` (started 14:40, post-rebuild), so the decoupled acceleration is live in the session in use.
+
+Housekeeping in the same pass — seven stale detached test sessions from 27 days earlier
+(`ts_Launch`, `ts_Messag`, `ts_0`–`ts_3`, `ts_test`, all `EXITED - attach to resurrect`) reaped with
+`zellij delete-session`. That clears resurrection data only, so two residues were removed by hand:
+
+- `contract_version_1/session_info/`: 6 orphaned `session-metadata.kdl` dirs
+  (`adventurous-piano`, `awesome-horse`, `excellent-megalodon`, `glowing-cuckoo`, `smoke-real`,
+  `test_parse_check`) — dead servers, invisible to `list-sessions`. Kept `joyous-donkey`.
+- cache root: 137 of 143 empty per-session UUID data dirs (`-mtime +0` only, so everything created
+  today, including the live server's, was left alone). `permissions.kdl` and `contract_version_1/`
+  untouched per the standing rule.
+
+Smoke test after the sweep: a fresh `zellij -s reap_smoke` came up and appeared in `list-sessions`,
+then exited cleanly with its client — plugin permissions survived, nothing to re-grant.
