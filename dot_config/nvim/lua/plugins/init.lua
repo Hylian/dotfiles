@@ -146,11 +146,9 @@ return {
   { 'declancm/maximize.nvim', lazy = true, config = true },
   { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown" } },
   {
-    'https://github.com/fresh2dev/zellij.vim',
+    'mrjones2014/smart-splits.nvim',
     lazy = false,
-    init = function()
-      vim.g.zellij_navigator_no_default_mappings = 1
-    end,
+    opts = {},
   },
   {
     'nvim-focus/focus.nvim',

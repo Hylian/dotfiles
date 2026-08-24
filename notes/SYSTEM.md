@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-08-19*
+*Last Updated: 2026-08-24*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -67,6 +67,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Long-Running & LSP Stability:** `clangd` is configured with `--enable-config` (reads project/user `.clangd` configs), `--pch-storage=memory` (fast RAM preamble caching), `-j=8` (bounds indexing concurrency to 8 worker threads), `--background-index-priority=low`, bounded completion/reference limits, and `vim.lsp.set_log_level("warn")` to eliminate memory bloat and event-loop lag.
 * **Treesitter & Syntax Engine:** `nvim-treesitter` is pinned to the stable `master` branch with `lazy = false` for Neovim 0.11 compatibility, configured via `nvim-treesitter.configs` with `auto_install = true`, baseline `ensure_installed` parsers (`c`, `lua`, `vim`, `vimdoc`, `query`, `markdown`, `markdown_inline`), and a 100KB buffer size guard using Neovim 0.10+ `vim.uv.fs_stat`.
 * **Startup Time & Plugin Lazy-Loading (~103ms baseline):** Core visual/editing essentials (`everforest`, `lualine`, `nvim-web-devicons`, `treesitter`, `lsp`, `tabby`) load synchronously at startup so buffers and UI render cleanly on frame 1. Non-critical tools (`cmp`, `telescope`, `fzf-lua`, `spider`, `codecompanion`, `focus`, `toggleterm`, `deadcolumn`, `trim`, `ibl`, `mini.diff`, `gitsigns`) are deferred to `VeryLazy`, `BufReadPost`, `InsertEnter`, or their respective commands/keybindings via `dot_config/nvim/lua/plugins/init.lua`.
+* **Zellij Navigation & Multiplexer Integration (`smart-splits.nvim`):** Uses `mrjones2014/smart-splits.nvim` for seamless directional navigation (`<A-h/j/k/l>`) and cross-border window/pane resizing (`<A-C-h/j/k/l>`) between Neovim splits and Zellij panes. All other Zellij actions (tab switching, pane moving, new tab/pane spawning in editor CWD, layout swaps) are dispatched asynchronously via a non-blocking `vim.system({ 'zellij', 'action', ... })` helper in [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua) to avoid UI thread blocking.
 
 ---
 
@@ -82,6 +83,8 @@ This document represents the current, living ground truth for this cross-platfor
 * `Alt + q` (`<A-q>`): `:q<CR>` (close current window/buffer).
 * `Alt + Shift + q` (`<A-S-q>` / `<A-Q>`): `:q!<CR>` (force quit).
 * `Alt + w` (`<A-w>`): `:w<CR>` (save).
+* `<A-h/j/k/l>`: Seamless directional focus navigation across Neovim splits and Zellij panes (`smart-splits.nvim`).
+* `<A-C-h/j/k/l>`: Directional split resizing across Neovim windows and Zellij panes (`smart-splits.nvim`).
 * `<C-k>`: Jump backwards to previous shell prompt line (`❯`).
 * `<C-j>`: Jump forwards to next shell prompt line (`❯`).
 
