@@ -85,6 +85,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `Alt + q` (in scroll/editor): Quick quit.
 
 ### Neovim
+* `<leader>`: `;` (semicolon), `<localleader>`: `;;`
 * `Alt + q` (`<A-q>`): `:q<CR>` (close current window/buffer).
 * `Alt + Shift + q` (`<A-S-q>` / `<A-Q>`): `:q!<CR>` (force quit).
 * `Alt + w` (`<A-w>`): `:w<CR>` (save).
@@ -94,6 +95,12 @@ This document represents the current, living ground truth for this cross-platfor
 * `<A-S-e>`: `focus.focus_equalise()` (equalize window dimensions).
 * `<A-S-r>`: `focus.focus_autoresize()` (trigger focus autoresize).
 * `<A-S-f>` / `M`: `maximize.toggle()` (toggle maximize current window).
+* `<leader>nh`: `<cmd>Noice history<CR>` (view scrollable message & notification history).
+* `<leader>nl`: `<cmd>Noice last<CR>` (re-display most recent notification).
+* `<leader>ne`: `<cmd>Noice errors<CR>` (view recent error messages).
+* `<leader>nd`: `<cmd>Noice dismiss<CR>` (dismiss active notification popups).
+* `<leader>t`: `:Tabby jump_to_tab<CR>`.
+* `<leader>w`: `:Tabby pick_window<CR>`.
 * `<C-k>`: Jump backwards to previous shell prompt line (`❯`).
 * `<C-j>`: Jump forwards to next shell prompt line (`❯`).
 
