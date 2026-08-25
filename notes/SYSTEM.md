@@ -88,6 +88,10 @@ This document represents the current, living ground truth for this cross-platfor
 * `Alt + w` (`<A-w>`): `:w<CR>` (save).
 * `<A-h/j/k/l>`: Seamless directional focus navigation across Neovim splits and Zellij panes (`smart-splits.nvim`).
 * `<A-C-h/j/k/l>`: Directional split resizing across Neovim windows and Zellij panes (`smart-splits.nvim`).
+* `<A-S-s>`: `focus.split_command('l')` (split window to the right).
+* `<A-S-e>`: `focus.focus_equalise()` (equalize window dimensions).
+* `<A-S-r>`: `focus.focus_autoresize()` (trigger focus autoresize).
+* `<A-S-f>` / `M`: `maximize.toggle()` (toggle maximize current window).
 * `<C-k>`: Jump backwards to previous shell prompt line (`❯`).
 * `<C-j>`: Jump forwards to next shell prompt line (`❯`).
 

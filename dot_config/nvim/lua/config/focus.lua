@@ -5,16 +5,19 @@ require("focus").setup({
         enable = true, -- Enable or disable auto-resizing of splits
         width = 0, -- Force width for the focused window
         height = 0, -- Force height for the focused window
-        minwidth = 40, -- Force minimum width for the unfocused window
+        minwidth = 10, -- Force minimum width for the unfocused window
         minheight = 0, -- Force minimum height for the unfocused window
+        focusedwindow_minwidth = 84,
+        focusedwindow_minheight = 0,
         height_quickfix = 10, -- Set the height of quickfix panel
+        equalise_min_cols = 166,
     },
     split = {
         bufnew = false, -- Create blank buffer for new split windows
         tmux = false, -- Create tmux splits instead of neovim splits
     },
     ui = {
-        number = false, -- Display line numbers in the focussed window only
+        number = true, -- Display line numbers in the focussed window only
         relativenumber = false, -- Display relative line numbers in the focussed window only
         hybridnumber = false, -- Display hybrid line numbers in the focussed window only
         absolutenumber_unfocussed = false, -- Preserve absolute numbers in the unfocussed windows
