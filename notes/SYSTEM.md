@@ -22,8 +22,9 @@ This document represents the current, living ground truth for this cross-platfor
 
 ## 2. Core Toolstack & Configuration
 
-### A. Window Management & Compositors
+### A. Window Management, Compositors & Notifications
 * **Linux (Wayland):** `sway`, `niri`, `waybar`, `dunst`, `kanshi`, `swaylock`, `swayidle`, `tofi`.
+  - **Notifications (Dunst):** Configured via [dot_config/dunst/dunstrc.tmpl](../dot_config/dunst/dunstrc.tmpl) with `origin = bottom-left` and `offset = 4x4`, pinned to the rightmost 4K vertical monitor (`DP-2` on `shined` / `natura`).
 * **macOS:** `aerospace`, `sketchybar`, `borders`.
 
 ### B. Terminal Emulator (Ghostty)
