@@ -62,28 +62,67 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
-_zsh_resolve_clipboard_env() {
+typeset -g _zellij_client_env_mtime=0
+_ZSH_CLIP_IS_SSH=0
+_ZSH_CLIP_WAYLAND="$WAYLAND_DISPLAY"
+_ZSH_CLIP_DISPLAY="$DISPLAY"
+
+_zellij_sync_client_env_hook() {
+  [[ -n "$ZELLIJ" ]] || return 0
   local env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
   local env_file="$env_dir/${ZELLIJ_SESSION_NAME:-client}"
   [[ -f "$env_file" ]] || env_file="$env_dir/client"
+  [[ -f "$env_file" ]] || return 0
 
-  _ZSH_CLIP_IS_SSH=0
-  _ZSH_CLIP_WAYLAND="$WAYLAND_DISPLAY"
-  _ZSH_CLIP_DISPLAY="$DISPLAY"
+  local -A st
+  if zstat -H st -F "%s.%N" "$env_file" 2>/dev/null; then
+    if [[ "$st[mtime]" == "$_zellij_client_env_mtime" ]]; then
+      return 0
+    fi
+    _zellij_client_env_mtime="$st[mtime]"
+  fi
 
-  if [[ -n "$ZELLIJ" && -f "$env_file" ]]; then
-    local k v
-    while IFS='=' read -r k v; do
-      case "$k" in
-        SSH) _ZSH_CLIP_IS_SSH="$v" ;;
-        WAYLAND_DISPLAY) _ZSH_CLIP_WAYLAND="$v" ;;
-        DISPLAY) _ZSH_CLIP_DISPLAY="$v" ;;
-      esac
-    done < "$env_file"
+  local k v
+  while IFS='=' read -r k v; do
+    case "$k" in
+      SSH)
+        _ZSH_CLIP_IS_SSH="$v"
+        ;;
+      SSH_AUTH_SOCK)
+        if [[ -n "$v" ]]; then export SSH_AUTH_SOCK="$v"; else unset SSH_AUTH_SOCK; fi
+        ;;
+      SSH_CLIENT)
+        if [[ -n "$v" ]]; then export SSH_CLIENT="$v"; else unset SSH_CLIENT; fi
+        ;;
+      SSH_CONNECTION)
+        if [[ -n "$v" ]]; then export SSH_CONNECTION="$v"; else unset SSH_CONNECTION; fi
+        ;;
+      SSH_TTY)
+        if [[ -n "$v" ]]; then export SSH_TTY="$v"; else unset SSH_TTY; fi
+        ;;
+      WAYLAND_DISPLAY)
+        _ZSH_CLIP_WAYLAND="$v"
+        if [[ -n "$v" ]]; then export WAYLAND_DISPLAY="$v"; else unset WAYLAND_DISPLAY; fi
+        ;;
+      DISPLAY)
+        _ZSH_CLIP_DISPLAY="$v"
+        if [[ -n "$v" ]]; then export DISPLAY="$v"; else unset DISPLAY; fi
+        ;;
+    esac
+  done < "$env_file"
+}
+
+_zsh_resolve_clipboard_env() {
+  if [[ -n "$ZELLIJ" ]]; then
+    _zellij_sync_client_env_hook
   elif [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
     _ZSH_CLIP_IS_SSH=1
     _ZSH_CLIP_WAYLAND=""
     _ZSH_CLIP_DISPLAY=""
+  else
+    _ZSH_CLIP_IS_SSH=0
+    _ZSH_CLIP_WAYLAND="$WAYLAND_DISPLAY"
+    _ZSH_CLIP_DISPLAY="$DISPLAY"
   fi
 }
 
@@ -270,17 +309,48 @@ fi
 # Cached Tool Initializations
 if (( $+commands[zellij] )); then
   _zellij_sync_client_env() {
-    local session="${ZELLIJ_SESSION_NAME:-$1}"
+    case "$1" in
+      action|edit|run|setup|plugin|list-sessions|delete-session|delete-all-sessions|kill-all-sessions|convert-*|options|pipe)
+        return 0
+        ;;
+    esac
+
+    local session=""
+    local prev=""
+    for arg in "$@"; do
+      if [[ "$prev" == "-s" || "$prev" == "--session" || "$prev" == "attach" || "$prev" == "a" || "$prev" == "-c" || "$prev" == "--create" ]]; then
+        if [[ "$arg" != -* ]]; then
+          session="$arg"
+          break
+        fi
+      fi
+      if [[ "$arg" == "-s" || "$arg" == "--session" || "$arg" == "attach" || "$arg" == "a" || "$arg" == "-c" || "$arg" == "--create" ]]; then
+        prev="$arg"
+      elif [[ "$arg" != -* && -z "$prev" ]]; then
+        session="$arg"
+        break
+      fi
+    done
+    session="${session:-${ZELLIJ_SESSION_NAME:-}}"
+
     local env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
     mkdir -p "$env_dir" 2>/dev/null
     local content
     if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
-      content="SSH=1\nWAYLAND_DISPLAY=\nDISPLAY=\n"
+      content="SSH=1\nSSH_AUTH_SOCK=${SSH_AUTH_SOCK:-}\nSSH_CLIENT=${SSH_CLIENT:-}\nSSH_CONNECTION=${SSH_CONNECTION:-}\nSSH_TTY=${SSH_TTY:-}\nWAYLAND_DISPLAY=\nDISPLAY=\n"
     else
-      content="SSH=0\nWAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}\nDISPLAY=${DISPLAY:-}\n"
+      content="SSH=0\nSSH_AUTH_SOCK=${SSH_AUTH_SOCK:-}\nSSH_CLIENT=\nSSH_CONNECTION=\nSSH_TTY=\nWAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}\nDISPLAY=${DISPLAY:-}\n"
     fi
-    printf "%b" "$content" > "$env_dir/${session:-client}" 2>/dev/null
+    if [[ -n "$session" ]]; then
+      printf "%b" "$content" > "$env_dir/$session" 2>/dev/null
+    fi
     printf "%b" "$content" > "$env_dir/client" 2>/dev/null
+
+    if [[ -n "$SSH_AUTH_SOCK" ]]; then
+      ln -snf "$SSH_AUTH_SOCK" "$env_dir/ssh-auth-sock" 2>/dev/null
+    elif [[ -e "$env_dir/ssh-auth-sock" ]]; then
+      rm -f "$env_dir/ssh-auth-sock" 2>/dev/null
+    fi
   }
 
   zellij() {
@@ -367,8 +437,10 @@ _zellij_refresh_git_branch() {
 
 if [[ -n $ZELLIJ ]]; then
     zmodload -F zsh/files b:zf_rm
+    zmodload -F zsh/stat b:zstat 2>/dev/null
+    _zellij_sync_client_env_hook
     chpwd_functions+=(zellij_tab_name_update _zellij_track_git_dirty_cache)
-    precmd_functions+=(_zellij_osc7_cwd _zellij_refresh_git_branch)
+    precmd_functions+=(_zellij_sync_client_env_hook _zellij_osc7_cwd _zellij_refresh_git_branch)
 fi
 
 

@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-08-24*
+*Last Updated: 2026-08-25*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -61,9 +61,11 @@ This document represents the current, living ground truth for this cross-platfor
 ### E. Editor (Neovim 0.11.x) & Clipboard Stack
 * **Mouse & Scroll Step:** `vim.opt.mouse = 'a'` and `vim.opt.mousescroll = 'ver:1,hor:1'` for smooth 1-line trackpad scrolling.
 * **Clipboard Mode:** `vim.opt.clipboard = 'unnamedplus'`.
-* **Dynamic Persistent Zellij Client Handshake:** When transitioning between local desk and remote SSH on persistent Zellij sessions, the outer attaching shell (`_zellij_sync_client_env` in `dot_zshrc.tmpl`) writes an ephemeral client descriptor into `$XDG_RUNTIME_DIR/zellij-env/$ZELLIJ_SESSION_NAME` (`SSH=1` vs `SSH=0\nWAYLAND_DISPLAY=...`). Both Neovim (`resolve_client_env()`) and Zsh (`_zsh_resolve_clipboard_env()`) dynamically consult this descriptor on every copy/paste operation:
-  - **Remote SSH Mode (`SSH=1`):** Yanks write to `~/.cache/clipboard` and broadcast ANSI OSC 52 sequences to `/dev/tty` (Ghostty pasteboard sync). Pastes read directly from `~/.cache/clipboard`, completely bypassing local workstation display servers to eliminate stale/locked Wayland paste traps.
-  - **Local Desktop Mode (`SSH=0`):** Dynamically discovers active `WAYLAND_DISPLAY` / `DISPLAY` sockets, executing `wl-copy` asynchronously via `vim.system` and querying `wl-paste` for seamless two-way sync with local Linux GUI applications.
+* **Dynamic Persistent Zellij Client Handshake & Environment Sync:** When transitioning between local desk and remote SSH on persistent Zellij sessions, the outer attaching shell (`_zellij_sync_client_env` in `dot_zshrc.tmpl`) writes an ephemeral client descriptor into `$XDG_RUNTIME_DIR/zellij-env/$ZELLIJ_SESSION_NAME` and `$XDG_RUNTIME_DIR/zellij-env/client` (`SSH=1` vs `SSH=0`, `SSH_AUTH_SOCK`, `SSH_CLIENT`, `SSH_CONNECTION`, `SSH_TTY`, `WAYLAND_DISPLAY`, `DISPLAY`) and maintains a stable symlink `$XDG_RUNTIME_DIR/zellij-env/ssh-auth-sock`.
+  - **Zsh Prompt Refresh (`_zellij_sync_client_env_hook` in `precmd_functions`):** Running shells inside Zellij panes dynamically check the descriptor's mtime using `zstat` before each prompt (< 2µs, zero forks). When a client attaches or switches between local and SSH, `precmd` instantly updates `export SSH_AUTH_SOCK` (enabling `gcert` and SSH authentication immediately), refreshes `SSH_CLIENT`/`SSH_CONNECTION`/`SSH_TTY`, and toggles `WAYLAND_DISPLAY`/`DISPLAY`.
+  - **Dynamic Neovim Environment & Clipboard (`resolve_client_env()` in `dot_config/nvim/init.lua.tmpl`):** Dynamically sets `vim.env.SSH_AUTH_SOCK` and toggles clipboard modes:
+    - **Remote SSH Mode (`SSH=1`):** Yanks write to `~/.cache/clipboard` and broadcast ANSI OSC 52 sequences to `/dev/tty` (Ghostty pasteboard sync). Pastes read directly from `~/.cache/clipboard`, completely bypassing local workstation display servers to eliminate stale/locked Wayland paste traps.
+    - **Local Desktop Mode (`SSH=0`):** Dynamically discovers active `WAYLAND_DISPLAY` / `DISPLAY` sockets, executing `wl-copy` asynchronously via `vim.system` and querying `wl-paste` for seamless two-way sync with local Linux GUI applications.
 * **Instant Local & Headless Paste:** Paste operations query local display tools (`wl-paste`, `pbpaste`, `xclip`) when connected locally, fall back to `~/.cache/clipboard`, and then to Neovim's unnamed register (`"`), guaranteeing seamless interoperability with `zsh-vi-mode` (`p` in `zvm`) across headless SSH and GUI environments.
 * **Long-Running & LSP Stability:** `clangd` is configured with `--enable-config` (reads project/user `.clangd` configs), `--pch-storage=memory` (fast RAM preamble caching), `-j=8` (bounds indexing concurrency to 8 worker threads), `--background-index-priority=low`, bounded completion/reference limits, and `vim.lsp.set_log_level("warn")` to eliminate memory bloat and event-loop lag.
 * **Treesitter & Syntax Engine:** `nvim-treesitter` is pinned to the stable `master` branch with `lazy = false` for Neovim 0.11 compatibility, configured via `nvim-treesitter.configs` with `auto_install = true`, baseline `ensure_installed` parsers (`c`, `lua`, `vim`, `vimdoc`, `query`, `markdown`, `markdown_inline`), and a 100KB buffer size guard using Neovim 0.10+ `vim.uv.fs_stat`.

@@ -98,6 +98,20 @@ if pcall(require, 'vim.ui.clipboard.osc52') then
       f:close()
       if content then
         local ssh_flag = content:match('SSH=([^\n]+)')
+        local auth_sock = content:match('SSH_AUTH_SOCK=([^\n]*)')
+        local ssh_client = content:match('SSH_CLIENT=([^\n]*)')
+        local ssh_conn = content:match('SSH_CONNECTION=([^\n]*)')
+        local ssh_tty = content:match('SSH_TTY=([^\n]*)')
+
+        if auth_sock and auth_sock ~= '' then
+          vim.env.SSH_AUTH_SOCK = auth_sock
+        elseif auth_sock == '' then
+          vim.env.SSH_AUTH_SOCK = nil
+        end
+        if ssh_client and ssh_client ~= '' then vim.env.SSH_CLIENT = ssh_client else vim.env.SSH_CLIENT = nil end
+        if ssh_conn and ssh_conn ~= '' then vim.env.SSH_CONNECTION = ssh_conn else vim.env.SSH_CONNECTION = nil end
+        if ssh_tty and ssh_tty ~= '' then vim.env.SSH_TTY = ssh_tty else vim.env.SSH_TTY = nil end
+
         if ssh_flag == '1' then
           is_ssh = true
           wayland = nil
