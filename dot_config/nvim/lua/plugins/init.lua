@@ -71,31 +71,20 @@ return {
   { 'nvim-treesitter/nvim-treesitter-context' },
   {
     'rcarriga/nvim-notify',
-    opts = {
-      fps = 26,
-      render = "minimal",
-      max_width = 20,
-      minimum_width = 10,
-      stages = "fade",
-      timeout = 200,
-    }
+    config = function()
+      require('config.notify')
+    end,
   },
   {
     'folke/noice.nvim',
     event = "VeryLazy",
-    opts = {
-      lsp = {
-        override = {
-          ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-          ["vim.lsp.util.stylize_markdown"] = true,
-          ["cmp.entry.get_documentation"] = true,
-        },
-      },
-    },
     dependencies = {
       'MunifTanjim/nui.nvim',
       'rcarriga/nvim-notify',
-    }
+    },
+    config = function()
+      require('config.noice')
+    end,
   },
   { 'williamboman/mason.nvim' },
   { 'williamboman/mason-lspconfig.nvim' },
