@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-08-25*
+*Last Updated: 2026-09-01*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -103,6 +103,8 @@ This document represents the current, living ground truth for this cross-platfor
 * `<leader>w`: `:Tabby pick_window<CR>`.
 * `<C-k>`: Jump backwards to previous shell prompt line (`❯`).
 * `<C-j>`: Jump forwards to next shell prompt line (`❯`).
+* `gd`: Jump to LSP definition in current buffer (`fzf-lua.lsp_definitions`).
+* `gD`: Open LSP definition in a new nvim tab (`fzf-lua.lsp_definitions` with `jump1_action` and `actions.enter` set to `actions.file_tabedit`).
 
 ### Zsh Interactive Widgets
 * Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.
