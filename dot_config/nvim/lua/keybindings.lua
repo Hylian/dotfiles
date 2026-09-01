@@ -219,7 +219,6 @@ map('v', '_', "<cmd>lua require('grug-far').with_visual_selection({ prefills = {
 -- current visual selection
 --map('v', '\"', "<cmd>lua require('grug-far').with_visual_selection()<CR>")
 
-map('n', '<TAB>',     "<cmd>:ToggleDiag<CR>")
 map('n', '.',   "ms*")
 map('n', ',',   "ms#")
 map('n', '<Esc>', ":noh<CR>")
