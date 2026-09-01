@@ -23,15 +23,23 @@ Inspecting `vim.fn.getjumplist()` returns `[jumps, idx]` where `jumps` is a 1-in
    - Computes `count = (target_idx - 1) - idx` and feeds `<count><C-i>`.
    - This design ensures backward and forward file hops are mathematically symmetrical and cleanly reversible: hopping back across files `C -> B -> A` and forward `A -> B -> C` restores the exact same file-level positions.
 
-3. **Keybinding ergonomics:**
+3. **Ghost & Deleted File Filtering (`is_valid_jump_target`):**
+   - Persistent ShaDa jumplists can retain references to old temporary, deleted, or scratch files (e.g. from previous automated test scripts or ephemeral git operations).
+   - Stepping back to a nonexistent file caused Neovim to initialize an empty `[New File]` buffer.
+   - `is_valid_jump_target` explicitly validates that candidate buffers exist on disk (`vim.uv.fs_stat(name) ~= nil`) or are active, modified buffers in memory with a standard file buftype (ignoring special buffers like help, quickfix, or terminal). Nonexistent files are transparently bypassed.
+
+4. **Keybinding ergonomics:**
    - `<leader>o` and `<leader>i` (with `<leader>` configured as `;`) provide intuitive, zero-delay mnemonics matching native `<C-o>` and `<C-i>`.
    - Avoids terminal escape collisions (unlike `g<C-i>`, which sends ASCII `0x09` / `g<Tab>` in non-extended terminal environments).
 
 ## Changes
 
 - **[dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua):**
+  - Added `is_valid_jump_target(bufnr, cur_buf)` checking filesystem presence and buffer validity.
   - Added `jump_file(direction)` inspecting `vim.fn.getjumplist()`.
   - Mapped normal-mode `<leader>o` (backward) and `<leader>i` (forward).
+- **ShaDa Maintenance:**
+  - Pruned historical nonexistent `/tmp/` test entries from `~/.local/state/nvim/shada/main.shada`.
 - **[notes/SYSTEM.md](SYSTEM.md):**
   - Updated Neovim keybindings reference.
 
@@ -41,5 +49,7 @@ Inspecting `vim.fn.getjumplist()` returns `[jumps, idx]` where `jumps` is a 1-in
    - Initialized 3 buffers with multiple intra-file line jumps (`_1.txt`, `_2.txt`, `_3.txt`).
    - Verified `<leader>o` hopped from `_3.txt` (line 4) -> `_2.txt` (line 5) -> `_1.txt` (line 4), skipping intermediate intra-file line entries.
    - Verified `<leader>i` reversed symmetrically from `_1.txt` (line 4) -> `_2.txt` (line 5) -> `_3.txt` (line 4).
-2. `chezmoi diff` and `chezmoi apply` applied cleanly.
-3. `nvim --headless` loaded configuration without errors or warnings.
+   - Verified that nonexistent/deleted files in jumplist are skipped and boundary notification fires gracefully.
+2. Verified `main.shada` reads cleanly in real Neovim session with zero warnings/errors.
+3. `chezmoi diff` and `chezmoi apply` applied cleanly.
+4. `nvim --headless` loaded configuration without errors or warnings.

@@ -248,7 +248,28 @@ end
 vim.keymap.set({ 'n', 'v', 'o' }, '<C-k>', function() jump_prompt(true) end, { desc = 'Jump to previous prompt' })
 vim.keymap.set({ 'n', 'v', 'o' }, '<C-j>', function() jump_prompt(false) end, { desc = 'Jump to next prompt' })
 
--- File-level jumplist navigation (skip intra-file jumps)
+-- File-level jumplist navigation (skip intra-file jumps & ghost/deleted files)
+local function is_valid_jump_target(bufnr, cur_buf)
+  if bufnr == cur_buf or not vim.api.nvim_buf_is_valid(bufnr) then
+    return false
+  end
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  if name == '' then
+    return false
+  end
+  if vim.api.nvim_buf_is_loaded(bufnr) then
+    local buftype = vim.api.nvim_get_option_value('buftype', { buf = bufnr })
+    if buftype ~= '' and buftype ~= 'help' then
+      return false
+    end
+    if vim.uv.fs_stat(name) or vim.api.nvim_get_option_value('modified', { buf = bufnr }) then
+      return true
+    end
+    return false
+  end
+  return vim.uv.fs_stat(name) ~= nil
+end
+
 local function jump_file(direction)
   local jumps, idx = unpack(vim.fn.getjumplist())
   local cur_buf = vim.api.nvim_get_current_buf()
@@ -256,7 +277,7 @@ local function jump_file(direction)
   if direction == 'backward' then
     for i = idx, 1, -1 do
       local j = jumps[i]
-      if j.bufnr ~= cur_buf and vim.api.nvim_buf_is_valid(j.bufnr) and vim.api.nvim_buf_get_name(j.bufnr) ~= '' then
+      if is_valid_jump_target(j.bufnr, cur_buf) then
         local count = idx - (i - 1)
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(count .. '<C-o>', true, false, true), 'nx', false)
         return true
@@ -270,7 +291,7 @@ local function jump_file(direction)
     for i = idx + 2, #jumps do
       local j = jumps[i]
       if not target_buf then
-        if j.bufnr ~= cur_buf and vim.api.nvim_buf_is_valid(j.bufnr) and vim.api.nvim_buf_get_name(j.bufnr) ~= '' then
+        if is_valid_jump_target(j.bufnr, cur_buf) then
           target_buf = j.bufnr
           target_idx = i
         end
@@ -293,6 +314,7 @@ local function jump_file(direction)
     return false
   end
 end
+
 
 map('n', '<leader>o', function() jump_file('backward') end, { desc = 'Jump to previous file in jumplist' })
 map('n', '<leader>i', function() jump_file('forward') end, { desc = 'Jump to next file in jumplist' })
