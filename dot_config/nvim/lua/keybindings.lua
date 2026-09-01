@@ -101,9 +101,105 @@ map('n', '\\',            ":NvimTreeFindFileToggle<CR>")
 map('n', '<C-p>',     ":set paste<CR>o<ESC>p:set nopaste<CR>")
 map('n', '<C-S-p>',   ":set paste<CR>O<ESC>p:set nopaste<CR>")
 map('n', '<CR>',      ":noh<CR><CR>")
+-- Switch between source and header file (clangd LSP with filesystem fallback)
+local function fallback_switch_source_header()
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == '' then return false end
+
+  local ext = vim.fn.fnamemodify(file, ':e'):lower()
+  local dir = vim.fn.fnamemodify(file, ':h')
+  local stem = vim.fn.fnamemodify(file, ':t:r')
+
+  local source_exts = { 'c', 'cc', 'cpp', 'cxx', 'm', 'mm', 's' }
+  local header_exts = { 'h', 'hh', 'hpp', 'hxx', 'inc' }
+
+  local is_source = vim.tbl_contains(source_exts, ext)
+  local is_header = vim.tbl_contains(header_exts, ext)
+  if not is_source and not is_header then return false end
+
+  local target_exts = is_source and header_exts or source_exts
+
+  -- 1. Same directory
+  local root = vim.fn.fnamemodify(file, ':r')
+  for _, e in ipairs(target_exts) do
+    local target = root .. '.' .. e
+    if vim.uv.fs_stat(target) then
+      vim.cmd.edit(target)
+      return true
+    end
+  end
+
+  -- 2. Sister include/src directories
+  local candidate_dirs = {}
+  if is_source then
+    table.insert(candidate_dirs, (dir:gsub('/src$', '/include')))
+    table.insert(candidate_dirs, (dir:gsub('/src$', '/inc')))
+    table.insert(candidate_dirs, dir .. '/../include')
+    table.insert(candidate_dirs, dir .. '/../inc')
+    table.insert(candidate_dirs, dir .. '/include')
+  else
+    table.insert(candidate_dirs, (dir:gsub('/include$', '/src')))
+    table.insert(candidate_dirs, (dir:gsub('/inc$', '/src')))
+    table.insert(candidate_dirs, dir .. '/../src')
+    table.insert(candidate_dirs, dir .. '/src')
+  end
+
+  for _, cdir in ipairs(candidate_dirs) do
+    for _, e in ipairs(target_exts) do
+      local target = cdir .. '/' .. stem .. '.' .. e
+      if vim.uv.fs_stat(target) then
+        vim.cmd.edit(vim.fs.normalize(target))
+        return true
+      end
+    end
+  end
+
+  return false
+end
+
+local function switch_source_header()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })
+  if #clients > 0 then
+    local client = clients[1]
+    local method = 'textDocument/switchSourceHeader'
+    local params = vim.lsp.util.make_text_document_params(bufnr)
+    client:request(method, params, function(err, result)
+      if err then
+        vim.notify(tostring(err), vim.log.levels.ERROR)
+        return
+      end
+      if not result or result == '' then
+        if not fallback_switch_source_header() then
+          vim.notify('Corresponding source/header file cannot be determined', vim.log.levels.WARN)
+        end
+        return
+      end
+      vim.cmd.edit(vim.uri_to_fname(result))
+    end, bufnr)
+    return
+  end
+
+  if vim.fn.exists(':LspClangdSwitchSourceHeader') == 2 then
+    vim.cmd('LspClangdSwitchSourceHeader')
+    return
+  end
+
+  if vim.fn.exists(':ClangdSwitchSourceHeader') == 2 then
+    vim.cmd('ClangdSwitchSourceHeader')
+    return
+  end
+
+  if not fallback_switch_source_header() then
+    vim.notify('No corresponding header or source file found', vim.log.levels.WARN)
+  end
+end
+
 map('n', 'gd',        "<cmd>lua require('fzf-lua').lsp_definitions()<CR>")
 map('n', 'gD',        "<cmd>lua require('fzf-lua').lsp_definitions({ jump1_action = require('fzf-lua.actions').file_tabedit, actions = { enter = require('fzf-lua.actions').file_tabedit } })<CR>")
 map('n', 'gr',        "<cmd>lua require('fzf-lua').lsp_references()<CR>")
+map('n', 'gh',        switch_source_header, { desc = "Switch between header and source" })
+map('n', '[',         switch_source_header, { desc = "Switch between header and source" })
 map('n', ']',         "<cmd>lua require('fzf-lua').lsp_finder()<CR>")
 map('n', '{',         "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>")
 map('n', '\"',        "<cmd>lua require('fzf-lua').oldfiles({ cwd_only = true })<CR>")
@@ -123,7 +219,6 @@ map('v', '_', "<cmd>lua require('grug-far').with_visual_selection({ prefills = {
 -- current visual selection
 --map('v', '\"', "<cmd>lua require('grug-far').with_visual_selection()<CR>")
 
-map('n', '[',         "<cmd>:ClangdSwitchSourceHeader<CR>")
 map('n', '<TAB>',     "<cmd>:ToggleDiag<CR>")
 map('n', '.',   "ms*")
 map('n', ',',   "ms#")

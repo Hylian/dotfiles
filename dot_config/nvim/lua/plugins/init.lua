@@ -173,7 +173,13 @@ return {
     version = '*',
     event = { "BufReadPost", "BufNewFile" },
     config = function()
-      require('mini.diff').setup()
+      require('mini.diff').setup({
+        mappings = {
+          apply = '',
+          reset = '',
+          textobject = '',
+        },
+      })
     end,
   },
   {

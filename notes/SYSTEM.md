@@ -105,6 +105,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `<C-j>`: Jump forwards to next shell prompt line (`❯`).
 * `gd`: Jump to LSP definition in current buffer (`fzf-lua.lsp_definitions`).
 * `gD`: Open LSP definition in a new nvim tab (`fzf-lua.lsp_definitions` with `jump1_action` and `actions.enter` set to `actions.file_tabedit`).
+* `gh` / `[`: Switch between header and source file (`clangd` LSP `textDocument/switchSourceHeader` with sister-directory filesystem fallback).
 * `<A-S-1>` .. `<A-S-0>` / `<A-!>` .. `<A-)>`: Switch directly to Neovim tab 1 .. 10 (`1gt` .. `10gt`). Supports both Kitty extended keyboard sequences and ASCII terminal escape sequences.
 * `<A-S-`>` / `<A-~>`: `g<Tab>` (toggle between last two active Neovim tabs).
 
