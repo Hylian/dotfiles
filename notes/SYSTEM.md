@@ -109,6 +109,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `<A-S-1>` .. `<A-S-0>` / `<A-!>` .. `<A-)>`: Switch directly to Neovim tab 1 .. 10 (`1gt` .. `10gt`). Supports both Kitty extended keyboard sequences and ASCII terminal escape sequences.
 * `<A-S-`>` / `<A-~>`: `g<Tab>` (toggle between last two active Neovim tabs).
 * `<C-o>` / `<C-i>` (or `<Tab>`): Jump backward / forward through the Neovim jumplist (`:jumps`). Reclaimed `<Tab>` by removing `:ToggleDiag` binding.
+* `<leader>o` / `<leader>i` (`;o` / `;i`): Jump backward / forward through the Neovim jumplist on a per-file basis, skipping intra-file line jumps and landing directly on the most recent cursor position in the previous/next file.
 
 ### Zsh Interactive Widgets
 * Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.

@@ -248,6 +248,55 @@ end
 vim.keymap.set({ 'n', 'v', 'o' }, '<C-k>', function() jump_prompt(true) end, { desc = 'Jump to previous prompt' })
 vim.keymap.set({ 'n', 'v', 'o' }, '<C-j>', function() jump_prompt(false) end, { desc = 'Jump to next prompt' })
 
+-- File-level jumplist navigation (skip intra-file jumps)
+local function jump_file(direction)
+  local jumps, idx = unpack(vim.fn.getjumplist())
+  local cur_buf = vim.api.nvim_get_current_buf()
+
+  if direction == 'backward' then
+    for i = idx, 1, -1 do
+      local j = jumps[i]
+      if j.bufnr ~= cur_buf and vim.api.nvim_buf_is_valid(j.bufnr) and vim.api.nvim_buf_get_name(j.bufnr) ~= '' then
+        local count = idx - (i - 1)
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(count .. '<C-o>', true, false, true), 'nx', false)
+        return true
+      end
+    end
+    vim.notify('No previous file in jumplist', vim.log.levels.INFO)
+    return false
+  else
+    local target_buf = nil
+    local target_idx = nil
+    for i = idx + 2, #jumps do
+      local j = jumps[i]
+      if not target_buf then
+        if j.bufnr ~= cur_buf and vim.api.nvim_buf_is_valid(j.bufnr) and vim.api.nvim_buf_get_name(j.bufnr) ~= '' then
+          target_buf = j.bufnr
+          target_idx = i
+        end
+      else
+        if j.bufnr == target_buf then
+          target_idx = i
+        else
+          break
+        end
+      end
+    end
+
+    if target_idx then
+      local count = (target_idx - 1) - idx
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(count .. '<C-i>', true, false, true), 'nx', false)
+      return true
+    end
+
+    vim.notify('No next file in jumplist', vim.log.levels.INFO)
+    return false
+  end
+end
+
+map('n', '<leader>o', function() jump_file('backward') end, { desc = 'Jump to previous file in jumplist' })
+map('n', '<leader>i', function() jump_file('forward') end, { desc = 'Jump to next file in jumplist' })
+
 vim.keymap.set(
 	{ "n" },
 	"M",
