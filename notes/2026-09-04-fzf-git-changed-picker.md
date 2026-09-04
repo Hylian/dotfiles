@@ -55,3 +55,7 @@ Implemented `git_changed_picker(mode, opts)` in [dot_config/nvim/lua/keybindings
 
 5. **Seamless File Navigation Actions:**
    * Uses `_fmt = { from = function(x) return x:match("\t(.*)$") or x end }` so all standard `fzf-lua` file actions (`<CR>` to edit, `<C-v>` vsplit, `<C-s>` split, `<C-t>` tabedit) operate directly on the clean file path.
+
+6. **Half-Page Preview Scrolling (`<C-d>` / `<C-u>`):**
+   * Configured `preview-half-page-down` and `preview-half-page-up` for `<C-d>` and `<C-u>` across both `fzf` and `builtin` keymaps (in `config/fzf-lua.lua` globally and directly in `git_changed_picker`).
+   * Displayed in the picker header hint (`<C-d>/<C-u>: Scroll Preview`).

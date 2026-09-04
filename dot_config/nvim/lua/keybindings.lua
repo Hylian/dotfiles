@@ -379,19 +379,19 @@ local function git_changed_picker(mode, opts)
     both = {
       title = "Git Active (All)",
       prompt = "Git Active (All)> ",
-      header = ":: <C-g>: Cycle Scope [All ➔ Worktree ➔ HEAD]",
+      header = ":: <C-g>: Cycle Scope [All ➔ Worktree ➔ HEAD] | <C-d>/<C-u>: Scroll Preview",
       next = "worktree",
     },
     worktree = {
       title = (#entries == 0) and "Git Working Tree (Clean)" or "Git Working Tree",
       prompt = (#entries == 0) and "Git Working Tree (Clean)> " or "Git Working Tree> ",
-      header = ":: <C-g>: Cycle Scope [Worktree ➔ HEAD ➔ All]",
+      header = ":: <C-g>: Cycle Scope [Worktree ➔ HEAD ➔ All] | <C-d>/<C-u>: Scroll Preview",
       next = "head",
     },
     head = {
       title = "Git HEAD Commit",
       prompt = "Git HEAD Commit> ",
-      header = ":: <C-g>: Cycle Scope [HEAD ➔ All ➔ Worktree]",
+      header = ":: <C-g>: Cycle Scope [HEAD ➔ All ➔ Worktree] | <C-d>/<C-u>: Scroll Preview",
       next = "both",
     },
   }
@@ -418,6 +418,16 @@ local function git_changed_picker(mode, opts)
     query = opts.query or "",
     prompt = cur_info.prompt,
     actions = fzf_actions,
+    keymap = {
+      builtin = {
+        ["<c-d>"] = "preview-half-page-down",
+        ["<c-u>"] = "preview-half-page-up",
+      },
+      fzf = {
+        ["ctrl-d"] = "preview-half-page-down",
+        ["ctrl-u"] = "preview-half-page-up",
+      },
+    },
     previewer = {
       _ctor = get_git_changed_previewer,
     },
