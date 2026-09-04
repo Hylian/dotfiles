@@ -59,3 +59,15 @@ Implemented `git_changed_picker(mode, opts)` in [dot_config/nvim/lua/keybindings
 6. **Half-Page Preview Scrolling (`<C-d>` / `<C-u>`):**
    * Configured `preview-half-page-down` and `preview-half-page-up` for `<C-d>` and `<C-u>` across both `fzf` and `builtin` keymaps (in `config/fzf-lua.lua` globally and directly in `git_changed_picker`).
    * Displayed in the picker header hint (`<C-d>/<C-u>: Scroll Preview`).
+
+7. **Smart Path Middle Truncation (`shorten_path`):**
+   * Solves the issue where fzf's default right-edge line truncation chops off trailing filenames in narrow list panes (40% of float window with right:60% preview).
+   * Implements strict hierarchical display priorities:
+     1. **Filename (Highest Priority):** Always visible and never truncated.
+     2. **Path Root & Parent Directory (Next Priority):** Shows the starting directory and immediate parent (e.g. `start/…/parent/filename.ext`).
+     3. **Middle Directories (Least Important):** Collapsed into a single unicode ellipsis (`…`), dynamically expanding inward/outward as pane width allows.
+     4. **Graceful Narrow Fallbacks:** If the base candidate exceeds available columns, degrades progressively: `…/parent/filename` ➔ `start/…/filename` ➔ `…/filename` ➔ `filename`.
+   * **Three-Field Architecture:**
+     * Generates entries as `<col1_tag_icon>\t<display_path>\t<real_path>`.
+     * Configures `--with-nth=1,2` so fzf renders the shortened path cleanly in the list pane without clutter.
+     * Extracts `<real_path>` via `\t[^\t]+\t(.*)$` in both `GitChangedPreviewer:cmdline` (delta diff command) and `_fmt.from` (file edit, split, tabedit actions), ensuring tools always receive the authentic filesystem path.

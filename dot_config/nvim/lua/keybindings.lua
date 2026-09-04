@@ -233,7 +233,7 @@ local function get_git_changed_previewer()
       local entry_str = items[1]
       local utils = require("fzf-lua.utils")
       local clean = utils.strip_ansi_coloring(entry_str)
-      local file = clean:match("\t(.*)$")
+      local file = clean:match("\t[^\t]+\t(.*)$") or clean:match("\t(.*)$")
       if not file or file == "" then
         return utils.shell_nop()
       end
@@ -279,6 +279,99 @@ local function get_git_changed_previewer()
   end
 
   return GitChangedPreviewer
+end
+
+local function shorten_path(path, max_len)
+  if not max_len or max_len <= 0 or vim.fn.strdisplaywidth(path) <= max_len then
+    return path
+  end
+
+  local parts = vim.split(path, "/", { plain = true })
+  local n = #parts
+  if n <= 1 then
+    return path
+  end
+
+  local filename = parts[n]
+  if n == 2 then
+    local c1 = "…/" .. filename
+    if vim.fn.strdisplaywidth(c1) <= max_len then
+      return c1
+    end
+    return filename
+  end
+
+  local head_idx = 1
+  local tail_idx = n - 1
+
+  local function build_candidate(h, t)
+    local head_str = table.concat(parts, "/", 1, h)
+    local tail_str = table.concat(parts, "/", t, n)
+    if h >= t - 1 then
+      return head_str .. "/" .. tail_str
+    end
+    return head_str .. "/…/" .. tail_str
+  end
+
+  local base = build_candidate(head_idx, tail_idx)
+  if vim.fn.strdisplaywidth(base) <= max_len then
+    local best = base
+    local prefer_tail = true
+    while head_idx < tail_idx - 1 do
+      local expanded = false
+      if prefer_tail then
+        local cand = build_candidate(head_idx, tail_idx - 1)
+        if vim.fn.strdisplaywidth(cand) <= max_len then
+          best = cand
+          tail_idx = tail_idx - 1
+          expanded = true
+        else
+          cand = build_candidate(head_idx + 1, tail_idx)
+          if vim.fn.strdisplaywidth(cand) <= max_len then
+            best = cand
+            head_idx = head_idx + 1
+            expanded = true
+          end
+        end
+      else
+        local cand = build_candidate(head_idx + 1, tail_idx)
+        if vim.fn.strdisplaywidth(cand) <= max_len then
+          best = cand
+          head_idx = head_idx + 1
+          expanded = true
+        else
+          cand = build_candidate(head_idx, tail_idx - 1)
+          if vim.fn.strdisplaywidth(cand) <= max_len then
+            best = cand
+            tail_idx = tail_idx - 1
+            expanded = true
+          end
+        end
+      end
+      if not expanded then
+        break
+      end
+      prefer_tail = not prefer_tail
+    end
+    return best
+  end
+
+  local c_parent = "…/" .. parts[n - 1] .. "/" .. filename
+  if vim.fn.strdisplaywidth(c_parent) <= max_len then
+    return c_parent
+  end
+
+  local c_start = parts[1] .. "/…/" .. filename
+  if vim.fn.strdisplaywidth(c_start) <= max_len then
+    return c_start
+  end
+
+  local c_file = "…/" .. filename
+  if vim.fn.strdisplaywidth(c_file) <= max_len then
+    return c_file
+  end
+
+  return filename
 end
 
 local function git_changed_picker(mode, opts)
@@ -364,6 +457,9 @@ local function git_changed_picker(mode, opts)
     return
   end
 
+  local cols = vim.o.columns or 120
+  local max_path_len = math.max(28, math.floor(cols * 0.85 * 0.40) - 14)
+
   local entries = {}
   for _, p in ipairs(order) do
     local info = files_map[p]
@@ -372,7 +468,8 @@ local function git_changed_picker(mode, opts)
     local padded_tag = string.format("%-8s", info.text)
     local colored_tag = string.format("%s%s\27[0m", info.color, padded_tag)
     local col1 = string.format("%s %s", colored_tag, icon)
-    table.insert(entries, string.format("%s\t%s", col1, p))
+    local disp = shorten_path(p, max_path_len)
+    table.insert(entries, string.format("%s\t%s\t%s", col1, disp, p))
   end
 
   local mode_info = {
@@ -438,7 +535,7 @@ local function git_changed_picker(mode, opts)
     },
     _fmt = {
       from = function(x)
-        return x:match("\t(.*)$") or x
+        return x:match("\t[^\t]+\t(.*)$") or x:match("\t(.*)$") or x
       end,
     },
     winopts = {
