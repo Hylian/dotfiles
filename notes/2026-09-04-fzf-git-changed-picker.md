@@ -42,14 +42,15 @@ Implemented `git_changed_picker(mode, opts)` in [dot_config/nvim/lua/keybindings
      * `[DEL]   ` — Deleted file (red)
    * The tab delimiter (`\t`) ensures file paths align cleanly into a column regardless of devicon or tag length.
 
-4. **Native Neovim Buffer Previewer (`GitChangedPreviewer`):**
-   * Subclasses `fzf-lua.previewer.builtin.base` to render diffs and file contents inside Neovim's floating preview buffer rather than an external shell child process (eliminating shell quotation escaping pitfalls).
+4. **Delta Git Diff Previewer (`GitChangedPreviewer`):**
+   * Subclasses `fzf-lua.previewer.fzf.base` to integrate with `fzf-lua`'s RPC-driven command preview mechanism, avoiding shell escaping issues while feeding directly into `delta`.
+   * Automatically configures `delta --width=<COLUMNS> --<light|dark>` to match Neovim's `background` and the exact floating preview pane width.
    * Contextually generates diffs:
-     * `[NEW]` (untracked): reads file contents with Treesitter syntax highlighting.
-     * `[HEAD]`: `git diff HEAD~1 HEAD -- <file>`.
-     * `[H*]` (HEAD + dirty): `git diff HEAD~1 -- <file>` to view cumulative changes.
-     * `[MOD]`, `[STAGED]`, `[SM]`, `[DEL]`: `git diff HEAD -- <file>` to view working tree and index changes.
-   * Dynamically updates the preview window title with the status badge and file path (`[HEAD] path/to/file`).
+     * `[NEW]` (untracked): `git diff --color=always --no-index /dev/null -- <file>` to render full file content via delta with line numbers and syntax highlighting.
+     * `[HEAD]`: `git diff --color=always HEAD~1 HEAD -- <file>` to render commit diff.
+     * `[H*]` (HEAD + dirty): `git diff --color=always HEAD~1 -- <file>` to render cumulative changes across commit and worktree.
+     * `[MOD]`, `[STAGED]`, `[SM]`, `[DEL]`: `git diff --color=always HEAD -- <file>` to render all uncommitted working tree and staged index changes.
+   * Graceful fallback: falls back to `bat` or colored diff if `delta` is not installed.
    * Lazily initialized on picker invocation to ensure `keybindings.lua` can be required before `config.lazy` during Neovim startup.
 
 5. **Seamless File Navigation Actions:**

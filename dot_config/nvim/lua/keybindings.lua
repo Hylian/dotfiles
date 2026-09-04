@@ -213,68 +213,69 @@ map('n', '\'',        "<cmd>lua require('fzf-lua').files()<CR>")
 local GitChangedPreviewer = nil
 local function get_git_changed_previewer()
   if GitChangedPreviewer then return GitChangedPreviewer end
-  local builtin_previewer = require("fzf-lua.previewer.builtin")
-  GitChangedPreviewer = builtin_previewer.base:extend()
+  local fzf_previewer = require("fzf-lua.previewer.fzf")
+  GitChangedPreviewer = fzf_previewer.base:extend()
 
-  function GitChangedPreviewer:gen_winopts()
-    local winopts = {
-      wrap = false,
-      cursorline = false,
-      number = false,
-    }
-    return vim.tbl_extend("keep", winopts, self.winopts or {})
+  function GitChangedPreviewer:fzf_delimiter()
+    return "[\t]"
   end
 
-  function GitChangedPreviewer:populate_preview_buf(entry_str)
-    if not self.win or not self.win:validate_preview() then return end
-    local utils = require("fzf-lua.utils")
-    local clean = utils.strip_ansi_coloring(entry_str)
-    local file = clean:match("\t(.*)$")
-    if not file then return end
+  function GitChangedPreviewer:preview_window()
+    return "right:60%"
+  end
 
-    local root = self.opts.cwd or vim.fn.getcwd()
-    local fullpath = (file:sub(1, 1) == "/") and file or (root .. "/" .. file)
-    local tag = clean:match("(%b[])") or ""
-    local head_base = self.opts.head_base or "HEAD~1"
-    local buf = self:get_tmp_buffer()
-
-    local lines = {}
-    local ft = "diff"
-
-    if tag:find("NEW") then
-      if vim.uv.fs_stat(fullpath) then
-        local ok, content = pcall(vim.fn.readfile, fullpath)
-        if ok then
-          lines = content
-          ft = vim.filetype.match({ filename = fullpath }) or "text"
-        end
+  function GitChangedPreviewer:cmdline(o)
+    o = o or {}
+    local act = function(items, fzf_lines, fzf_columns)
+      if not items or not items[1] then
+        return require("fzf-lua.utils").shell_nop()
       end
-    elseif tag:find("H%*") then
-      local diff_cmd = string.format("git -C %s --no-optional-locks diff %s -- %s", vim.fn.shellescape(root), head_base, vim.fn.shellescape(file))
-      lines = vim.fn.systemlist(diff_cmd)
-    elseif tag:find("HEAD") then
-      local diff_cmd = string.format("git -C %s --no-optional-locks diff %s HEAD -- %s", vim.fn.shellescape(root), head_base, vim.fn.shellescape(file))
-      lines = vim.fn.systemlist(diff_cmd)
-    else
-      local diff_cmd = string.format("git -C %s --no-optional-locks diff HEAD -- %s", vim.fn.shellescape(root), vim.fn.shellescape(file))
-      lines = vim.fn.systemlist(diff_cmd)
-    end
-
-    -- Fallback to reading file if diff is empty
-    if #lines == 0 and vim.uv.fs_stat(fullpath) then
-      local ok, content = pcall(vim.fn.readfile, fullpath)
-      if ok then
-        lines = content
-        ft = vim.filetype.match({ filename = fullpath }) or "text"
+      local entry_str = items[1]
+      local utils = require("fzf-lua.utils")
+      local clean = utils.strip_ansi_coloring(entry_str)
+      local file = clean:match("\t(.*)$")
+      if not file or file == "" then
+        return utils.shell_nop()
       end
-    end
 
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.bo[buf].filetype = ft
-    self:set_preview_buf(buf)
-    self.win:update_preview_title(string.format(" %s %s ", tag, file))
-    self.win:update_preview_scrollbar()
-    return true
+      local root = self.opts.cwd or vim.fn.getcwd()
+      local tag = clean:match("(%b[])") or ""
+      local head_base = self.opts.head_base or "HEAD~1"
+
+      local git_cmd
+      if tag:find("NEW") then
+        git_cmd = string.format("git -C %s --no-optional-locks diff --color=always --no-index /dev/null -- %s",
+          vim.fn.shellescape(root), vim.fn.shellescape(file))
+      elseif tag:find("H%*") then
+        git_cmd = string.format("git -C %s --no-optional-locks diff --color=always %s -- %s",
+          vim.fn.shellescape(root), head_base, vim.fn.shellescape(file))
+      elseif tag:find("HEAD") then
+        git_cmd = string.format("git -C %s --no-optional-locks diff --color=always %s HEAD -- %s",
+          vim.fn.shellescape(root), head_base, vim.fn.shellescape(file))
+      else
+        git_cmd = string.format("git -C %s --no-optional-locks diff --color=always HEAD -- %s",
+          vim.fn.shellescape(root), vim.fn.shellescape(file))
+      end
+
+      local pager = ""
+      if vim.fn.executable("delta") == 1 then
+        local bg = (vim.o.background == "dark") and "--dark" or "--light"
+        local cols = (tonumber(fzf_columns) and tonumber(fzf_columns) > 0) and fzf_columns or "${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}"
+        pager = string.format("| delta --width=%s %s", tostring(cols), bg)
+      elseif vim.fn.executable("bat") == 1 then
+        pager = "| bat --style=plain --color=always"
+      end
+
+      local cmd = string.format("%s 2>/dev/null %s", git_cmd, pager)
+      local env = {
+        ["LINES"] = fzf_lines,
+        ["COLUMNS"] = fzf_columns,
+        ["FZF_PREVIEW_LINES"] = fzf_lines,
+        ["FZF_PREVIEW_COLUMNS"] = fzf_columns,
+      }
+      return { cmd = cmd, env = env }
+    end
+    return { fn = act, type = "cmd", field_index = "{} {q}" }
   end
 
   return GitChangedPreviewer
