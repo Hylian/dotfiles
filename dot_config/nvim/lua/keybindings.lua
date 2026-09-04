@@ -210,6 +210,76 @@ map('n', '\'',        "<cmd>lua require('fzf-lua').files()<CR>")
 --map('n', '<C-\'>',    "<cmd>lua require('fzf-lua').grep_cword()<CR>")
 
 -- Interactive git changed files picker with <C-g> mode cycling (All -> Worktree -> HEAD)
+local GitChangedPreviewer = nil
+local function get_git_changed_previewer()
+  if GitChangedPreviewer then return GitChangedPreviewer end
+  local builtin_previewer = require("fzf-lua.previewer.builtin")
+  GitChangedPreviewer = builtin_previewer.base:extend()
+
+  function GitChangedPreviewer:gen_winopts()
+    local winopts = {
+      wrap = false,
+      cursorline = false,
+      number = false,
+    }
+    return vim.tbl_extend("keep", winopts, self.winopts or {})
+  end
+
+  function GitChangedPreviewer:populate_preview_buf(entry_str)
+    if not self.win or not self.win:validate_preview() then return end
+    local utils = require("fzf-lua.utils")
+    local clean = utils.strip_ansi_coloring(entry_str)
+    local file = clean:match("\t(.*)$")
+    if not file then return end
+
+    local root = self.opts.cwd or vim.fn.getcwd()
+    local fullpath = (file:sub(1, 1) == "/") and file or (root .. "/" .. file)
+    local tag = clean:match("(%b[])") or ""
+    local head_base = self.opts.head_base or "HEAD~1"
+    local buf = self:get_tmp_buffer()
+
+    local lines = {}
+    local ft = "diff"
+
+    if tag:find("NEW") then
+      if vim.uv.fs_stat(fullpath) then
+        local ok, content = pcall(vim.fn.readfile, fullpath)
+        if ok then
+          lines = content
+          ft = vim.filetype.match({ filename = fullpath }) or "text"
+        end
+      end
+    elseif tag:find("H%*") then
+      local diff_cmd = string.format("git -C %s --no-optional-locks diff %s -- %s", vim.fn.shellescape(root), head_base, vim.fn.shellescape(file))
+      lines = vim.fn.systemlist(diff_cmd)
+    elseif tag:find("HEAD") then
+      local diff_cmd = string.format("git -C %s --no-optional-locks diff %s HEAD -- %s", vim.fn.shellescape(root), head_base, vim.fn.shellescape(file))
+      lines = vim.fn.systemlist(diff_cmd)
+    else
+      local diff_cmd = string.format("git -C %s --no-optional-locks diff HEAD -- %s", vim.fn.shellescape(root), vim.fn.shellescape(file))
+      lines = vim.fn.systemlist(diff_cmd)
+    end
+
+    -- Fallback to reading file if diff is empty
+    if #lines == 0 and vim.uv.fs_stat(fullpath) then
+      local ok, content = pcall(vim.fn.readfile, fullpath)
+      if ok then
+        lines = content
+        ft = vim.filetype.match({ filename = fullpath }) or "text"
+      end
+    end
+
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.bo[buf].filetype = ft
+    self:set_preview_buf(buf)
+    self.win:update_preview_title(string.format(" %s %s ", tag, file))
+    self.win:update_preview_scrollbar()
+    return true
+  end
+
+  return GitChangedPreviewer
+end
+
 local function git_changed_picker(mode, opts)
   opts = opts or {}
   mode = mode or "both"
@@ -327,12 +397,6 @@ local function git_changed_picker(mode, opts)
 
   local cur_info = mode_info[mode]
 
-  local preview_cmd = string.format(
-    [[sh -c 'f="{2}"; t="{1}"; if echo "$t" | grep -q "NEW"; then if command -v bat >/dev/null 2>&1; then bat --style=plain --color=always "$f" 2>/dev/null || cat "$f"; else cat "$f"; fi; elif echo "$t" | grep -q "HEAD"; then if echo "$t" | grep -q "\*"; then d=$(git --no-pager diff --color=always %s -- "$f" 2>/dev/null); else d=$(git --no-pager diff --color=always %s HEAD -- "$f" 2>/dev/null); fi; if [ -n "$d" ]; then if command -v delta >/dev/null 2>&1; then echo "$d" | delta --width="${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}" 2>/dev/null || echo "$d"; else echo "$d"; fi; else if command -v bat >/dev/null 2>&1; then bat --style=plain --color=always "$f" 2>/dev/null || cat "$f"; else cat "$f"; fi; fi; else d=$(git --no-pager diff --color=always HEAD -- "$f" 2>/dev/null); if [ -n "$d" ]; then if command -v delta >/dev/null 2>&1; then echo "$d" | delta --width="${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}" 2>/dev/null || echo "$d"; else echo "$d"; fi; else if command -v bat >/dev/null 2>&1; then bat --style=plain --color=always "$f" 2>/dev/null || cat "$f"; else cat "$f"; fi; fi; fi']],
-    head_base,
-    head_base
-  )
-
   local fzf_actions = vim.tbl_deep_extend("force", fzf.defaults.actions.files, {
     ["ctrl-g"] = {
       fn = function()
@@ -349,15 +413,17 @@ local function git_changed_picker(mode, opts)
 
   fzf.fzf_exec(entries, {
     cwd = root,
+    head_base = head_base,
     query = opts.query or "",
     prompt = cur_info.prompt,
     actions = fzf_actions,
+    previewer = {
+      _ctor = get_git_changed_previewer,
+    },
     fzf_opts = {
-      ["--delimiter"] = "\t",
+      ["--delimiter"] = "[\t]",
       ["--with-nth"] = "1,2",
       ["--header"] = cur_info.header,
-      ["--preview"] = preview_cmd,
-      ["--preview-window"] = "right:60%",
     },
     _fmt = {
       from = function(x)

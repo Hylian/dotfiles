@@ -42,10 +42,15 @@ Implemented `git_changed_picker(mode, opts)` in [dot_config/nvim/lua/keybindings
      * `[DEL]   ` — Deleted file (red)
    * The tab delimiter (`\t`) ensures file paths align cleanly into a column regardless of devicon or tag length.
 
-4. **Live Delta Git Diff Preview:**
-   * Shell preview uses `{2}` (the clean file path) and `{1}` (status tag).
-   * Automatically invokes `delta` with `${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}` for syntax-highlighted diffs matching the previewer pane dimensions.
-   * Falls back to `bat` / `cat` for untracked files or clean files.
+4. **Native Neovim Buffer Previewer (`GitChangedPreviewer`):**
+   * Subclasses `fzf-lua.previewer.builtin.base` to render diffs and file contents inside Neovim's floating preview buffer rather than an external shell child process (eliminating shell quotation escaping pitfalls).
+   * Contextually generates diffs:
+     * `[NEW]` (untracked): reads file contents with Treesitter syntax highlighting.
+     * `[HEAD]`: `git diff HEAD~1 HEAD -- <file>`.
+     * `[H*]` (HEAD + dirty): `git diff HEAD~1 -- <file>` to view cumulative changes.
+     * `[MOD]`, `[STAGED]`, `[SM]`, `[DEL]`: `git diff HEAD -- <file>` to view working tree and index changes.
+   * Dynamically updates the preview window title with the status badge and file path (`[HEAD] path/to/file`).
+   * Lazily initialized on picker invocation to ensure `keybindings.lua` can be required before `config.lazy` during Neovim startup.
 
 5. **Seamless File Navigation Actions:**
    * Uses `_fmt = { from = function(x) return x:match("\t(.*)$") or x end }` so all standard `fzf-lua` file actions (`<CR>` to edit, `<C-v>` vsplit, `<C-s>` split, `<C-t>` tabedit) operate directly on the clean file path.
