@@ -209,6 +209,178 @@ map('n', '\'',        "<cmd>lua require('fzf-lua').files()<CR>")
 --map('n', '\"',        "<cmd>lua require('fzf-lua').grep_project()<CR>")
 --map('n', '<C-\'>',    "<cmd>lua require('fzf-lua').grep_cword()<CR>")
 
+-- Interactive git changed files picker with <C-g> mode cycling (All -> Worktree -> HEAD)
+local function git_changed_picker(mode, opts)
+  opts = opts or {}
+  mode = mode or "both"
+
+  local root = vim.fn.systemlist("git rev-parse --show-toplevel 2>/dev/null")[1]
+  if not root or root == "" then
+    vim.notify("Not in a git repository", vim.log.levels.WARN)
+    return
+  end
+
+  local fzf = require("fzf-lua")
+  local devicons = require("fzf-lua.devicons")
+  devicons.load()
+
+  -- Check if HEAD~1 exists (repository has at least 2 commits)
+  vim.fn.system("git rev-parse --verify --quiet HEAD~1")
+  local head_base = (vim.v.shell_error == 0) and "HEAD~1" or "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
+  local head_files = {}
+  if mode == "head" or mode == "both" then
+    head_files = vim.fn.systemlist("git --no-optional-locks diff-tree --no-commit-id --name-only -r --root HEAD 2>/dev/null")
+  end
+
+  local status_lines = {}
+  if mode == "worktree" or mode == "both" then
+    status_lines = vim.fn.systemlist("git -c color.status=false --no-optional-locks status --porcelain=v1 -u 2>/dev/null")
+  end
+
+  local files_map = {}
+  local order = {}
+
+  local function record(path, tag_text, tag_color)
+    if not files_map[path] then
+      table.insert(order, path)
+    end
+    files_map[path] = { text = tag_text, color = tag_color }
+  end
+
+  if mode == "head" or mode == "both" then
+    for _, p in ipairs(head_files) do
+      if #p > 0 then
+        record(p, "[HEAD]", "\27[35m") -- Magenta
+      end
+    end
+  end
+
+  if mode == "worktree" or mode == "both" then
+    for _, line in ipairs(status_lines) do
+      if #line >= 4 then
+        local x = line:sub(1, 1)
+        local y = line:sub(2, 2)
+        local p = line:sub(4):gsub('^.* %-> ', ''):gsub('^"', ''):gsub('"$', '')
+
+        local tag_text, tag_color
+        if x == '?' then
+          tag_text = "[NEW]"
+          tag_color = "\27[36m" -- Cyan
+        elseif files_map[p] and mode == "both" then
+          tag_text = "[H*]"
+          tag_color = "\27[1;35m" -- Bold Magenta (in HEAD + modified in worktree)
+        elseif x == 'D' or y == 'D' then
+          tag_text = "[DEL]"
+          tag_color = "\27[31m" -- Red
+        elseif x ~= ' ' and y ~= ' ' then
+          tag_text = "[SM]"
+          tag_color = "\27[1;33m" -- Bold Yellow (staged + unstaged)
+        elseif x ~= ' ' then
+          tag_text = "[STAGED]"
+          tag_color = "\27[32m" -- Green
+        else
+          tag_text = "[MOD]"
+          tag_color = "\27[33m" -- Yellow
+        end
+        record(p, tag_text, tag_color)
+      end
+    end
+  end
+
+  if mode == "both" and #order == 0 and not opts._is_cycle then
+    vim.notify("No files changed in HEAD or working tree", vim.log.levels.INFO)
+    return
+  end
+
+  local entries = {}
+  for _, p in ipairs(order) do
+    local info = files_map[p]
+    local icon, _ = devicons.get_devicon(p)
+    icon = icon or " "
+    local padded_tag = string.format("%-8s", info.text)
+    local colored_tag = string.format("%s%s\27[0m", info.color, padded_tag)
+    local col1 = string.format("%s %s", colored_tag, icon)
+    table.insert(entries, string.format("%s\t%s", col1, p))
+  end
+
+  local mode_info = {
+    both = {
+      title = "Git Active (All)",
+      prompt = "Git Active (All)> ",
+      header = ":: <C-g>: Cycle Scope [All ➔ Worktree ➔ HEAD]",
+      next = "worktree",
+    },
+    worktree = {
+      title = (#entries == 0) and "Git Working Tree (Clean)" or "Git Working Tree",
+      prompt = (#entries == 0) and "Git Working Tree (Clean)> " or "Git Working Tree> ",
+      header = ":: <C-g>: Cycle Scope [Worktree ➔ HEAD ➔ All]",
+      next = "head",
+    },
+    head = {
+      title = "Git HEAD Commit",
+      prompt = "Git HEAD Commit> ",
+      header = ":: <C-g>: Cycle Scope [HEAD ➔ All ➔ Worktree]",
+      next = "both",
+    },
+  }
+
+  local cur_info = mode_info[mode]
+
+  local preview_cmd = string.format(
+    [[sh -c 'f="{2}"; t="{1}"; if echo "$t" | grep -q "NEW"; then if command -v bat >/dev/null 2>&1; then bat --style=plain --color=always "$f" 2>/dev/null || cat "$f"; else cat "$f"; fi; elif echo "$t" | grep -q "HEAD"; then if echo "$t" | grep -q "\*"; then d=$(git --no-pager diff --color=always %s -- "$f" 2>/dev/null); else d=$(git --no-pager diff --color=always %s HEAD -- "$f" 2>/dev/null); fi; if [ -n "$d" ]; then if command -v delta >/dev/null 2>&1; then echo "$d" | delta --width="${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}" 2>/dev/null || echo "$d"; else echo "$d"; fi; else if command -v bat >/dev/null 2>&1; then bat --style=plain --color=always "$f" 2>/dev/null || cat "$f"; else cat "$f"; fi; fi; else d=$(git --no-pager diff --color=always HEAD -- "$f" 2>/dev/null); if [ -n "$d" ]; then if command -v delta >/dev/null 2>&1; then echo "$d" | delta --width="${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}" 2>/dev/null || echo "$d"; else echo "$d"; fi; else if command -v bat >/dev/null 2>&1; then bat --style=plain --color=always "$f" 2>/dev/null || cat "$f"; else cat "$f"; fi; fi; fi']],
+    head_base,
+    head_base
+  )
+
+  local fzf_actions = vim.tbl_deep_extend("force", fzf.defaults.actions.files, {
+    ["ctrl-g"] = {
+      fn = function()
+        local next_mode = cur_info.next
+        git_changed_picker(next_mode, {
+          query = fzf.get_last_query() or "",
+          _is_cycle = true,
+        })
+      end,
+      reuse = true,
+      header = false,
+    },
+  })
+
+  fzf.fzf_exec(entries, {
+    cwd = root,
+    query = opts.query or "",
+    prompt = cur_info.prompt,
+    actions = fzf_actions,
+    fzf_opts = {
+      ["--delimiter"] = "\t",
+      ["--with-nth"] = "1,2",
+      ["--header"] = cur_info.header,
+      ["--preview"] = preview_cmd,
+      ["--preview-window"] = "right:60%",
+    },
+    _fmt = {
+      from = function(x)
+        return x:match("\t(.*)$") or x
+      end,
+    },
+    winopts = {
+      title = " " .. cur_info.title .. " ",
+    },
+  })
+end
+
+map('n', '<leader>g', function() git_changed_picker('both') end, { desc = "Git changed files (HEAD + worktree)" })
+
+vim.api.nvim_create_user_command('GitChanged', function(cmd_opts)
+  local m = (cmd_opts.args ~= "") and cmd_opts.args or "both"
+  git_changed_picker(m)
+end, {
+  nargs = '?',
+  complete = function() return { 'both', 'worktree', 'head' } end,
+  desc = "Fuzzy picker for git changed files with <C-g> mode cycling",
+})
+
 -- grug-far.nvim bindings
 -- current cursor word, current file
 map('n', '_', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>'), paths = vim.fn.expand('%') }})<CR>")

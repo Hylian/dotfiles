@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-09-01*
+*Last Updated: 2026-09-04*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -110,6 +110,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `<A-S-`>` / `<A-~>`: `g<Tab>` (toggle between last two active Neovim tabs).
 * `<C-o>` / `<C-i>` (or `<Tab>`): Jump backward / forward through the Neovim jumplist (`:jumps`). Reclaimed `<Tab>` by removing `:ToggleDiag` binding.
 * `<leader>o` / `<leader>i` (`;o` / `;i`): Jump backward / forward through the Neovim jumplist on a per-file basis, skipping intra-file line jumps and landing directly on the most recent cursor position in the previous/next file.
+* `<leader>g` (`;g`) / `:GitChanged [both|worktree|head]`: Interactive `fzf-lua` picker for git changed files with status badges (`[HEAD]`, `[STAGED]`, `[MOD]`, `[SM]`, `[H*]`, `[NEW]`, `[DEL]`), file devicons, and live delta git diff preview. Supports in-picker scope cycling via `<C-g>` without closing the window (`All` ➔ `Worktree` ➔ `HEAD`), retaining the active search query across scope transitions.
 
 ### Zsh Interactive Widgets
 * Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.
