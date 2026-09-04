@@ -221,7 +221,8 @@ local function get_git_changed_previewer()
   end
 
   function GitChangedPreviewer:preview_window()
-    return "right:60%"
+    local cols = vim.o.columns or 120
+    return (cols >= 180) and "right:55%" or "right:50%"
   end
 
   function GitChangedPreviewer:cmdline(o)
@@ -281,6 +282,24 @@ local function get_git_changed_previewer()
   return GitChangedPreviewer
 end
 
+local function truncate_left(str, max_len)
+  if vim.fn.strdisplaywidth(str) <= max_len then
+    return str
+  end
+  if max_len <= 1 then
+    return "…"
+  end
+  local target_suffix_width = max_len - 1
+  local len = #str
+  for i = 1, len do
+    local suffix = str:sub(i)
+    if vim.fn.strdisplaywidth(suffix) <= target_suffix_width then
+      return "…" .. suffix
+    end
+  end
+  return "…"
+end
+
 local function shorten_path(path, max_len)
   if not max_len or max_len <= 0 or vim.fn.strdisplaywidth(path) <= max_len then
     return path
@@ -289,7 +308,7 @@ local function shorten_path(path, max_len)
   local parts = vim.split(path, "/", { plain = true })
   local n = #parts
   if n <= 1 then
-    return path
+    return truncate_left(parts[1], max_len)
   end
 
   local filename = parts[n]
@@ -298,7 +317,10 @@ local function shorten_path(path, max_len)
     if vim.fn.strdisplaywidth(c1) <= max_len then
       return c1
     end
-    return filename
+    if vim.fn.strdisplaywidth(filename) <= max_len then
+      return filename
+    end
+    return truncate_left(filename, max_len)
   end
 
   local head_idx = 1
@@ -371,7 +393,11 @@ local function shorten_path(path, max_len)
     return c_file
   end
 
-  return filename
+  if vim.fn.strdisplaywidth(filename) <= max_len then
+    return filename
+  end
+
+  return truncate_left(filename, max_len)
 end
 
 local function git_changed_picker(mode, opts)
@@ -458,7 +484,14 @@ local function git_changed_picker(mode, opts)
   end
 
   local cols = vim.o.columns or 120
-  local max_path_len = math.max(28, math.floor(cols * 0.85 * 0.40) - 14)
+  local float_width = math.floor(cols * 0.90)
+  local inner_width = float_width - 2 -- rounded border
+  local prev_ratio = (cols >= 180) and 0.55 or 0.50
+  local prev_cols = math.floor(inner_width * prev_ratio)
+  local list_cols = inner_width - prev_cols - 1 -- preview divider
+  -- Gutter/pointer (2) + badge (8) + space (1) + devicon (~2) + tab (~4) + margin/scrollbar (3) = 20
+  local prefix_and_margin = 20
+  local max_path_len = math.max(16, list_cols - prefix_and_margin)
 
   local entries = {}
   for _, p in ipairs(order) do
@@ -539,6 +572,8 @@ local function git_changed_picker(mode, opts)
       end,
     },
     winopts = {
+      width = 0.90,
+      height = 0.85,
       title = " " .. cur_info.title .. " ",
     },
   })

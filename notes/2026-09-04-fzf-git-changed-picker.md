@@ -60,13 +60,25 @@ Implemented `git_changed_picker(mode, opts)` in [dot_config/nvim/lua/keybindings
    * Configured `preview-half-page-down` and `preview-half-page-up` for `<C-d>` and `<C-u>` across both `fzf` and `builtin` keymaps (in `config/fzf-lua.lua` globally and directly in `git_changed_picker`).
    * Displayed in the picker header hint (`<C-d>/<C-u>: Scroll Preview`).
 
-7. **Smart Path Middle Truncation (`shorten_path`):**
-   * Solves the issue where fzf's default right-edge line truncation chops off trailing filenames in narrow list panes (40% of float window with right:60% preview).
-   * Implements strict hierarchical display priorities:
-     1. **Filename (Highest Priority):** Always visible and never truncated.
+7. **Smart Path Middle Truncation & Balanced Pane Geometry:**
+   * Solves the issue where fzf's default right-edge line truncation chops off trailing filenames and file extensions.
+   * **Balanced Window & Preview Geometry:**
+     * Expands the floating window to `width = 0.90` (from 0.80) to provide ample horizontal space.
+     * Uses a balanced 50/50 split (`right:50%`, scaling to `55%` on $\ge 180$ column screens) instead of 60%, nearly doubling available list width for filepaths while keeping plenty of room for Delta diffs.
+     * Dynamically calculates available list pane columns subtracting borders, dividers, gutter pointer, status badge, devicons, tab stops, and safety margins:
+       ```lua
+       local float_width = math.floor(cols * 0.90)
+       local inner_width = float_width - 2
+       local prev_ratio = (cols >= 180) and 0.55 or 0.50
+       local prev_cols = math.floor(inner_width * prev_ratio)
+       local list_cols = inner_width - prev_cols - 1
+       local max_path_len = math.max(16, list_cols - 20)
+       ```
+   * **Hierarchical Display Priorities (`shorten_path`):**
+     1. **Filename (Highest Priority):** Always preserved. If an exceptionally long filename exceeds available list columns on very narrow screens, `truncate_left` clips from the left (`…tail.ext`) so the file extension and distinctive suffix are never chopped off by fzf's right-edge truncation.
      2. **Path Root & Parent Directory (Next Priority):** Shows the starting directory and immediate parent (e.g. `start/…/parent/filename.ext`).
      3. **Middle Directories (Least Important):** Collapsed into a single unicode ellipsis (`…`), dynamically expanding inward/outward as pane width allows.
-     4. **Graceful Narrow Fallbacks:** If the base candidate exceeds available columns, degrades progressively: `…/parent/filename` ➔ `start/…/filename` ➔ `…/filename` ➔ `filename`.
+     4. **Graceful Degradation:** `start/…/parent/filename` ➔ `…/parent/filename` ➔ `start/…/filename` ➔ `…/filename` ➔ `filename` ➔ `truncate_left(filename)`.
    * **Three-Field Architecture:**
      * Generates entries as `<col1_tag_icon>\t<display_path>\t<real_path>`.
      * Configures `--with-nth=1,2` so fzf renders the shortened path cleanly in the list pane without clutter.
