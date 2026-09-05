@@ -234,6 +234,7 @@ vim.api.nvim_create_autocmd("VimLeave", {
     command = "silent !zellij action switch-mode normal"
 })
 
+require('config.root').setup()
 require('config.everforest')
 require('config.lualine')
 require('config.nvim-web-devicons')
