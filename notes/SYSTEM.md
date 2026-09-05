@@ -71,26 +71,42 @@ This document represents the current, living ground truth for this cross-platfor
 * **Long-Running & LSP Stability:** `clangd` is configured with `--enable-config` (reads project/user `.clangd` configs), `--pch-storage=memory` (fast RAM preamble caching), `-j=8` (bounds indexing concurrency to 8 worker threads), `--background-index-priority=low`, bounded completion/reference limits, and `vim.lsp.set_log_level("warn")` to eliminate memory bloat and event-loop lag.
 * **Treesitter & Syntax Engine:** `nvim-treesitter` is pinned to the stable `master` branch with `lazy = false` for Neovim 0.11 compatibility, configured via `nvim-treesitter.configs` with `auto_install = true`, baseline `ensure_installed` parsers (`c`, `lua`, `vim`, `vimdoc`, `query`, `markdown`, `markdown_inline`), and a 100KB buffer size guard using Neovim 0.10+ `vim.uv.fs_stat`.
 * **Startup Time & Plugin Lazy-Loading (~103ms baseline):** Core visual/editing essentials (`everforest`, `lualine`, `nvim-web-devicons`, `treesitter`, `lsp`, `tabby`) load synchronously at startup so buffers and UI render cleanly on frame 1. Non-critical tools (`cmp`, `telescope`, `fzf-lua`, `spider`, `codecompanion`, `focus`, `toggleterm`, `deadcolumn`, `trim`, `ibl`, `mini.diff`, `gitsigns`) are deferred to `VeryLazy`, `BufReadPost`, `InsertEnter`, or their respective commands/keybindings via `dot_config/nvim/lua/plugins/init.lua`.
-* **Zellij Navigation & Multiplexer Integration (`smart-splits.nvim`):** Uses `mrjones2014/smart-splits.nvim` for seamless directional navigation (`<A-h/j/k/l>`) and cross-border window/pane resizing (`<A-C-h/j/k/l>`) between Neovim splits and Zellij panes. All other Zellij actions (tab switching, pane moving, new tab/pane spawning in editor CWD, layout swaps) are dispatched asynchronously via a non-blocking `vim.system({ 'zellij', 'action', ... })` helper in [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua) to avoid UI thread blocking.
+* **Zellij Navigation & Multiplexer Integration (`smart-splits.nvim`):** Uses `mrjones2014/smart-splits.nvim` for seamless directional navigation (`<A-h/j/k/l>`) and cross-border window/pane resizing (`<A-C-h/j/k/l>`) between Neovim splits and Zellij panes. All other Zellij actions (tab switching, pane moving, new tab/pane spawning in editor CWD, layout swaps) are dispatched asynchronously via a non-blocking `vim.system({ 'zellij', 'action', ... })` helper in [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua) to avoid UI thread blocking. All Zellij and Neovim tab keybindings are mapped across all modes (`{'n', 'i', 'v', 't'}`), ensuring full navigation fluidity inside terminal buffers, prompt modes, and floating popups (e.g. `fzf-lua`) where `zellij-autolock` locks Zellij and passes all Alt chords to Neovim. Dynamic tab tracking hooks `FocusGained` and `VimEnter` to maintain the previous/active tab indices for `<A-`>` toggling. In terminal mode, `<A-d>` and `<A-q>` intelligently dismiss floating popup windows (`vim.api.nvim_win_close`) while closing terminal panes/splits.
 * **Notifications & Messages (`nvim-notify` / `noice.nvim`):** Configured via [dot_config/nvim/lua/config/notify.lua](../dot_config/nvim/lua/config/notify.lua) with `render = "minimal"`, `stages = "fade"`, and a dynamic `max_width = function() return math.max(60, math.floor(vim.o.columns * 0.75)) end` with `minimum_width = 15` and `timeout = 3000` to ensure message notifications scale responsively and remain easily readable across terminal dimensions.
 
 ---
 
 ## 3. Standard Keybinding Conventions
 
-### Zellij
-* `Alt` is the primary modifier for pane, tab, and navigation management.
-* `Alt + \``: `ToggleTab` — quick switch back and forth between the two most recent tabs.
-* `Alt + e` (or `Ctrl + s` -> `e`): Instant `EditScrollback` — dumps active pane scrollback into Neovim.
-* `Alt + q` (in scroll/editor): Quick quit.
-
-### Neovim
-* `<leader>`: `;` (semicolon), `<localleader>`: `;;`
-* `Alt + q` (`<A-q>`): `:q<CR>` (close current window/buffer).
-* `Alt + Shift + q` (`<A-S-q>` / `<A-Q>`): `:q!<CR>` (force quit).
-* `Alt + w` (`<A-w>`): `:w<CR>` (save).
-* `<A-h/j/k/l>`: Seamless directional focus navigation across Neovim splits and Zellij panes (`smart-splits.nvim`).
+### Zellij & Neovim Tab Management (Omnipresent Across Modes `{'n', 'i', 'v', 't'}`)
+* `Alt` is the primary modifier for pane, tab, and navigation management in both Zellij and Neovim. Because `zellij-autolock` locks Zellij when Neovim is focused, all Alt chords are handled inside Neovim across normal (`n`), insert (`i`), visual (`v`), and terminal (`t`) modes (including floating popups like `fzf-lua`).
+* `Alt + \``: `ToggleTab` — quick switch back and forth between the two most recent Zellij tabs (dynamically tracked via `current-tab-info`).
+* `Alt + Left` / `Alt + Right`: Zellij previous/next tab.
+* `Alt + 1` .. `Alt + 0`: Switch directly to Zellij tab 1 .. 10.
+* `Alt + Ctrl + Left` / `Alt + Ctrl + Right`: Move Zellij tab left/right.
+* `Alt + s`: New Zellij pane (right) in current working directory.
+* `Alt + n`: New Zellij tab in current working directory.
+* `Alt + f`: Toggle fullscreen Zellij pane.
+* `<A-h/j/k/l>`: Seamless directional focus navigation across Neovim splits and Zellij panes (`smart-splits.nvim`, works in floats and terminal buffers).
 * `<A-C-h/j/k/l>`: Directional split resizing across Neovim windows and Zellij panes (`smart-splits.nvim`).
+* `<A-S-h/j/k/l>`: Move Zellij pane directionally.
+* `<A-S-[>` / `<A-S-]>` / `<A-{>` / `<A-}>`: Swap Zellij layout previous/next.
+* `<A-[>` / `<A-]>`: Break Zellij pane left/right.
+* `<A-+>` / `<A-=>` / `<A-->`: Increase/decrease Zellij pane size.
+* `<A-z>`: Switch Zellij back to normal unlocked mode.
+* `Alt + e` (or `Ctrl + s` -> `e`): Instant `EditScrollback` — dumps active pane scrollback into Neovim.
+* `Alt + d` / `Alt + q`: Smart close — in floating popups (like `fzf-lua`), dismisses the float; in editor/splits, closes window; in terminal pane, closes pane.
+* `Alt + Shift + q` (`<A-S-q>` / `<A-Q>`): Force quit (`:q!<CR>`).
+* `Alt + w` (`<A-w>`): Save buffer (`:w<CR>`).
+* `<A-S-Left>` / `<A-S-Right>`: Previous / next Neovim tab (`tabp` / `tabn`).
+* `<A-S-1>` .. `<A-S-0>` / `<A-!>` .. `<A-)>`: Switch directly to Neovim tab 1 .. 10 (`1gt` .. `10gt`).
+* `<A-S-`>` / `<A-~>`: Toggle last two Neovim tabs (`tabnext #`).
+* `<C-A-S-Left>` / `<C-A-S-Right>`: Move Neovim tab left / right (`-tabmove` / `+tabmove`).
+* `<A-S-n>`: Open new Neovim tab (`:$tabnew<CR>`).
+* `<A-S-d>`: Close Neovim tab (`tabclose`).
+
+### Neovim Editing & Navigation
+* `<leader>`: `;` (semicolon), `<localleader>`: `;;`
 * `<A-S-s>`: `focus.split_command('l')` (split window to the right).
 * `<A-S-e>`: `focus.focus_equalise()` (equalize window dimensions).
 * `<A-S-r>`: `focus.focus_autoresize()` (trigger focus autoresize).
@@ -106,8 +122,6 @@ This document represents the current, living ground truth for this cross-platfor
 * `gd`: Jump to LSP definition in current buffer (`fzf-lua.lsp_definitions`).
 * `gD`: Open LSP definition in a new nvim tab (`fzf-lua.lsp_definitions` with `jump1_action` and `actions.enter` set to `actions.file_tabedit`).
 * `gh` / `[`: Switch between header and source file (`clangd` LSP `textDocument/switchSourceHeader` with sister-directory filesystem fallback).
-* `<A-S-1>` .. `<A-S-0>` / `<A-!>` .. `<A-)>`: Switch directly to Neovim tab 1 .. 10 (`1gt` .. `10gt`). Supports both Kitty extended keyboard sequences and ASCII terminal escape sequences.
-* `<A-S-`>` / `<A-~>`: `g<Tab>` (toggle between last two active Neovim tabs).
 * `<C-o>` / `<C-i>` (or `<Tab>`): Jump backward / forward through the Neovim jumplist (`:jumps`). Reclaimed `<Tab>` by removing `:ToggleDiag` binding.
 * `<leader>o` / `<leader>i` (`;o` / `;i`): Jump backward / forward through the Neovim jumplist on a per-file basis, skipping intra-file line jumps and landing directly on the most recent cursor position in the previous/next file.
 * `<leader>g` (`;g`) / `:GitChanged [both|worktree|head]`: Interactive `fzf-lua` picker for git changed files with status badges (`[HEAD]`, `[STAGED]`, `[MOD]`, `[SM]`, `[H*]`, `[NEW]`, `[DEL]`), file devicons, and live delta git diff preview (`GitChangedPreviewer`). Supports in-picker scope cycling via `<C-g>` without closing the window (`All` ➔ `Worktree` ➔ `HEAD`), retaining the active search query across scope transitions, `<C-d>` / `<C-u>` half-page preview scrolling, and smart middle path truncation (`shorten_path`) that guarantees filenames are never cut off while collapsing middle path directories to `…`.

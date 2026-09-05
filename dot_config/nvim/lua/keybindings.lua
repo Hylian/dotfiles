@@ -14,82 +14,169 @@ local function zellij(...)
   vim.system({ 'zellij', 'action', ... })
 end
 
-map('n', '<A-h>',         function() require('smart-splits').move_cursor_left() end)
-map('n', '<A-j>',         function() require('smart-splits').move_cursor_down() end)
-map('n', '<A-k>',         function() require('smart-splits').move_cursor_up() end)
-map('n', '<A-l>',         function() require('smart-splits').move_cursor_right() end)
+local zellij_modes = { 'n', 'i', 'v', 't' }
 
-map('n', '<A-C-h>',       function() require('smart-splits').resize_left() end)
-map('n', '<A-C-j>',       function() require('smart-splits').resize_down() end)
-map('n', '<A-C-k>',       function() require('smart-splits').resize_up() end)
-map('n', '<A-C-l>',       function() require('smart-splits').resize_right() end)
+-- Track active and previous Zellij tabs so <A-`> can toggle between them
+local zellij_last_tab = nil
+local zellij_curr_tab = nil
 
-map('n', '<A-Left>',      function() zellij('go-to-previous-tab') end)
-map('n', '<A-Right>',     function() zellij('go-to-next-tab') end)
-map('n', '<A-S-h>',       function() zellij('move-pane', 'left') end)
-map('n', '<A-S-l>',       function() zellij('move-pane', 'right') end)
-map('n', '<A-S-j>',       function() zellij('move-pane', 'down') end)
-map('n', '<A-S-k>',       function() zellij('move-pane', 'up') end)
-map('n', '<A-C-Left>',    function() zellij('move-tab', 'left') end)
-map('n', '<A-C-Right>',   function() zellij('move-tab', 'right') end)
-map('n', '<A-S-[>',       function() zellij('previous-swap-layout') end)
-map('n', '<A-S-]>',       function() zellij('next-swap-layout') end)
-map('n', '<A-1>',         function() zellij('go-to-tab', '1') end)
-map('n', '<A-2>',         function() zellij('go-to-tab', '2') end)
-map('n', '<A-3>',         function() zellij('go-to-tab', '3') end)
-map('n', '<A-4>',         function() zellij('go-to-tab', '4') end)
-map('n', '<A-5>',         function() zellij('go-to-tab', '5') end)
-map('n', '<A-6>',         function() zellij('go-to-tab', '6') end)
-map('n', '<A-7>',         function() zellij('go-to-tab', '7') end)
-map('n', '<A-8>',         function() zellij('go-to-tab', '8') end)
-map('n', '<A-9>',         function() zellij('go-to-tab', '9') end)
-map('n', '<A-0>',         function() zellij('go-to-tab', '10') end)
-map('n', '<A-s>',         function() zellij('new-pane', '-d', 'right', '--cwd', vim.fn.getcwd()) end)
-map('n', '<A-n>',         function() zellij('new-tab', '--cwd', vim.fn.getcwd()) end)
-map('n', '<A-f>',         function() zellij('toggle-fullscreen') end)
---map('n', '<A-S-s>',       function() require('focus').split_nicely() end)
-map('n', '<A-S-s>',       function() require('focus').split_command('l') end)
-map('n', '<A-S-e>',       function() require('focus').focus_equalise() end)
-map('n', '<A-S-r>',       function() require('focus').focus_autoresize() end)
---map('n', '<A-S-f>',       function() require('focus').focus_max_or_equal() end)
-map('n', '<A-S-f>',       function() require('maximize').toggle() end)
-map('n', '<A-w>',         ":w<CR>")
-map('n', '<A-d>',         ":q<CR>")
-map('n', '<A-q>',         ":q<CR>")
-map('n', '<A-S-q>',       ":q!<CR>")
-map('n', '<A-Q>',         ":q!<CR>")
---map('n', '<A-]>',         ":tab split<CR>")
-map('n', '<A-C-S-]>',       "<C-w>r")
-map('n', '<A-S-n>',       ":$tabnew<CR>")
-map('n', '<A-S-d>',       "<cmd>NvimTreeClose<CR><cmd>tabclose<CR>")
-map('n', '<A-S-Left>',    ":tabp<CR>")
-map('n', '<A-S-Right>',   ":tabn<CR>")
-map('n', '<A-S-1>',       "1gt")
-map('n', '<A-S-2>',       "2gt")
-map('n', '<A-S-3>',       "3gt")
-map('n', '<A-S-4>',       "4gt")
-map('n', '<A-S-5>',       "5gt")
-map('n', '<A-S-6>',       "6gt")
-map('n', '<A-S-7>',       "7gt")
-map('n', '<A-S-8>',       "8gt")
-map('n', '<A-S-9>',       "9gt")
-map('n', '<A-S-0>',       "10gt")
+local function update_zellij_tab(cb)
+  if not vim.env.ZELLIJ then return end
+  vim.system({ 'zellij', 'action', 'current-tab-info' }, { text = true }, function(obj)
+    if obj.code == 0 and obj.stdout then
+      local pos = tonumber(obj.stdout:match("position:%s*(%d+)"))
+      if pos then
+        local tab_idx = pos + 1
+        if zellij_curr_tab and zellij_curr_tab ~= tab_idx then
+          zellij_last_tab = zellij_curr_tab
+        end
+        zellij_curr_tab = tab_idx
+      end
+    end
+    if cb then vim.schedule(cb) end
+  end)
+end
 
-map('n', '<A-!>',         "1gt")
-map('n', '<A-@>',         "2gt")
-map('n', '<A-#>',         "3gt")
-map('n', '<A-$>',         "4gt")
-map('n', '<A-%>',         "5gt")
-map('n', '<A-^>',         "6gt")
-map('n', '<A-&>',         "7gt")
-map('n', '<A-*>',         "8gt")
-map('n', '<A-(>',         "9gt")
-map('n', '<A-)>',         "10gt")
+local function zellij_goto_tab(idx)
+  if zellij_curr_tab and zellij_curr_tab ~= idx then
+    zellij_last_tab = zellij_curr_tab
+  end
+  zellij_curr_tab = idx
+  zellij('go-to-tab', tostring(idx))
+end
 
-map('n', '<A-S-`>',       "g<Tab>")
-map('n', '<A-~>',         "g<Tab>")
-map('n', '<C-A-S-Left>',  ":-tabmove<CR>")
-map('n', '<C-A-S-Right>', ":+tabmove<CR>")
+local function zellij_toggle_tab()
+  if zellij_last_tab then
+    local target = zellij_last_tab
+    zellij_last_tab = zellij_curr_tab
+    zellij_curr_tab = target
+    zellij('go-to-tab', tostring(target))
+  else
+    update_zellij_tab(function()
+      if zellij_last_tab then
+        local target = zellij_last_tab
+        zellij_last_tab = zellij_curr_tab
+        zellij_curr_tab = target
+        zellij('go-to-tab', tostring(target))
+      else
+        zellij('go-to-previous-tab')
+      end
+    end)
+  end
+end
+
+vim.api.nvim_create_autocmd({ "FocusGained", "VimEnter" }, {
+  callback = function()
+    update_zellij_tab()
+  end,
+})
+
+-- Smart splits navigation (seamless across Neovim splits and Zellij panes)
+map(zellij_modes, '<A-h>',         function() require('smart-splits').move_cursor_left() end)
+map(zellij_modes, '<A-j>',         function() require('smart-splits').move_cursor_down() end)
+map(zellij_modes, '<A-k>',         function() require('smart-splits').move_cursor_up() end)
+map(zellij_modes, '<A-l>',         function() require('smart-splits').move_cursor_right() end)
+
+map(zellij_modes, '<A-C-h>',       function() require('smart-splits').resize_left() end)
+map(zellij_modes, '<A-C-j>',       function() require('smart-splits').resize_down() end)
+map(zellij_modes, '<A-C-k>',       function() require('smart-splits').resize_up() end)
+map(zellij_modes, '<A-C-l>',       function() require('smart-splits').resize_right() end)
+
+-- Zellij tab navigation
+map(zellij_modes, '<A-Left>',      function() zellij('go-to-previous-tab'); vim.defer_fn(update_zellij_tab, 100) end)
+map(zellij_modes, '<A-Right>',     function() zellij('go-to-next-tab'); vim.defer_fn(update_zellij_tab, 100) end)
+map(zellij_modes, '<A-C-Left>',    function() zellij('move-tab', 'left') end)
+map(zellij_modes, '<A-C-Right>',   function() zellij('move-tab', 'right') end)
+map(zellij_modes, '<A-`>',         zellij_toggle_tab)
+map(zellij_modes, '<A-1>',         function() zellij_goto_tab(1) end)
+map(zellij_modes, '<A-2>',         function() zellij_goto_tab(2) end)
+map(zellij_modes, '<A-3>',         function() zellij_goto_tab(3) end)
+map(zellij_modes, '<A-4>',         function() zellij_goto_tab(4) end)
+map(zellij_modes, '<A-5>',         function() zellij_goto_tab(5) end)
+map(zellij_modes, '<A-6>',         function() zellij_goto_tab(6) end)
+map(zellij_modes, '<A-7>',         function() zellij_goto_tab(7) end)
+map(zellij_modes, '<A-8>',         function() zellij_goto_tab(8) end)
+map(zellij_modes, '<A-9>',         function() zellij_goto_tab(9) end)
+map(zellij_modes, '<A-0>',         function() zellij_goto_tab(10) end)
+
+-- Zellij pane movement & layouts
+map(zellij_modes, '<A-S-h>',       function() zellij('move-pane', 'left') end)
+map(zellij_modes, '<A-S-l>',       function() zellij('move-pane', 'right') end)
+map(zellij_modes, '<A-S-j>',       function() zellij('move-pane', 'down') end)
+map(zellij_modes, '<A-S-k>',       function() zellij('move-pane', 'up') end)
+map(zellij_modes, '<A-S-[>',       function() zellij('previous-swap-layout') end)
+map(zellij_modes, '<A-S-]>',       function() zellij('next-swap-layout') end)
+map(zellij_modes, '<A-{>',         function() zellij('previous-swap-layout') end)
+map(zellij_modes, '<A-}>',         function() zellij('next-swap-layout') end)
+map(zellij_modes, '<A-[>',         function() zellij('break-pane-left') end)
+map(zellij_modes, '<A-]>',         function() zellij('break-pane-right') end)
+map(zellij_modes, '<A-+>',         function() zellij('resize', 'increase') end)
+map(zellij_modes, '<A-=>',         function() zellij('resize', 'increase') end)
+map(zellij_modes, '<A-->',         function() zellij('resize', 'decrease') end)
+map(zellij_modes, '<A-z>',         function() zellij('switch-mode', 'normal') end)
+
+-- Zellij pane creation & actions
+map(zellij_modes, '<A-s>',         function() zellij('new-pane', '-d', 'right', '--cwd', vim.fn.getcwd()) end)
+map(zellij_modes, '<A-n>',         function() zellij('new-tab', '--cwd', vim.fn.getcwd()) end)
+map(zellij_modes, '<A-f>',         function() zellij('toggle-fullscreen') end)
+
+-- Window / Pane management & quit
+map({ 'n', 't' }, '<A-S-s>',       function() require('focus').split_command('l') end)
+map({ 'n', 't' }, '<A-S-e>',       function() require('focus').focus_equalise() end)
+map({ 'n', 't' }, '<A-S-r>',       function() require('focus').focus_autoresize() end)
+map({ 'n', 't' }, '<A-S-f>',       function() require('maximize').toggle() end)
+map({ 'n', 'i', 'v' }, '<A-w>',    "<cmd>w<CR>")
+map({ 'n', 'v' }, '<A-d>',         "<cmd>q<CR>")
+map({ 'n', 'v' }, '<A-q>',         "<cmd>q<CR>")
+map('t', '<A-d>', function()
+  if vim.api.nvim_win_get_config(0).relative ~= "" then
+    vim.api.nvim_win_close(0, true)
+  else
+    zellij('close-pane')
+  end
+end)
+map('t', '<A-q>', function()
+  if vim.api.nvim_win_get_config(0).relative ~= "" then
+    vim.api.nvim_win_close(0, true)
+  else
+    vim.cmd('q')
+  end
+end)
+map({ 'n', 'v', 't' }, '<A-S-q>',  "<cmd>q!<CR>")
+map({ 'n', 'v', 't' }, '<A-Q>',    "<cmd>q!<CR>")
+map(zellij_modes, '<A-C-S-]>',     "<C-w>r")
+map(zellij_modes, '<A-S-n>',       "<cmd>$tabnew<CR>")
+map(zellij_modes, '<A-S-d>',       "<cmd>NvimTreeClose<CR><cmd>tabclose<CR>")
+
+-- Neovim internal tab navigation (mapped across all modes)
+map(zellij_modes, '<A-S-Left>',    "<cmd>tabp<CR>")
+map(zellij_modes, '<A-S-Right>',   "<cmd>tabn<CR>")
+map(zellij_modes, '<A-S-1>',       "<cmd>1gt<CR>")
+map(zellij_modes, '<A-S-2>',       "<cmd>2gt<CR>")
+map(zellij_modes, '<A-S-3>',       "<cmd>3gt<CR>")
+map(zellij_modes, '<A-S-4>',       "<cmd>4gt<CR>")
+map(zellij_modes, '<A-S-5>',       "<cmd>5gt<CR>")
+map(zellij_modes, '<A-S-6>',       "<cmd>6gt<CR>")
+map(zellij_modes, '<A-S-7>',       "<cmd>7gt<CR>")
+map(zellij_modes, '<A-S-8>',       "<cmd>8gt<CR>")
+map(zellij_modes, '<A-S-9>',       "<cmd>9gt<CR>")
+map(zellij_modes, '<A-S-0>',       "<cmd>10gt<CR>")
+
+map(zellij_modes, '<A-!>',         "<cmd>1gt<CR>")
+map(zellij_modes, '<A-@>',         "<cmd>2gt<CR>")
+map(zellij_modes, '<A-#>',         "<cmd>3gt<CR>")
+map(zellij_modes, '<A-$>',         "<cmd>4gt<CR>")
+map(zellij_modes, '<A-%>',         "<cmd>5gt<CR>")
+map(zellij_modes, '<A-^>',         "<cmd>6gt<CR>")
+map(zellij_modes, '<A-&>',         "<cmd>7gt<CR>")
+map(zellij_modes, '<A-*>',         "<cmd>8gt<CR>")
+map(zellij_modes, '<A-(>',         "<cmd>9gt<CR>")
+map(zellij_modes, '<A-)>',         "<cmd>10gt<CR>")
+
+map(zellij_modes, '<A-S-`>',       "<cmd>tabnext #<CR>")
+map(zellij_modes, '<A-~>',         "<cmd>tabnext #<CR>")
+map(zellij_modes, '<C-A-S-Left>',  "<cmd>-tabmove<CR>")
+map(zellij_modes, '<C-A-S-Right>', "<cmd>+tabmove<CR>")
 map('n', '<leader>t',     ":Tabby jump_to_tab<CR>")
 map('n', '<leader>w',     ":Tabby pick_window<CR>")
 map('n', '<leader>nh',    "<cmd>Noice history<CR>")
