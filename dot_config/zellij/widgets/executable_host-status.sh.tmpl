@@ -22,7 +22,7 @@ elif [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
 fi
 
 if [ "$is_ssh" = "1" ]; then
-	printf '🌐 %s\n' "$hostname"
+	printf '%s 🌐\n' "$hostname"
 else
 	printf '%s\n' "$hostname"
 fi

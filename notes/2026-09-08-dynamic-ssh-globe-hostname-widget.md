@@ -9,7 +9,7 @@ Persistent Zellij multiplexer sessions are accessed both locally at the desk (un
 
 To provide clear, ambient awareness of whether the active session is currently attached via SSH or locally, the hostname widget now dynamically updates:
 - **Local desktop:** displays the machine hostname (`shined.cam.corp.google.com`).
-- **Remote SSH:** displays a globe emoji preceding the hostname (`🌐 shined.cam.corp.google.com`).
+- **Remote SSH:** displays a globe emoji following the hostname (`shined.cam.corp.google.com 🌐`).
 
 ## Implementation Details
 
@@ -18,7 +18,7 @@ To provide clear, ambient awareness of whether the active session is currently a
    - Bakes `{{ .chezmoi.fqdnHostname }}` directly into the script at chezmoi template render time (avoiding `hostname` subprocesses).
    - Reads the client descriptor written by `_zellij_sync_client_env` in `${XDG_RUNTIME_DIR:-/tmp}/zellij-env/$ZELLIJ_SESSION_NAME` (falling back to `/client`).
    - Parses `SSH=1` vs `SSH=0` via shell builtins (`read -r k v`).
-   - If `SSH=1`, emits `🌐 $hostname`; otherwise emits `$hostname`.
+   - If `SSH=1`, emits `$hostname 🌐`; otherwise emits `$hostname`.
    - Execution time: ~1ms with zero subprocess forks.
 
 2. **Layout Integration ([dot_config/zellij/layouts/default.kdl.tmpl](../dot_config/zellij/layouts/default.kdl.tmpl)):**
@@ -42,5 +42,5 @@ To provide clear, ambient awareness of whether the active session is currently a
 ## Verification
 
 1. **Local Mode:** Verified `~/.config/zellij/widgets/host-status.sh` outputs `shined.cam.corp.google.com`.
-2. **SSH Mode:** Verified with `SSH=1` descriptor outputs `🌐 shined.cam.corp.google.com`.
+2. **SSH Mode:** Verified with `SSH=1` descriptor outputs `shined.cam.corp.google.com 🌐`.
 3. **Chezmoi Diff & Apply:** Verified `chezmoi diff` and applied cleanly with `chezmoi apply`.
