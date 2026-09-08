@@ -119,7 +119,12 @@ map(zellij_modes, '<A-z>',         function() zellij('switch-mode', 'normal') en
 
 -- Zellij pane creation & actions
 map(zellij_modes, '<A-s>',         function() zellij('new-pane', '-d', 'right', '--cwd', vim.fn.getcwd()) end)
-map(zellij_modes, '<A-n>',         function() zellij('new-tab', '--cwd', vim.fn.getcwd()) end)
+map(zellij_modes, '<A-n>',         function()
+  local cwd = vim.fn.getcwd()
+  local name = cwd == vim.env.HOME and '~' or vim.fn.fnamemodify(cwd, ':t')
+  if name == '' then name = '/' end
+  zellij('new-tab', '--cwd', cwd, '--name', name)
+end)
 map(zellij_modes, '<A-f>',         function() zellij('toggle-fullscreen') end)
 
 -- Window / Pane management & quit

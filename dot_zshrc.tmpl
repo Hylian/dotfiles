@@ -393,11 +393,13 @@ _zellij_osc7_cwd() {
 }
 
 zellij_tab_name_update() {
+    [[ -n $ZELLIJ ]] && (( $+commands[zellij] )) || return 0
     local current_dir=$PWD
     if [[ $current_dir == $HOME ]]; then
         current_dir="~"
     else
         current_dir=${current_dir##*/}
+        [[ -z $current_dir ]] && current_dir="/"
     fi
     command zellij action rename-tab "$current_dir" </dev/null >/dev/null 2>&1 &!
 }
@@ -441,6 +443,7 @@ if [[ -n $ZELLIJ ]]; then
     _zellij_sync_client_env_hook
     chpwd_functions+=(zellij_tab_name_update _zellij_track_git_dirty_cache)
     precmd_functions+=(_zellij_sync_client_env_hook _zellij_osc7_cwd _zellij_refresh_git_branch)
+    zellij_tab_name_update
 fi
 
 
