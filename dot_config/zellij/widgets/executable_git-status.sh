@@ -122,6 +122,12 @@ case $head in
 	*) branch=${head%"${head#???????}"} ;;
 esac
 
+# Reftable backend sentinel: Git writes "ref: refs/heads/.invalid" into .git/HEAD
+# for backward-compatible repo detection, while actual refs live in .git/reftable/.
+if [ "$branch" = ".invalid" ]; then
+	branch=$($git symbolic-ref --short HEAD 2>/dev/null || $git rev-parse --short HEAD 2>/dev/null)
+fi
+
 [ -n "$branch" ] || emit ''
 
 cache=$gitdir/zjstatus-dirty
