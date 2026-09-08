@@ -82,7 +82,7 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### Zellij & Neovim Tab Management (Omnipresent Across Modes `{'n', 'i', 'v', 't'}`)
 * `Alt` is the primary modifier for pane, tab, and navigation management in both Zellij and Neovim. Because `zellij-autolock` locks Zellij when Neovim is focused, all Alt chords are handled inside Neovim across normal (`n`), insert (`i`), visual (`v`), and terminal (`t`) modes (including floating popups like `fzf-lua`).
-* `Alt + \``: `ToggleTab` — quick switch back and forth between the two most recent Zellij tabs (dynamically tracked via `current-tab-info`).
+* `Alt + \`` / `Alt + ~` (`<A-`>` / `<A-~>` / `<A-S-`>`): `ToggleTab` — quick switch back and forth between the two most recent Zellij tabs (dynamically tracked in Neovim via `current-tab-info`).
 * `Alt + Left` / `Alt + Right`: Zellij previous/next tab.
 * `Alt + 1` .. `Alt + 0`: Switch directly to Zellij tab 1 .. 10.
 * `Alt + Ctrl + Left` / `Alt + Ctrl + Right`: Move Zellij tab left/right.
@@ -102,7 +102,6 @@ This document represents the current, living ground truth for this cross-platfor
 * `Alt + w` (`<A-w>`): Save buffer (`:w<CR>`).
 * `<A-S-Left>` / `<A-S-Right>`: Previous / next Neovim tab (`tabp` / `tabn`).
 * `<A-S-1>` .. `<A-S-0>` / `<A-!>` .. `<A-)>`: Switch directly to Neovim tab 1 .. 10 (`1gt` .. `10gt`).
-* `<A-S-`>` / `<A-~>`: Toggle last two Neovim tabs (`tabnext #`).
 * `<C-A-S-Left>` / `<C-A-S-Right>`: Move Neovim tab left / right (`-tabmove` / `+tabmove`).
 * `<A-S-n>`: Open new Neovim tab (`:$tabnew<CR>`).
 * `<A-S-d>`: Close Neovim tab (`tabclose`).

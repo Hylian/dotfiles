@@ -51,6 +51,7 @@ keybinds clear-defaults=true {
         bind "x" { CloseTab; SwitchToMode "normal"; }
         bind "tab" { ToggleTab; }
         bind "`" { ToggleTab; }
+        bind "~" { ToggleTab; }
     }
     resize {
         bind "left" { Resize "Increase left"; }
@@ -140,6 +141,8 @@ keybinds clear-defaults=true {
         bind "Alt 8" { GoToTab 8; SwitchToMode "normal"; }
         bind "Alt 9" { GoToTab 9; SwitchToMode "normal"; }
         bind "Alt `" { ToggleTab; }
+        bind "Alt ~" { ToggleTab; }
+        bind "Alt Shift `" { ToggleTab; }
         bind "Alt =" { Resize "Increase"; }
         bind "Alt D" { CloseTab; }
         bind "Alt H" { MovePane "left"; }
