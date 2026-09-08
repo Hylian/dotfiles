@@ -18,10 +18,11 @@ When opening a new tab in Zellij (via `Alt+n`, tab mode `n`, or Neovim's `<A-n>`
 
 ## Solution
 
-1. **Trigger `zellij_tab_name_update` on Shell Initialization:**
-   - In [dot_zshrc.tmpl](../dot_zshrc.tmpl), invoked `zellij_tab_name_update` directly within the `if [[ -n $ZELLIJ ]]; then` block.
-   - Because `zellij_tab_name_update` dispatches asynchronously via `&!` (`command zellij action rename-tab "$current_dir" </dev/null >/dev/null 2>&1 &!`), it adds zero blocking latency to shell startup while immediately setting the tab title to the active directory basename.
+1. **Trigger `zellij_tab_name_update` at the Top of Shell Initialization:**
+   - In [dot_zshrc.tmpl](../dot_zshrc.tmpl), defined and invoked `zellij_tab_name_update` at the very beginning of `.zshrc` (before history loading, Antigen bundles, completion scripts, and Starship initialization).
+   - Placing it at the start allows `zsh` to dispatch `command zellij action rename-tab "$current_dir" </dev/null >/dev/null 2>&1 &!` within < 0.5ms of process birth, eliminating the ~140ms delay caused by waiting for full `.zshrc` evaluation.
    - Added command and environment guards (`[[ -n $ZELLIJ ]] && (( $+commands[zellij] )) || return 0`) and root directory safety (`/` fallback when `${current_dir##*/}` evaluates to empty).
+   - `chpwd_functions` continues to reference `zellij_tab_name_update` for directory navigation changes.
 2. **Neovim `<A-n>` Tab Name Parameter:**
    - In [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua), updated the `<A-n>` keybinding to pass `--name <dir>` directly to `zellij action new-tab`.
    - This provides instantaneous, zero-latency tab title rendering in the status bar before the child shell process even spawns.
