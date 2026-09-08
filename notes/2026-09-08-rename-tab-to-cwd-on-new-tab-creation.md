@@ -16,20 +16,21 @@ When opening a new tab in Zellij (via `Alt+n`, tab mode `n`, or Neovim's `<A-n>`
    - When a new tab is created and a new shell spawns, the shell initializes in its inherited working directory without invoking `cd`.
    - Consequently, `chpwd` hooks never executed on shell startup, leaving the tab stuck with Zellij's default numeric name until the user manually changed directories.
 
-## Solution
+## Solution & Investigation
 
-1. **Trigger `zellij_tab_name_update` at the Top of Shell Initialization:**
-   - In [dot_zshrc.tmpl](../dot_zshrc.tmpl), defined and invoked `zellij_tab_name_update` at the very beginning of `.zshrc` (before history loading, Antigen bundles, completion scripts, and Starship initialization).
-   - Placing it at the start allows `zsh` to dispatch `command zellij action rename-tab "$current_dir" </dev/null >/dev/null 2>&1 &!` within < 0.5ms of process birth, eliminating the ~140ms delay caused by waiting for full `.zshrc` evaluation.
-   - Added command and environment guards (`[[ -n $ZELLIJ ]] && (( $+commands[zellij] )) || return 0`) and root directory safety (`/` fallback when `${current_dir##*/}` evaluates to empty).
-   - `chpwd_functions` continues to reference `zellij_tab_name_update` for directory navigation changes.
-2. **Neovim `<A-n>` Tab Name Parameter:**
+1. **Neovim `<A-n>` Tab Name Parameter:**
    - In [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua), updated the `<A-n>` keybinding to pass `--name <dir>` directly to `zellij action new-tab`.
-   - This provides instantaneous, zero-latency tab title rendering in the status bar before the child shell process even spawns.
-3. **Blank Initial Tab Name in Zellij (`NewTab { name " "; }`):**
-   - When opening a new tab directly in Zellij (via `Alt+n` or tab mode `n`), Zellij's server defaults unnamed tabs to `Tab #<id>`. During the brief ~60ms window before the shell finishes loading `.zshrc`, this caused a jarring flash of `Tab #2` before transitioning to the folder name.
-   - Updated `NewTab` keybindings in [dot_config/zellij/config.kdl.tmpl](../dot_config/zellij/config.kdl.tmpl) to pass `{ name " "; }`.
-   - Zellij initializes the tab with an empty whitespace string, rendering as a clean blank active tab pill in `zjstatus` with zero text flash, which smoothly populates with the directory name once the shell prompt initializes.
+   - This provides instantaneous, zero-latency tab title rendering in the status bar on frame 0 before the child shell process even spawns.
+2. **Investigation of Shell-Level Renaming & Blank Flashes:**
+   - Attempting to rename tabs on shell initialization via `command zellij action rename-tab "$current_dir"` in [dot_zshrc.tmpl](../dot_zshrc.tmpl) revealed fundamental multiplexer overhead:
+     - `CliAction::RenameTab` (without `--tab-id`) in `zellij-utils/src/input/actions.rs` emits two actions: `TabNameInput { input: vec![0] }` followed by `TabNameInput { input: name }`.
+     - The null byte `\0` explicitly wipes the active tab name to an empty string (`active_tab.name = String::new()`) and calls `log_and_report_session_state()`, broadcasting an empty tab name `TabUpdate` event to `zjstatus` before the second action sets the real name. This caused `zjstatus` to flash blank!
+     - Spawning `zellij` CLI client processes on shell startup also competed for CPU and socket IPC during session boot, making initial prompt rendering feel sluggish.
+   - Binding `NewTab { name " "; }` in [dot_config/zellij/config.kdl.tmpl](../dot_config/zellij/config.kdl.tmpl) also forced the Zellij client to read `default.kdl` from disk and parse the full KDL layout AST instead of taking the in-memory fast path (`tiled_layout: None`).
+3. **Restoring Clean Baseline:**
+   - Reverted `dot_config/zellij/config.kdl.tmpl` to bare `NewTab;` to preserve fast in-memory layout instantiation.
+   - Removed `zellij_tab_name_update` from shell startup in `dot_zshrc.tmpl`, keeping it strictly within `chpwd_functions` for directory changes.
+   - Hardened `zellij_tab_name_update` with command existence guards and `/` root directory handling.
 
 ## Verification
 
