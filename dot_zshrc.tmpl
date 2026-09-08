@@ -110,6 +110,8 @@ _zellij_sync_client_env_hook() {
         ;;
     esac
   done < "$env_file"
+
+  command zellij pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
 }
 
 _zsh_resolve_clipboard_env() {
@@ -343,6 +345,9 @@ if (( $+commands[zellij] )); then
     fi
     if [[ -n "$session" ]]; then
       printf "%b" "$content" > "$env_dir/$session" 2>/dev/null
+      command zellij --session "$session" pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+    else
+      command zellij pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
     fi
     printf "%b" "$content" > "$env_dir/client" 2>/dev/null
 

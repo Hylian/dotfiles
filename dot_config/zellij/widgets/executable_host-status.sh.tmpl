@@ -1,0 +1,28 @@
+#!/bin/sh
+
+hostname="{{ .chezmoi.fqdnHostname }}"
+[ -n "$hostname" ] || hostname=$(hostname)
+
+env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
+session="${ZELLIJ_SESSION_NAME:-client}"
+
+env_file="$env_dir/$session"
+[ -f "$env_file" ] || env_file="$env_dir/client"
+
+is_ssh=0
+if [ -f "$env_file" ]; then
+	while IFS='=' read -r k v; do
+		if [ "$k" = "SSH" ]; then
+			is_ssh="$v"
+			break
+		fi
+	done < "$env_file"
+elif [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+	is_ssh=1
+fi
+
+if [ "$is_ssh" = "1" ]; then
+	printf '🌐 %s\n' "$hostname"
+else
+	printf '%s\n' "$hostname"
+fi
