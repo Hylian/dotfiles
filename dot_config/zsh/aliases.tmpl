@@ -211,9 +211,11 @@ fzf-git-checkout() {
 fzf-git-pick-commit() {
   git rev-parse HEAD > /dev/null 2>&1 || return
 
-  local filter
-  if [ -n $@ ] && [ -f $@ ]; then
-    filter="-- $@"
+  local filter=""
+  local -a path_args=()
+  if [[ $# -gt 0 ]]; then
+    filter="-- ${(j: :)@}"
+    path_args=(-- "$@")
   fi
 
   local gitlog=(
@@ -221,10 +223,10 @@ fzf-git-pick-commit() {
     --color=always
     --abbrev=7
     --format='%C(auto)%h %an %C(blue)%s %C(yellow)%cr'
-    $@
+    "${path_args[@]}"
   )
 
-    local fzf=(
+  local fzf=(
     fzf
     -m
     --ansi --no-sort --reverse --tiebreak=index
@@ -247,20 +249,38 @@ fzf-git-pick-commit() {
 
 fzf-git-difftool() {
   local commit
-  commit=$(fzf-git-pick-commit)
-  if [[ ! -z "$commit" ]] && git difftool $commit~1 $commit
+  commit=$(fzf-git-pick-commit "$@")
+  if [[ -n "$commit" ]]; then
+    if [[ $# -gt 0 ]]; then
+      git difftool $commit~1 $commit -- "$@"
+    else
+      git difftool $commit~1 $commit
+    fi
+  fi
 }
 
 fzf-git-difftool-to() {
   local commit
-  commit=$(fzf-git-pick-commit)
-  if [[ ! -z "$commit" ]] && git difftool $commit
+  commit=$(fzf-git-pick-commit "$@")
+  if [[ -n "$commit" ]]; then
+    if [[ $# -gt 0 ]]; then
+      git difftool $commit -- "$@"
+    else
+      git difftool $commit
+    fi
+  fi
 }
 
 fzf-git-show() {
   local commit
-  commit=$(fzf-git-pick-commit)
-  if [[ ! -z "$commit" ]] && git show $commit --pretty
+  commit=$(fzf-git-pick-commit "$@")
+  if [[ -n "$commit" ]]; then
+    if [[ $# -gt 0 ]]; then
+      git show $=commit --pretty -- "$@"
+    else
+      git show $=commit --pretty
+    fi
+  fi
 }
 
 fzf-git-unstage() {
@@ -278,6 +298,7 @@ alias gcheckout='fzf-git-checkout'
 alias gdiff='fzf-git-difftool'
 alias gdiffto='fzf-git-difftool-to'
 alias gshow='fzf-git-show'
+alias gshow.='fzf-git-show .'
 alias gunstage='fzf-git-unstage'
 alias gadd='fzf-git-add'
 
