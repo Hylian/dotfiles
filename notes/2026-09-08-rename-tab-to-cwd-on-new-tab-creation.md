@@ -25,9 +25,14 @@ When opening a new tab in Zellij (via `Alt+n`, tab mode `n`, or Neovim's `<A-n>`
 2. **Neovim `<A-n>` Tab Name Parameter:**
    - In [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua), updated the `<A-n>` keybinding to pass `--name <dir>` directly to `zellij action new-tab`.
    - This provides instantaneous, zero-latency tab title rendering in the status bar before the child shell process even spawns.
+3. **Blank Initial Tab Name in Zellij (`NewTab { name " "; }`):**
+   - When opening a new tab directly in Zellij (via `Alt+n` or tab mode `n`), Zellij's server defaults unnamed tabs to `Tab #<id>`. During the brief ~60ms window before the shell finishes loading `.zshrc`, this caused a jarring flash of `Tab #2` before transitioning to the folder name.
+   - Updated `NewTab` keybindings in [dot_config/zellij/config.kdl.tmpl](../dot_config/zellij/config.kdl.tmpl) to pass `{ name " "; }`.
+   - Zellij initializes the tab with an empty whitespace string, rendering as a clean blank active tab pill in `zjstatus` with zero text flash, which smoothly populates with the directory name once the shell prompt initializes.
 
 ## Verification
 
 1. **Neovim Validation:** Ran headless Neovim test (`nvim --headless -c 'quit'`) successfully.
 2. **Zsh Script & Syntax Validation:** Verified parameter expansion for both standard directory paths and root `/`.
-3. **Applied & Verified:** Executed `chezmoi apply` and confirmed clean `chezmoi diff`.
+3. **Zellij Configuration Check:** Validated syntax with `zellij setup --check` (`Config File: Well defined`).
+4. **Applied & Verified:** Executed `chezmoi apply` and confirmed clean `chezmoi diff`.

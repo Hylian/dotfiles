@@ -45,7 +45,7 @@ keybinds clear-defaults=true {
         bind "j" { GoToNextTab; }
         bind "k" { GoToPreviousTab; }
         bind "l" { GoToNextTab; }
-        bind "n" { NewTab; SwitchToMode "normal"; }
+        bind "n" { NewTab { name " "; }; SwitchToMode "normal"; }
         bind "s" { ToggleActiveSyncTab; SwitchToMode "normal"; }
         bind "Alt t" { SwitchToMode "normal"; }
         bind "x" { CloseTab; SwitchToMode "normal"; }
@@ -171,7 +171,7 @@ keybinds clear-defaults=true {
         bind "Alt j" { MoveFocus "down"; }
         bind "Alt k" { MoveFocus "up"; }
         bind "Alt l" { MoveFocus "right"; }
-        bind "Alt n" { NewTab; }
+        bind "Alt n" { NewTab { name " "; }; }
         bind "Ctrl q" { Quit; }
         bind "Ctrl Alt s" {
             LaunchOrFocusPlugin "session-manager" {
