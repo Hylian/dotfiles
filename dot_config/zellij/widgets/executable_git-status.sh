@@ -130,6 +130,12 @@ fi
 
 [ -n "$branch" ] || emit ''
 
+# Truncate branch names longer than 12 characters to prevent zjstatus from
+# dropping the right-aligned status widgets on narrow terminal widths.
+if [ "${#branch}" -gt 12 ]; then
+	branch="${branch%"${branch#???????????}"}…"
+fi
+
 cache=$gitdir/zjstatus-dirty
 dirty_exp=0
 dirty_marker=''
