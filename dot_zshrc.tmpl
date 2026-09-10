@@ -33,40 +33,74 @@ fi
 # Read history from disk into memory immediately upon startup
 [[ -f "$HISTFILE" ]] && fc -R "$HISTFILE" 2>/dev/null
 
-# Setup Antigen
-ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
-ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
-ANTIGEN_PATH_MAC=/opt/homebrew/share/antigen/antigen.zsh
-has_antigen=false
-
-if [[ "$OSTYPE" == "darwin"* && -f "$ANTIGEN_PATH_MAC" ]]; then
-  source "$ANTIGEN_PATH_MAC"
-  has_antigen=true
-elif [[ -f "$ANTIGEN_PATH_ARCH" ]]; then
-  source "$ANTIGEN_PATH_ARCH"
-  has_antigen=true
-elif [[ -f "$ANTIGEN_PATH_DEBIAN" ]]; then
-  source "$ANTIGEN_PATH_DEBIAN"
-  has_antigen=true
-fi
-
-if [[ "$has_antigen" == true ]]; then
-  antigen use oh-my-zsh
-
-  antigen bundle direnv
-  antigen bundle fd
-  antigen bundle pip
-  antigen bundle ripgrep
-  antigen bundle jeffreytse/zsh-vi-mode
-  antigen bundle zsh-users/zsh-autosuggestions
-  antigen bundle fzf
-
-  antigen apply
-fi
-
+export ANTIGEN_COMPINIT_OPTS="-C"
+export DISABLE_LS_COLORS="true"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
+
+_ANTIGEN_BUNDLES="$HOME/.antigen/bundles"
+if [[ -d "$_ANTIGEN_BUNDLES/robbyrussell/oh-my-zsh" && \
+      -d "$_ANTIGEN_BUNDLES/jeffreytse/zsh-vi-mode" && \
+      -d "$_ANTIGEN_BUNDLES/zsh-users/zsh-autosuggestions" ]]; then
+  export ZSH="$_ANTIGEN_BUNDLES/robbyrussell/oh-my-zsh"
+  fpath=(
+    "$ZSH/lib"
+    "$ZSH/plugins/direnv"
+    "$ZSH/plugins/fd"
+    "$ZSH/plugins/pip"
+    "$ZSH/plugins/ripgrep"
+    "$_ANTIGEN_BUNDLES/jeffreytse/zsh-vi-mode"
+    "$_ANTIGEN_BUNDLES/zsh-users/zsh-autosuggestions"
+    "$ZSH/plugins/fzf"
+    $fpath
+  )
+  autoload -Uz compinit
+  compinit -C -d "$ZSH_CACHE_DIR/zcompdump"
+  if [[ ! -f "$ZSH_CACHE_DIR/zcompdump.zwc" || "$ZSH_CACHE_DIR/zcompdump" -nt "$ZSH_CACHE_DIR/zcompdump.zwc" ]]; then
+    zcompile "$ZSH_CACHE_DIR/zcompdump" 2>/dev/null &!
+  fi
+  for _omz_lib in completion directories functions git history key-bindings misc termsupport; do
+    [[ -f "$ZSH/lib/$_omz_lib.zsh" ]] && source "$ZSH/lib/$_omz_lib.zsh"
+  done
+  unset _omz_lib
+  [[ -f "$ZSH/plugins/direnv/direnv.plugin.zsh" ]] && source "$ZSH/plugins/direnv/direnv.plugin.zsh"
+  [[ -f "$_ANTIGEN_BUNDLES/jeffreytse/zsh-vi-mode/zsh-vi-mode.plugin.zsh" ]] && source "$_ANTIGEN_BUNDLES/jeffreytse/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+  [[ -f "$_ANTIGEN_BUNDLES/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$_ANTIGEN_BUNDLES/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [[ -f "$ZSH/plugins/fzf/fzf.plugin.zsh" ]] && source "$ZSH/plugins/fzf/fzf.plugin.zsh"
+else
+  # Setup Antigen (fallback for initial bundle installation)
+  ANTIGEN_PATH_DEBIAN=/usr/share/zsh-antigen/antigen.zsh
+  ANTIGEN_PATH_ARCH=/usr/share/zsh/share/antigen.zsh
+  ANTIGEN_PATH_MAC=/opt/homebrew/share/antigen/antigen.zsh
+  has_antigen=false
+
+  if [[ "$OSTYPE" == "darwin"* && -f "$ANTIGEN_PATH_MAC" ]]; then
+    source "$ANTIGEN_PATH_MAC"
+    has_antigen=true
+  elif [[ -f "$ANTIGEN_PATH_ARCH" ]]; then
+    source "$ANTIGEN_PATH_ARCH"
+    has_antigen=true
+  elif [[ -f "$ANTIGEN_PATH_DEBIAN" ]]; then
+    source "$ANTIGEN_PATH_DEBIAN"
+    has_antigen=true
+  fi
+
+  if [[ "$has_antigen" == true ]]; then
+    antigen use oh-my-zsh
+
+    antigen bundle direnv
+    antigen bundle fd
+    antigen bundle pip
+    antigen bundle ripgrep
+    antigen bundle jeffreytse/zsh-vi-mode
+    antigen bundle zsh-users/zsh-autosuggestions
+    antigen bundle fzf
+
+    antigen apply
+  fi
+fi
+unset _ANTIGEN_BUNDLES
 
 typeset -g _zellij_client_env_mtime=0
 _ZSH_CLIP_IS_SSH=0
@@ -82,6 +116,7 @@ _zellij_sync_client_env_hook() {
   fi
   [[ -f "$env_file" ]] || return 0
 
+  local prev_mtime="$_zellij_client_env_mtime"
   local -A st
   if zstat -H st -F "%s.%N" "$env_file" 2>/dev/null; then
     if [[ "$st[mtime]" == "$_zellij_client_env_mtime" ]]; then
@@ -119,7 +154,9 @@ _zellij_sync_client_env_hook() {
     esac
   done < "$env_file"
 
-  command zellij pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+  if [[ "$prev_mtime" != 0 ]]; then
+    command zellij pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+  fi
 }
 
 _zsh_resolve_clipboard_env() {
@@ -404,7 +441,7 @@ fi
 
 if (( $+commands[starship] )); then
   if [[ ! -f "$ZSH_CACHE_DIR/starship.zsh" || "$commands[starship]" -nt "$ZSH_CACHE_DIR/starship.zsh" ]]; then
-    starship init zsh >! "$ZSH_CACHE_DIR/starship.zsh" 2>/dev/null
+    starship init zsh | sed 's/^PROMPT2="/PROMPT2='\''/; s/continuation)"$/continuation)'\''/' >! "$ZSH_CACHE_DIR/starship.zsh" 2>/dev/null
     zcompile "$ZSH_CACHE_DIR/starship.zsh" 2>/dev/null
   fi
   source "$ZSH_CACHE_DIR/starship.zsh"
@@ -515,3 +552,10 @@ if [[ -d "$HOME/.nvm" ]]; then
     eval "$cmd() { lazy_load_nvm; $cmd \"\$@\"; }"
   done
 fi
+
+for _zf in "$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.config/zsh/widgets" "$HOME/.config/zsh/aliases"; do
+  if [[ -f "$_zf" && ( ! -f "${_zf}.zwc" || "$_zf" -nt "${_zf}.zwc" ) ]]; then
+    zcompile "$_zf" 2>/dev/null &!
+  fi
+done
+unset _zf
