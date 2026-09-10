@@ -1,8 +1,5 @@
 #!/bin/sh
 
-hostname="{{ .chezmoi.fqdnHostname }}"
-[ -n "$hostname" ] || hostname=$(hostname)
-
 env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
 session="${ZELLIJ_SESSION_NAME:-client}"
 
@@ -24,7 +21,5 @@ elif [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
 fi
 
 if [ "$is_ssh" = "1" ]; then
-	printf '%s 🌐\n' "$hostname"
-else
-	printf '%s\n' "$hostname"
+	printf ' 🌐\n'
 fi

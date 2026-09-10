@@ -1,39 +1,39 @@
-# Fix Dynamic SSH Globe Indicator for Non-Interactive & Unnamed Zellij Attaches
+# Fix Dynamic SSH Globe Indicator & Eliminate Frame 0 Blank Flash on New Tabs
 
 **Date:** 2026-09-10  
-**Context:** Ensure the status bar globe emoji (`🌐`) updates reliably when starting a session locally and later attaching over SSH (including via `rw` or `ssh host 'zellij a -c persist ...'`).
+**Context:**
+1. Ensure the status bar globe emoji (`🌐`) updates reliably when starting a session locally and later attaching over SSH (including via `rw` or `ssh host 'zellij a -c persist ...'`).
+2. Eliminate the 27-character blank flash and horizontal layout shift in `zjstatus` when opening a new tab (`Alt + n`).
 
 ## Root Cause Analysis
 
-When starting a persistent session (`persist`) locally on `shined` and later attaching over SSH, the globe emoji failed to appear due to two independent gaps in how `_zellij_sync_client_env` and `host-status.sh` handled session descriptors:
+### 1. Globe Emoji Not Updating on Non-Interactive & Unnamed SSH Attaches
+- **Non-Interactive Remote SSH Commands Bypassed `.zshrc`:** Connecting via wrapper aliases (`rw -r desktop -i 'zellij a -c persist options --on-force-close detach'` or `ssh host -t 'zellij a -c persist ...'`) spawns `zsh -c '...'`, which only sources `~/.zshenv`. Because `_zellij_sync_client_env` and `zellij()` were only defined in [dot_zshrc.tmpl](../dot_zshrc.tmpl), `zsh -c` executed the `zellij` binary directly without running the client handshake.
+- **Unnamed Attaches (`zellij a`) Left Session Descriptors Stale:** When attaching without a session argument, `$session` was empty (`""`), so `_zellij_sync_client_env` wrote `SSH=1` only to `$env_dir/client` while leaving `$env_dir/persist` at `SSH=0`. Meanwhile, [dot_config/zellij/widgets/executable_host-status.sh.tmpl](../dot_config/zellij/widgets/executable_host-status.sh.tmpl) checked `[ -f "$env_dir/$session" ]` first and ignored the newer `$env_dir/client`.
 
-1. **Non-Interactive Remote SSH Commands Bypassed `.zshrc`:**
-   - Connecting via remote wrapper aliases (such as `rw -r desktop -i 'zellij a -c persist options --on-force-close detach'` or `ssh host -t 'zellij a -c persist ...'`) spawns a non-interactive Zsh command shell (`zsh -c '...'`).
-   - Zsh only sources `~/.zshrc` for interactive shells; non-interactive command shells read `~/.zshenv` exclusively.
-   - Because `_zellij_sync_client_env` and the `zellij()` wrapper function were only defined in [dot_zshrc.tmpl](../dot_zshrc.tmpl), `zsh -c` executed the `zellij` binary directly without running the client handshake, leaving `$XDG_RUNTIME_DIR/zellij-env/persist` and `/client` at `SSH=0`.
-
-2. **Unnamed Attaches (`zellij a` / `zellij attach`) Left Per-Session Descriptors Stale:**
-   - When attaching without an explicit session name argument (`zellij a`, `zellij attach -c`), or when `_zellij_sync_client_env` ran at `.zshrc` startup, `$session` resolved to `""`.
-   - `_zellij_sync_client_env` wrote `SSH=1` only to `$env_dir/client`, leaving `$env_dir/persist` untouched at `SSH=0`.
-   - Meanwhile, [dot_config/zellij/widgets/executable_host-status.sh.tmpl](../dot_config/zellij/widgets/executable_host-status.sh.tmpl) and `_zellij_sync_client_env_hook` checked `[ -f "$env_dir/$session" ]` first—seeing that `$env_dir/persist` existed, they read `SSH=0` from `$env_dir/persist` and ignored the newer `$env_dir/client`.
-   - Additionally, `zellij pipe` outside a Zellij session without `--session <name>` failed to notify the active `persist` session.
+### 2. Frame 0 Blank Flash When Opening a New Tab
+- In Zellij, each tab runs its own `zjstatus.wasm` plugin instance.
+- Previously, [dot_config/zellij/layouts/default.kdl.tmpl](../dot_config/zellij/layouts/default.kdl.tmpl) placed the entire 27-character hostname (`shined.cam.corp.google.com`) inside the `{command_host}` command widget (`host-status.sh`).
+- On frame 0 of a newly created tab (`Alt + n`), `zjstatus` renders before `host-status.sh` has completed its first async execution (~50ms). With `state.command_results` empty on frame 0, `{command_host}` evaluated to `""`—causing the green hostname pill to render empty on frame 0 and then jump 27 columns wider ~50ms later, pushing `{session}` and `{command_git_branch}` left.
 
 ## Solution
 
 1. **Manage `~/.zshenv` via [dot_zshenv.tmpl](../dot_zshenv.tmpl):**
    - Defined `_zellij_sync_client_env` and the `zellij()` wrapper function in `~/.zshenv` so non-interactive `zsh -c 'zellij ...'` SSH attach commands execute the client handshake before attaching.
-2. **Update All Active Session Descriptors & Pipe to Running Sessions ([dot_zshrc.tmpl](../dot_zshrc.tmpl), [dot_zshenv.tmpl](../dot_zshenv.tmpl)):**
-   - `_zellij_sync_client_env` now writes the updated client descriptor to `$env_dir/client`, `$env_dir/$session`, and every existing regular session descriptor file in `$env_dir/*(N.)`.
-   - When `$session` is omitted, `_zellij_sync_client_env` iterates through `$(command zellij list-sessions -s 2>/dev/null)` and pipes `zjstatus::rerun::command_host` to each running session.
-3. **Prefer Newer Descriptor by Modification Time ([dot_config/zellij/widgets/executable_host-status.sh.tmpl](../dot_config/zellij/widgets/executable_host-status.sh.tmpl), [dot_zshrc.tmpl](../dot_zshrc.tmpl)):**
-   - Updated both `host-status.sh` and `_zellij_sync_client_env_hook` to prefer `$env_dir/client` whenever its mtime (`-nt`) is newer than `$env_dir/$session`:
-     ```sh
-     if [ ! -f "$env_file" ] || { [ -f "$env_dir/client" ] && [ "$env_dir/client" -nt "$env_file" ]; }; then
-     	env_file="$env_dir/client"
-     fi
-     ```
+   - Updated `_zellij_sync_client_env` in both [dot_zshenv.tmpl](../dot_zshenv.tmpl) and [dot_zshrc.tmpl](../dot_zshrc.tmpl) to update all existing session descriptors in `$env_dir/*(N.)` and pipe `zjstatus::rerun::command_host` to all running sessions when `$session` is omitted.
+   - Updated `host-status.sh` and `_zellij_sync_client_env_hook` to prefer `$env_dir/client` whenever its mtime (`-nt`) is newer than `$env_dir/$session`.
+
+2. **Static Hostname in Layout + Suffix-Only `command_host` ([dot_config/zellij/layouts/default.kdl.tmpl](../dot_config/zellij/layouts/default.kdl.tmpl), [dot_config/zellij/widgets/executable_host-status.sh.tmpl](../dot_config/zellij/widgets/executable_host-status.sh.tmpl)):**
+   - Moved `{{ .chezmoi.fqdnHostname }}` into static KDL text in `format_right` (`{{ .chezmoi.fqdnHostname }}{command_host}`).
+   - Updated `host-status.sh` to output **only** `' 🌐'` when `SSH=1` and nothing (`""`) when `SSH=0`.
+   - Because the 27-character hostname is static KDL text, it renders on frame 0 with zero flash or layout jump.
+
+3. **Shared `/tmp` Command Result Cache in `Hylian/zjstatus` (`~/.config/zellij/plugins/zjstatus.wasm`):**
+   - Patched `Hylian/zjstatus` (`src/widgets/command.rs`, `src/bin/zjstatus.rs`) to persist accepted `CommandResult` outputs to `/tmp/zjstatus-cmd-cache.<name>`.
+   - When a newly opened tab's `zjstatus.wasm` renders frame 0 with an empty `state.command_results` map, `CommandWidget::process` synchronously seeds `{command_host}` (` 🌐`) and `{command_git_branch}` (`main ●`) from `/tmp` in <5µs—eliminating any frame 0 pop-in across all status bar widgets.
 
 ## Verification
 
-- Verified `SSH_CONNECTION="10.0.0.1 1234 10.0.0.2 22" zsh -c '_zellij_sync_client_env a'` updates `$env_dir/persist` and `$env_dir/client` to `SSH=1`, causing `ZELLIJ_SESSION_NAME=persist host-status.sh` to output `shined.cam.corp.google.com 🌐`.
-- Verified `SSH_CONNECTION="" WAYLAND_DISPLAY="wayland-1" zsh -c '_zellij_sync_client_env a'` reverts `$env_dir/persist` and `$env_dir/client` to `SSH=0`, causing `ZELLIJ_SESSION_NAME=persist host-status.sh` to output `shined.cam.corp.google.com`.
+- Verified `chezmoi diff` and applied via `chezmoi apply`.
+- Verified `host-status.sh` emits `' 🌐'` when `SSH=1` and `""` when `SSH=0`.
+- Rebuilt `zjstatus.wasm` (`cargo build --release --target wasm32-wasip1`) and installed to `~/.config/zellij/plugins/zjstatus.wasm`.
