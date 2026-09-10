@@ -77,7 +77,9 @@ _zellij_sync_client_env_hook() {
   [[ -n "$ZELLIJ" ]] || return 0
   local env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
   local env_file="$env_dir/${ZELLIJ_SESSION_NAME:-client}"
-  [[ -f "$env_file" ]] || env_file="$env_dir/client"
+  if [[ ! -f "$env_file" ]] || [[ -f "$env_dir/client" && "$env_dir/client" -nt "$env_file" ]]; then
+    env_file="$env_dir/client"
+  fi
   [[ -f "$env_file" ]] || return 0
 
   local -A st
@@ -349,13 +351,25 @@ if (( $+commands[zellij] )); then
     else
       content="SSH=0\nSSH_AUTH_SOCK=${SSH_AUTH_SOCK:-}\nSSH_CLIENT=\nSSH_CONNECTION=\nSSH_TTY=\nWAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}\nDISPLAY=${DISPLAY:-}\n"
     fi
+    printf "%b" "$content" > "$env_dir/client" 2>/dev/null
+
     if [[ -n "$session" ]]; then
       printf "%b" "$content" > "$env_dir/$session" 2>/dev/null
+    fi
+    local f
+    for f in "$env_dir"/*(N.); do
+      [[ "${f:t}" == "client" || "${f:t}" == "ssh-auth-sock" ]] && continue
+      printf "%b" "$content" > "$f" 2>/dev/null
+    done
+
+    if [[ -n "$session" ]]; then
       command zellij --session "$session" pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
     else
-      command zellij pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+      local s
+      for s in $(command zellij list-sessions -s 2>/dev/null); do
+        command zellij --session "$s" pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+      done
     fi
-    printf "%b" "$content" > "$env_dir/client" 2>/dev/null
 
     if [[ -n "$SSH_AUTH_SOCK" ]]; then
       ln -snf "$SSH_AUTH_SOCK" "$env_dir/ssh-auth-sock" 2>/dev/null

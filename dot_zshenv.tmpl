@@ -1,0 +1,71 @@
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+# Ensure non-interactive SSH attach invocations (e.g. `ssh host 'zellij a -c persist ...'`)
+# sync client environment descriptors and SSH agent sockets before attaching.
+if (( $+commands[zellij] )); then
+  _zellij_sync_client_env() {
+    case "$1" in
+      action|edit|run|setup|plugin|list-sessions|delete-session|delete-all-sessions|kill-all-sessions|convert-*|options|pipe)
+        return 0
+        ;;
+    esac
+
+    local session=""
+    local prev=""
+    for arg in "$@"; do
+      if [[ "$prev" == "-s" || "$prev" == "--session" || "$prev" == "attach" || "$prev" == "a" || "$prev" == "-c" || "$prev" == "--create" ]]; then
+        if [[ "$arg" != -* ]]; then
+          session="$arg"
+          break
+        fi
+      fi
+      if [[ "$arg" == "-s" || "$arg" == "--session" || "$arg" == "attach" || "$arg" == "a" || "$arg" == "-c" || "$arg" == "--create" ]]; then
+        prev="$arg"
+      elif [[ "$arg" != -* && -z "$prev" ]]; then
+        session="$arg"
+        break
+      fi
+    done
+    session="${session:-${ZELLIJ_SESSION_NAME:-}}"
+
+    local env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
+    mkdir -p "$env_dir" 2>/dev/null
+    local content
+    if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+      content="SSH=1\nSSH_AUTH_SOCK=${SSH_AUTH_SOCK:-}\nSSH_CLIENT=${SSH_CLIENT:-}\nSSH_CONNECTION=${SSH_CONNECTION:-}\nSSH_TTY=${SSH_TTY:-}\nWAYLAND_DISPLAY=\nDISPLAY=\n"
+    else
+      content="SSH=0\nSSH_AUTH_SOCK=${SSH_AUTH_SOCK:-}\nSSH_CLIENT=\nSSH_CONNECTION=\nSSH_TTY=\nWAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}\nDISPLAY=${DISPLAY:-}\n"
+    fi
+
+    printf "%b" "$content" > "$env_dir/client" 2>/dev/null
+
+    if [[ -n "$session" ]]; then
+      printf "%b" "$content" > "$env_dir/$session" 2>/dev/null
+    fi
+    local f
+    for f in "$env_dir"/*(N.); do
+      [[ "${f:t}" == "client" || "${f:t}" == "ssh-auth-sock" ]] && continue
+      printf "%b" "$content" > "$f" 2>/dev/null
+    done
+
+    if [[ -n "$session" ]]; then
+      command zellij --session "$session" pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+    else
+      local s
+      for s in $(command zellij list-sessions -s 2>/dev/null); do
+        command zellij --session "$s" pipe "zjstatus::rerun::command_host" </dev/null >/dev/null 2>&1 &!
+      done
+    fi
+
+    if [[ -n "$SSH_AUTH_SOCK" ]]; then
+      ln -snf "$SSH_AUTH_SOCK" "$env_dir/ssh-auth-sock" 2>/dev/null
+    elif [[ -e "$env_dir/ssh-auth-sock" ]]; then
+      rm -f "$env_dir/ssh-auth-sock" 2>/dev/null
+    fi
+  }
+
+  zellij() {
+    _zellij_sync_client_env "$@"
+    command zellij "$@"
+  }
+fi

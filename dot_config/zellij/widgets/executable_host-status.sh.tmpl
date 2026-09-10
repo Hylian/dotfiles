@@ -7,7 +7,9 @@ env_dir="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/zellij-env"
 session="${ZELLIJ_SESSION_NAME:-client}"
 
 env_file="$env_dir/$session"
-[ -f "$env_file" ] || env_file="$env_dir/client"
+if [ ! -f "$env_file" ] || { [ -f "$env_dir/client" ] && [ "$env_dir/client" -nt "$env_file" ]; }; then
+	env_file="$env_dir/client"
+fi
 
 is_ssh=0
 if [ -f "$env_file" ]; then
