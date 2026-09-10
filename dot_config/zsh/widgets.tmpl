@@ -124,6 +124,15 @@ zle     -N            zoxide-fzf
 bindkey -M emacs '^j' accept-line
 bindkey -M vicmd '^j' accept-line
 bindkey -M viins '^j' accept-line
+
+# Disable Ctrl+Z in ZLE (prevent inserting literal ^Z when stty susp is undef)
+_zsh_noop() {}
+zle -N _zsh_noop
+bindkey -M emacs '^z' _zsh_noop
+bindkey -M viins '^z' _zsh_noop
+bindkey -M vicmd '^z' _zsh_noop
+bindkey -M visual '^z' _zsh_noop
+
 bindkey -M emacs '^o' zoxide-fzf
 bindkey -M vicmd '^o' zoxide-fzf
 bindkey -M viins '^o' zoxide-fzf

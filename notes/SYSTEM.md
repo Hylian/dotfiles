@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-09-08*
+*Last Updated: 2026-09-10*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -59,6 +59,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **History Configuration:** `HISTFILE=~/.zsh_history`, `HISTSIZE=50000`, `SAVEHIST=50000` with `EXTENDED_HISTORY`, `SHARE_HISTORY`, duplicate pruning, and startup `fc -R` to instantly load existing history into session memory for fzf (`^R`).
 * **Vi Mode & Readkey Engine:** `zsh-vi-mode` (`zvm`) configured with `ZVM_READKEY_ENGINE=zle`, `ZVM_KEYTIMEOUT=0.01`, and `KEYTIMEOUT=1` (10ms) to delegate escape sequence handling to native ZLE, completely eliminating normal mode escape lag and key buffering issues when passing `Alt+Left` / `Alt+Right` tab switches to Zellij.
 * **Vi Mode Clipboard & Visual Selection Highlight:** `zsh-vi-mode` (`zvm`) configured with `zsh_clipboard_copy` to broadcast ANSI OSC 52 sequences directly to `/dev/tty` upon yanks (`y`, `yy`, `yw`, visual mode `y`, deletions) AND persist to `~/.cache/clipboard`. `zvm` rebinds `vicmd` / `visual` mode `p` and `P` to `zvm_paste_clipboard_after` and `zvm_paste_clipboard_before`, querying local display servers (`wl-paste`, `xclip`, `pbpaste` when `WAYLAND_DISPLAY`/`DISPLAY` are set) and falling back to `~/.cache/clipboard` so normal-mode `p` seamlessly pastes Neovim and workstation yanks. `Y` in `visual` mode (`zvm_visual_yank_whole_line`) automatically expands partial/multi-line visual selections to the full line boundaries with trailing newline, while `Y` in `vicmd` (`zvm_yank_whole_line`) yanks the full current line. Visual selection highlights are themed with Everforest Light (`#e5e8c5` soft sage background, `#5c6a72` foreground, `bold`) to eliminate harsh red highlight defaults.
+* **Disable `Ctrl+Z` Process Suspension:** Terminal line discipline `SIGTSTP` (`susp`) is unbound via `stty susp undef` and frozen with `ttyctl -f` in [dot_zshrc.tmpl](../dot_zshrc.tmpl) so foreground jobs cannot be accidentally suspended to the background. In Zsh ZLE ([dot_config/zsh/widgets.tmpl](../dot_config/zsh/widgets.tmpl)), `^z` is bound across `emacs`, `viins`, `vicmd`, and `visual` keymaps to a silent no-op widget (`_zsh_noop`) to prevent raw `^Z` self-insertion at the prompt. `FZF_DEFAULT_OPTS` includes `--bind=ctrl-z:ignore`, and Neovim ([dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua)) maps `<C-z>` to `<Nop>` across all modes (`{'n', 'i', 'v', 'x', 's', 'o', 't', 'c'}`) to disable Vim's built-in `:suspend`. See [2026-09-10-disable-ctrl-z-suspend.md](2026-09-10-disable-ctrl-z-suspend.md).
 
 ### E. Editor (Neovim 0.11.x) & Clipboard Stack
 * **Mouse & Scroll Step:** `vim.opt.mouse = 'a'` and `vim.opt.mousescroll = 'ver:1,hor:1'` for smooth 1-line trackpad scrolling.

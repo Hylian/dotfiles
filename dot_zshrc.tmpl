@@ -24,6 +24,12 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 setopt HIST_VERIFY               # Do not execute immediately upon history expansion
 unsetopt BEEP                    # Never ring the bell on ZLE syntax errors or escape sequences
 
+# Disable Ctrl+Z (SIGTSTP) process suspension in terminal line discipline
+if [[ -t 0 ]]; then
+  stty susp undef 2>/dev/null
+  ttyctl -f 2>/dev/null
+fi
+
 # Read history from disk into memory immediately upon startup
 [[ -f "$HISTFILE" ]] && fc -R "$HISTFILE" 2>/dev/null
 
@@ -464,8 +470,9 @@ export FZF_CTRL_R_OPTS="
   --bind 'ctrl-t:track+clear-query'
   --bind 'ctrl-y:execute-silent(echo -n {2..} | wl-copy)+abort'"
 {{ if ne .theme "dark" -}}
-export FZF_DEFAULT_OPTS='--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987'
+export FZF_DEFAULT_OPTS='--bind=ctrl-z:ignore --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987'
 {{- else -}}
+export FZF_DEFAULT_OPTS='--bind=ctrl-z:ignore'
 {{- end }}
 
 if (( $+commands[fzf] )); then

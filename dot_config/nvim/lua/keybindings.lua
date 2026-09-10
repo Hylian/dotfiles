@@ -9,6 +9,9 @@ end
 vim.g.mapleader = ';'
 vim.g.maplocalleader = ';;'
 
+-- Disable Ctrl+Z process suspension in all modes
+map({ 'n', 'i', 'v', 'x', 's', 'o', 't', 'c' }, '<C-z>', '<Nop>')
+
 -- Zellij-related Bindings
 local function zellij(...)
   vim.system({ 'zellij', 'action', ... })
