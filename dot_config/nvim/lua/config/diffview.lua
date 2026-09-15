@@ -71,6 +71,8 @@ diffview.setup({
       { "n", "q", actions.close, { desc = "Close diffview" } },
       { "n", "<leader>q", actions.close, { desc = "Close diffview" } },
       { "n", "<cr>", actions.select_entry, { desc = "Open diff for file" } },
+      { "n", "<S-CR>", actions.goto_file_split, { desc = "Open file in a new split (not diff view)" } },
+      { "n", "<S-Enter>", actions.goto_file_split, { desc = "Open file in a new split (not diff view)" } },
       { "n", "-", actions.toggle_stage_entry, { desc = "Stage / unstage entry" } },
       { "n", "s", actions.toggle_stage_entry, { desc = "Stage / unstage entry" } },
       { "n", "S", actions.stage_all, { desc = "Stage all entries" } },
@@ -86,6 +88,9 @@ diffview.setup({
       { "n", "<Bar>", actions.toggle_files, { desc = "Toggle files panel sidebar" } },
       { "n", "q", actions.close, { desc = "Close diffview" } },
       { "n", "<leader>q", actions.close, { desc = "Close diffview" } },
+      { "n", "<cr>", actions.select_entry, { desc = "Open diff for file" } },
+      { "n", "<S-CR>", actions.goto_file_split, { desc = "Open file in a new split (not diff view)" } },
+      { "n", "<S-Enter>", actions.goto_file_split, { desc = "Open file in a new split (not diff view)" } },
     },
   },
 })

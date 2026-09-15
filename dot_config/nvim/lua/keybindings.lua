@@ -703,6 +703,9 @@ map('n', '<Bar>', function()
     vim.cmd("DiffviewOpen")
   end
 end, { desc = "Toggle Diffview files sidebar / open Diffview" })
+map('n', '<leader>gd', '<cmd>DiffviewOpen --cached<CR>', { desc = "Diffview open cached (index vs HEAD)" })
+map('n', '<leader>gh', '<cmd>DiffviewFileHistory<CR>', { desc = "Diffview file history" })
+map('v', '<leader>gh', ":'<,'>DiffviewFileHistory<CR>", { desc = "Diffview line history" })
 
 map('n', '.',   "ms*")
 map('n', ',',   "ms#")
