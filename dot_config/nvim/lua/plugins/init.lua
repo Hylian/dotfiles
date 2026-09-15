@@ -64,7 +64,7 @@ return {
   { 'Shougo/echodoc.vim', event = "VeryLazy" },
   {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'master',
+    branch = 'main',
     lazy = false,
     build = ':TSUpdate',
   },

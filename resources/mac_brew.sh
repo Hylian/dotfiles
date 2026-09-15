@@ -5,4 +5,4 @@
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask font-hack-nerd-font
 brew install --cask raycast
-brew install neovim chezmoi sketchybar antigen fzf zoxide ripgrep starship direnv cmake ccache fzf bat ripgrep eza borders fd flock util-linux
+brew install neovim chezmoi sketchybar antigen fzf zoxide ripgrep starship direnv cmake ccache fzf bat ripgrep eza borders fd flock util-linux tree-sitter-cli
