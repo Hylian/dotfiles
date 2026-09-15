@@ -134,6 +134,10 @@ This document represents the current, living ground truth for this cross-platfor
 * `<C-o>` / `<C-i>` (or `<Tab>`): Jump backward / forward through the Neovim jumplist (`:jumps`). Reclaimed `<Tab>` by removing `:ToggleDiag` binding.
 * `<leader>o` / `<leader>i` (`;o` / `;i`): Jump backward / forward through the Neovim jumplist on a per-file basis, skipping intra-file line jumps and landing directly on the most recent cursor position in the previous/next file.
 * `<leader>g` (`;g`) / `:GitChanged [both|worktree|head]`: Interactive `fzf-lua` picker for git changed files with status badges (`[HEAD]`, `[STAGED]`, `[MOD]`, `[SM]`, `[H*]`, `[NEW]`, `[DEL]`), file devicons, and live delta git diff preview (`GitChangedPreviewer`). Supports in-picker scope cycling via `<C-g>` without closing the window (`All` ➔ `Worktree` ➔ `HEAD`), retaining the active search query across scope transitions, `<C-d>` / `<C-u>` half-page preview scrolling, and smart middle path truncation (`shorten_path`) that guarantees filenames are never cut off while collapsing middle path directories to `…`.
+* `|` (`Shift+\`): Toggle Diffview files sidebar (opens `:DiffviewOpen` with left file panel when closed, or toggles files panel when open).
+* **Git Diff & Merge Conflict Resolution:**
+  * **Diffview (`diffview.nvim`):** `[c` / `]c` jump between diff hunks; `q` / `<leader>q` closes Diffview; in files panel: `<CR>` opens diff, `-` or `s` stages/unstages, `S` stages all, `U` unstages all, `X` restores working copy, `R` refreshes; in 3-way merge tool (`diff3_mixed`): `[x` / `]x` jump conflicts, `<leader>co` (ours), `<leader>ct` (theirs), `<leader>cb` (base), `<leader>ca` (all), `<leader>c0` (none).
+  * **In-Buffer Conflict Picker (`git-conflict.nvim`):** Inline virtual-text conflict markers during merges/rebases: `co` (ours), `ct` (theirs), `cb` (both), `c0` (none), `]x` / `[x` (next/prev conflict).
 
 ### Zsh Interactive Widgets
 * Deferred via `zvm_after_init_commands` to ensure persistence across `zsh-vi-mode` (`zvm_init`) keymap resets.

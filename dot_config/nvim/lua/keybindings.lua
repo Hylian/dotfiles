@@ -694,6 +694,15 @@ map('v', '_', "<cmd>lua require('grug-far').with_visual_selection({ prefills = {
 --map('n', '\"', "<cmd>lua require('grug-far').open({ prefills = { search = vim.fn.expand('<cword>') } })<CR>")
 -- current visual selection
 --map('v', '\"', "<cmd>lua require('grug-far').with_visual_selection()<CR>")
+-- Diffview & git diff sidebar bindings (Shift+\ toggles files sidebar / opens Diffview)
+map('n', '<Bar>', function()
+  local ok, lib = pcall(require, "diffview.lib")
+  if ok and lib.get_current_view() then
+    vim.cmd("DiffviewToggleFiles")
+  else
+    vim.cmd("DiffviewOpen")
+  end
+end, { desc = "Toggle Diffview files sidebar / open Diffview" })
 
 map('n', '.',   "ms*")
 map('n', ',',   "ms#")

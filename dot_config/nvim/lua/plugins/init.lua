@@ -91,7 +91,28 @@ return {
   { 'williamboman/mason-lspconfig.nvim' },
   { 'neovim/nvim-lspconfig' },
   { 'WhoIsSethDaniel/toggle-lsp-diagnostics.nvim' },
-  { 'sindrets/diffview.nvim', cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" } },
+  {
+    'sindrets/diffview.nvim',
+    cmd = {
+      "DiffviewOpen",
+      "DiffviewClose",
+      "DiffviewToggleFiles",
+      "DiffviewFocusFiles",
+      "DiffviewRefresh",
+      "DiffviewFileHistory",
+    },
+    config = function()
+      require('config.diffview')
+    end,
+  },
+  {
+    'akinsho/git-conflict.nvim',
+    version = "*",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require('config.git-conflict')
+    end,
+  },
   {
     'cappyzawa/trim.nvim',
     event = "BufWritePre",
