@@ -1,0 +1,4 @@
+[submodule "software/zellij"]
+	path = software/zellij
+	url = git@github.com:Hylian/zellij.git
+	branch = hylian/latency
