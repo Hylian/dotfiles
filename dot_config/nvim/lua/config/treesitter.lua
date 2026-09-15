@@ -6,7 +6,7 @@ if ok_main and ts_main.setup then
   ts_main.setup({
     install_dir = vim.fs.joinpath(vim.fn.stdpath('data'), 'site'),
   })
-  local ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" }
+  local ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "bash", "regex" }
   local installed = ts_main.get_installed and ts_main.get_installed() or {}
   local missing = vim.tbl_filter(function(lang)
     return not vim.list_contains(installed, lang)
@@ -17,7 +17,7 @@ if ok_main and ts_main.setup then
 elseif ok_configs and ts_configs.setup then
   -- Legacy master branch fallback (Neovim <= 0.11)
   ts_configs.setup({
-    ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+    ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "bash", "regex" },
     auto_install = true,
     highlight = {
       enable = true,
