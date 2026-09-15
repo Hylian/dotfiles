@@ -2,3 +2,7 @@
 	path = software/zellij
 	url = git@github.com:Hylian/zellij.git
 	branch = hylian/latency
+[submodule "software/zjstatus"]
+	path = software/zjstatus
+	url = git@github.com:Hylian/zjstatus.git
+	branch = hylian/autorender
