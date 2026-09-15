@@ -138,7 +138,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `<leader>gd` (`;gd`): `:DiffviewOpen --cached` (open Diffview for staged changes in index vs HEAD).
 * `<leader>gh` (`;gh`): `:DiffviewFileHistory` (open Diffview commit and file history; visual mode diffs selected lines).
 * **Git Diff & Merge Conflict Resolution:**
-  * **Diffview (`diffview.nvim`):** `[c` / `]c` jump between diff hunks; `q` / `<leader>q` closes Diffview; in files panel: `<CR>` opens diff view, `<S-CR>` / `Shift+Enter` opens highlighted file in a new normal split (not the diff view), `-` or `s` stages/unstages, `S` stages all, `U` unstages all, `X` restores working copy, `R` refreshes; in 3-way merge tool (`diff3_mixed`): `[x` / `]x` jump conflicts, `<leader>co` (ours), `<leader>ct` (theirs), `<leader>cb` (base), `<leader>ca` (all), `<leader>c0` (none).
+  * **Diffview (`diffview.nvim`):** `[c` / `]c` jump between diff hunks; `q` / `<leader>q` closes Diffview; in files panel: `<CR>` opens diff view, `<S-CR>` / `Shift+Enter` opens highlighted file on its own in a new tab (not the diff view), `-` or `s` stages/unstages, `S` stages all, `U` unstages all, `X` restores working copy, `R` refreshes; in 3-way merge tool (`diff3_mixed`): `[x` / `]x` jump conflicts, `<leader>co` (ours), `<leader>ct` (theirs), `<leader>cb` (base), `<leader>ca` (all), `<leader>c0` (none).
   * **In-Buffer Conflict Picker (`git-conflict.nvim`):** Inline virtual-text conflict markers during merges/rebases: `co` (ours), `ct` (theirs), `cb` (both), `c0` (none), `]x` / `[x` (next/prev conflict).
 
 ### Zsh Interactive Widgets
