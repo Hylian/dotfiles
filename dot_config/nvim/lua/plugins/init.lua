@@ -64,7 +64,7 @@ return {
   { 'Shougo/echodoc.vim', event = "VeryLazy" },
   {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'main',
+    branch = vim.fn.has('nvim-0.12') == 1 and 'main' or 'master',
     lazy = false,
     build = ':TSUpdate',
   },
