@@ -18,6 +18,18 @@ This document represents the current, living ground truth for this cross-platfor
 * **Public Repository:** Absolute zero-secrets policy. No API tokens, credentials, or private work paths.
 * **Work Separation:** Work-specific aliases and paths live in external untracked files (e.g. `~/.config/zsh/paths`, `aliases`, `gemini`).
 
+### Repository Upstream Synchronization & SSH Key Caching
+* **Autonomous Git Push/Pull:** `chez` automatically pulls upstream (`GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --ff-only`) upon session activation to sync changes made across machines, and pushes (`GIT_SSH_COMMAND="ssh -o BatchMode=yes" git push origin main`) following each conventional commit.
+* **Linux (`shined` / `eterna`) SSH Agent Topology:**
+  - `systemd --user` runs `ssh-agent.service` listening at `/run/user/$(id -u)/openssh_agent` (`$SSH_AUTH_SOCK`).
+  - User session lingering (`loginctl enable-linger`) is enabled, keeping `ssh-agent.service` alive across disconnects, Zellij sessions, and terminal closes.
+  - `~/.ssh/config` configures `Host github.com` with `IdentityFile ~/.ssh/id_ed25519`, `IdentitiesOnly yes`, and `AddKeysToAgent yes`.
+  - Passphrase authentication is required only once per boot: running any interactive git/ssh command or `ssh-add ~/.ssh/id_ed25519` inserts the decrypted key into the user-wide `ssh-agent`, where it remains cached in memory for the agent/skill to use autonomously.
+* **macOS Clients (`baumkuchen` / `midnight-future`):**
+  - Configured with `UseKeychain yes` and `AddKeysToAgent yes` in `~/.ssh/config` (seeded via `ssh-add --apple-use-keychain ~/.ssh/id_ed25519`), persisting passphrase storage in the native Apple Keychain across reboots.
+  - Remote SSH connections from macOS clients into `shined` forward the unlocked agent via `ForwardAgent yes`, synchronized into Zellij panes via `$XDG_RUNTIME_DIR/zellij-env/client`.
+* **Non-Interactive Batch Mode:** All automated git remote operations enforce `GIT_SSH_COMMAND="ssh -o BatchMode=yes"` so unauthenticated states fail immediately with an informative prompt to Rachel rather than hanging or blocking on stdin.
+
 ---
 
 ## 2. Core Toolstack & Configuration
