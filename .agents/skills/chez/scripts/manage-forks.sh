@@ -12,6 +12,11 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/builds"
 mkdir -p "$STATE_DIR"
 
+# Inherit Zellij dynamic SSH agent socket if running in a non-interactive subshell
+if [[ -z "${SSH_AUTH_SOCK:-}" && -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/zellij-env/ssh-auth-sock" ]]; then
+  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/zellij-env/ssh-auth-sock"
+fi
+
 # Fork definitions: name|relative_path|target_bin|branch
 FORKS=(
   "zellij|software/zellij|$HOME/.local/bin/zellij|hylian/latency"
@@ -219,7 +224,8 @@ cmd_build() {
 
 cmd_sync() {
   echo "🔍 Checking submodules in ${REPO_ROOT}..."
-  git -C "$REPO_ROOT" submodule update --init --recursive
+  GIT_SSH_COMMAND="ssh -o BatchMode=yes" git -C "$REPO_ROOT" submodule update --init --recursive 2>/dev/null || \
+    git -C "$REPO_ROOT" -c url."https://github.com/".insteadOf="git@github.com:" submodule update --init --recursive
 
   local built_any=0
   for entry in "${FORKS[@]}"; do
