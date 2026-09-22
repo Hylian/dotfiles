@@ -281,18 +281,10 @@ function M.format_lines(lines, max_width, cursor_lnum)
             new_cursor_lnum = #out
           end
           i = i + 1
-        elseif not is_list and display_width(line) <= max_width then
-          -- Plain prose line already <= max_width; keep untouched
-          table.insert(out, line)
-          if cursor_lnum and i == cursor_lnum then
-            new_cursor_lnum = #out
-          end
-          i = i + 1
         else
-          -- Collect continuation lines for this list item or overlong prose block
+          -- Collect all adjacent continuation lines for this list item, blockquote, or prose paragraph
           local parts = { vim.trim(first_content) }
           local raw_block = { line }
-          local block_overlong = display_width(line) > max_width
           local j = i + 1
           local prev_line = line
 
@@ -306,30 +298,44 @@ function M.format_lines(lines, max_width, cursor_lnum)
             end
 
             if is_list then
-              if next_line:sub(1, #cont_prefix) == cont_prefix then
-                local rest = next_line:sub(#cont_prefix + 1)
-                if not rest:match('^    ') and vim.trim(rest) ~= '' then
-                  table.insert(parts, vim.trim(rest))
-                  table.insert(raw_block, next_line)
-                  if display_width(next_line) > max_width then
-                    block_overlong = true
+              -- Allow hanging-indented continuation lines (or lazy continuation lines with same blockquote prefix)
+              local bq_prefix = cont_prefix:match('^(%s*>+%s*)') or ''
+              local next_bq, next_rest = next_line:match('^(%s*>+%s*)(.*)$')
+              if bq_prefix ~= '' then
+                if next_bq == bq_prefix then
+                  local indent_spaces = next_rest:match('^(%s*)')
+                  local expected_indent = #cont_prefix - #bq_prefix
+                  if #indent_spaces < expected_indent + 4 and vim.trim(next_rest) ~= '' then
+                    table.insert(parts, vim.trim(next_rest))
+                    table.insert(raw_block, next_line)
+                    prev_line = next_line
+                    j = j + 1
+                  else
+                    break
                   end
-                  prev_line = next_line
-                  j = j + 1
                 else
                   break
                 end
               else
-                break
+                if not next_bq then
+                  local indent_spaces = next_line:match('^(%s*)')
+                  if #indent_spaces < #cont_prefix + 4 and vim.trim(next_line) ~= '' then
+                    table.insert(parts, vim.trim(next_line))
+                    table.insert(raw_block, next_line)
+                    prev_line = next_line
+                    j = j + 1
+                  else
+                    break
+                  end
+                else
+                  break
+                end
               end
             else
               local p_first, p_cont, p_content = parse_prose_line(next_line)
               if p_first and p_cont == cont_prefix and p_first == cont_prefix and vim.trim(p_content) ~= '' then
                 table.insert(parts, vim.trim(p_content))
                 table.insert(raw_block, next_line)
-                if display_width(next_line) > max_width then
-                  block_overlong = true
-                end
                 prev_line = next_line
                 j = j + 1
               else
@@ -338,34 +344,25 @@ function M.format_lines(lines, max_width, cursor_lnum)
             end
           end
 
-          if not block_overlong then
-            for idx, rline in ipairs(raw_block) do
-              table.insert(out, rline)
-              if cursor_lnum and (i + idx - 1) == cursor_lnum then
-                new_cursor_lnum = #out
-              end
-            end
-          else
-            local trailing_break = ''
-            if prev_line:match('  +$') then
-              trailing_break = '  '
-            end
+          local trailing_break = ''
+          if prev_line:match('  +$') then
+            trailing_break = '  '
+          end
 
-            local combined = table.concat(parts, ' ')
-            local tokens = tokenize_markdown(combined, display_width(cont_prefix), max_width)
-            local wrapped = wrap_tokens(tokens, first_prefix, cont_prefix, max_width)
-            if trailing_break ~= '' and #wrapped > 0 then
-              wrapped[#wrapped] = wrapped[#wrapped] .. trailing_break
-            end
+          local combined = table.concat(parts, ' ')
+          local tokens = tokenize_markdown(combined, display_width(cont_prefix), max_width)
+          local wrapped = wrap_tokens(tokens, first_prefix, cont_prefix, max_width)
+          if trailing_break ~= '' and #wrapped > 0 then
+            wrapped[#wrapped] = wrapped[#wrapped] .. trailing_break
+          end
 
-            local out_start = #out
-            for _, wline in ipairs(wrapped) do
-              table.insert(out, wline)
-            end
-            if cursor_lnum and cursor_lnum >= i and cursor_lnum < j then
-              local rel = cursor_lnum - i + 1
-              new_cursor_lnum = math.min(#out, out_start + math.max(1, math.min(#wrapped, rel + (#wrapped - #raw_block))))
-            end
+          local out_start = #out
+          for _, wline in ipairs(wrapped) do
+            table.insert(out, wline)
+          end
+          if cursor_lnum and cursor_lnum >= i and cursor_lnum < j then
+            local rel = cursor_lnum - i + 1
+            new_cursor_lnum = math.min(#out, out_start + math.max(1, math.min(#wrapped, rel + (#wrapped - #raw_block))))
           end
           i = j
         end
@@ -386,17 +383,6 @@ function M.format_buffer(bufnr)
   end
 
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  local has_overlong = false
-  for _, line in ipairs(lines) do
-    if display_width(line) > MAX_WIDTH then
-      has_overlong = true
-      break
-    end
-  end
-  if not has_overlong then
-    return
-  end
-
   local view = vim.fn.winsaveview()
   local cursor_lnum = view and view.lnum or nil
   local formatted, new_cursor_lnum = M.format_lines(lines, MAX_WIDTH, cursor_lnum)

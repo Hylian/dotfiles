@@ -28,10 +28,12 @@ blocks, tables, frontmatter, or inline Markdown links.
      nesting depth (and inside blockquotes `> `), computing the exact hanging
      continuation prefix (`cont_prefix`) so continuation lines align cleanly
      under the start of the list item text.
-   - **Conservative Reflow Semantics:** Only reflows a paragraph or list item
-     when at least one line in that item exceeds 80 columns, leaving already
-     formatted (`<= 80` col) prose, poetry, and `**Key:**` metadata lines
-     untouched.
+   - **Paragraph & List Reflow Semantics:** Combines all adjacent continuation
+     lines within a prose paragraph, blockquote, or list item and reflows them
+     to the 80-column break (`<= 80` columns), so both overlong lines (`> 80`
+     chars) and edited/shortened adjacent lines (`< 80` chars) join and wrap
+     smoothly while respecting blank lines, `**Key:**` metadata boundaries, and
+     explicit hard breaks (`\` or `  `).
    - **Atomic Span Tokenization:** Treats inline code spans (`` `...` ``) and
      inline Markdown links/images (`[label](url)`) as single atomic tokens
      whenever they fit within a continuation line (`<= 80 - #cont_prefix`),
