@@ -115,6 +115,9 @@ build_zellij() {
     fi
   fi
 
+  # Clean any protobuf/wasm asset mutations written into the working tree by xtask
+  git -C "$dir" checkout -- . >/dev/null 2>&1 || true
+
   local commit
   commit="$(git -C "$dir" rev-parse HEAD)"
   write_receipt "zellij" "$commit" "$target"

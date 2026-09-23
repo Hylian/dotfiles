@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-09-22*
+*Last Updated: 2026-09-23*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -11,7 +11,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Collaborator / Engineer:** Rachel — Senior firmware engineer.
 * **Workstation (Linux):** `shined` — Primary Linux development machine.
 * **Secondary Linux:** `eterna` — Linux machine.
-* **Clients (macOS):** `baumkuchen` and `midnight-future` — Apple silicon laptops running macOS 27 (Ghostty + aerospace/sketchybar/borders). Both carry per-host `aerospace.toml.tmpl` blocks and both run the locally built zellij + zjstatus forks.
+* **Clients (macOS):** `shined-mac`, `baumkuchen`, and `midnight-future` — Apple silicon laptops running macOS (Ghostty + aerospace/sketchybar/borders). Each carries per-host `aerospace.toml.tmpl` blocks and runs the locally built zellij + zjstatus forks.
 * **Primary Remote Workflow:** macOS Client running **Ghostty** -> SSH into Linux Workstation (`shined`) -> **Zellij** multiplexer session.
 
 ### Privacy & Security Policy
@@ -25,8 +25,8 @@ This document represents the current, living ground truth for this cross-platfor
   - User session lingering (`loginctl enable-linger`) is enabled, keeping `ssh-agent.service` alive across disconnects, Zellij sessions, and terminal closes.
   - `~/.ssh/config` configures `Host github.com` with `IdentityFile ~/.ssh/id_ed25519`, `IdentitiesOnly yes`, and `AddKeysToAgent yes`.
   - Passphrase authentication is required only once per boot: running any interactive git/ssh command or `ssh-add ~/.ssh/id_ed25519` inserts the decrypted key into the user-wide `ssh-agent`, where it remains cached in memory for the agent/skill to use autonomously.
-* **macOS Clients (`baumkuchen` / `midnight-future`):**
-  - Configured with `UseKeychain yes` and `AddKeysToAgent yes` in `~/.ssh/config` (seeded via `ssh-add --apple-use-keychain ~/.ssh/id_ed25519`), persisting passphrase storage in the native Apple Keychain across reboots.
+* **macOS Clients (`shined-mac` / `baumkuchen` / `midnight-future`):**
+  - Configured with `IdentityFile ~/.ssh/id_ed25519`, `IdentitiesOnly yes`, and `AddKeysToAgent yes` in `~/.ssh/config` (plus `UseKeychain yes` on non-gnubby hosts; `gnubby-ssh` on `shined-mac` rejects `UseKeychain`, so unlock via `ssh-add ~/.ssh/id_ed25519` into the running agent).
   - Remote SSH connections from macOS clients into `shined` forward the unlocked agent via `ForwardAgent yes`, synchronized into Zellij panes via `$XDG_RUNTIME_DIR/zellij-env/client`.
 * **Non-Interactive Batch Mode:** All automated git remote operations enforce `GIT_SSH_COMMAND="ssh -o BatchMode=yes"` so unauthenticated states fail immediately with an informative prompt to Rachel rather than hanging or blocking on stdin.
 
