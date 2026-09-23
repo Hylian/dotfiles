@@ -155,7 +155,13 @@ return {
     end,
   },
   { 'declancm/maximize.nvim', lazy = true, config = true },
-  { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown" } },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = { "markdown" },
+    opts = {
+      render_modes = true,
+    },
+  },
   {
     'mrjones2014/smart-splits.nvim',
     lazy = false,
