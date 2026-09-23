@@ -722,8 +722,6 @@ map('i', '<C-Del>', '<C-o>dw')
 
 map('n', 'yp', '<cmd>lua vim.fn.setreg("\\\"", vim.fn.expand("%:p:h"))<CR>')
 
-map('v', 'r', '"_dp')
-
 -- Prompt navigation motions (Zellij scrollback & terminal buffers)
 local function jump_prompt(backwards)
   local flags = backwards and 'bW' or 'W'

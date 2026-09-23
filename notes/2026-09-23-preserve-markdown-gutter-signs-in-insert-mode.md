@@ -41,3 +41,11 @@ disappear and the entire buffer text to shift left by one column.
      [dot_config/nvim/init.lua.tmpl](../dot_config/nvim/init.lua.tmpl) so the
      sign column is permanently reserved across all buffers even when zero signs
      are present.
+3. **Restore Native Visual `r` Character Replacement (`v_r`):**
+   - Removed legacy `map('v', 'r', '"_dp')` from
+     [dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua),
+     which was deleting the visual selection to the black-hole register and
+     pasting the clipboard the instant `r` was pressed.
+   - `r<char>` in visual/block mode now restores native Vim character
+     replacement (`v_r`), while built-in visual `P` (`v_P`) provides native
+     register-preserving paste over visual selections.

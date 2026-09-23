@@ -131,6 +131,7 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### Neovim Editing & Navigation
 * `<leader>`: `;` (semicolon), `<localleader>`: `;;`
+* `r<char>` (Visual/Block mode `v_r`): Native Vim visual character replacement (legacy `map('v', 'r', '"_dp')` removed so `r` no longer hijacks visual block replacement; use native visual `P` (`v_P`) to paste over a selection without overwriting the unnamed register).
 * `<A-S-s>`: `focus.split_command('l')` (split window to the right).
 * `<A-S-e>`: `focus.focus_equalise()` (equalize window dimensions).
 * `<A-S-r>`: `focus.focus_autoresize()` (trigger focus autoresize).
