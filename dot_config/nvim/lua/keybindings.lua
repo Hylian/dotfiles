@@ -722,17 +722,12 @@ map('i', '<C-Del>', '<C-o>dw')
 
 map('n', 'yp', '<cmd>lua vim.fn.setreg("\\\"", vim.fn.expand("%:p:h"))<CR>')
 
--- Prompt navigation motions (Zellij scrollback & terminal buffers)
-local function jump_prompt(backwards)
-  local flags = backwards and 'bW' or 'W'
-  local found = vim.fn.search([[❯]], flags)
-  if found == 0 then
-    vim.fn.search([[\v(^\s*[\$#%] |❯)]], flags)
-  end
-end
-
-vim.keymap.set({ 'n', 'v', 'o' }, '<C-k>', function() jump_prompt(true) end, { desc = 'Jump to previous prompt' })
-vim.keymap.set({ 'n', 'v', 'o' }, '<C-j>', function() jump_prompt(false) end, { desc = 'Jump to next prompt' })
+-- Zellij OSC 133 prompt navigation & command output copy
+vim.keymap.set({ 'n', 'v', 'o' }, '<C-k>', function() zellij('scroll-to-previous-prompt') end, { silent = true, desc = 'Zellij scroll to previous prompt' })
+vim.keymap.set({ 'n', 'v', 'o' }, '<C-j>', function() zellij('scroll-to-next-prompt') end, { silent = true, desc = 'Zellij scroll to next prompt' })
+map(zellij_modes, '<A-Up>', function() zellij('scroll-to-previous-prompt') end, { desc = 'Zellij scroll to previous prompt' })
+map(zellij_modes, '<A-Down>', function() zellij('scroll-to-next-prompt') end, { desc = 'Zellij scroll to next prompt' })
+map(zellij_modes, '<A-y>', function() zellij('copy-last-command-output') end, { desc = 'Zellij copy output of last command' })
 
 -- File-level jumplist navigation (skip intra-file jumps & ghost/deleted files)
 local function is_valid_jump_target(bufnr, cur_buf)

@@ -181,6 +181,9 @@ keybinds clear-defaults=true {
             SwitchToMode "normal"
         }
         bind "Alt s" { NewPane; }
+        bind "Alt up" { ScrollToPreviousPrompt; }
+        bind "Alt down" { ScrollToNextPrompt; }
+        bind "Alt y" { CopyLastCommandOutput; SwitchToMode "normal"; }
         bind "Alt z" { SwitchToMode "locked"; }
         bind "Alt {" { PreviousSwapLayout; }
         bind "Alt }" { NextSwapLayout; }
@@ -224,6 +227,10 @@ keybinds clear-defaults=true {
         bind "k" { ScrollUp; }
         bind "l" { PageScrollDown; }
         bind "u" { HalfPageScrollUp; }
+        bind "Ctrl k" "[" "Alt up" { ScrollToPreviousPrompt; }
+        bind "Ctrl j" "]" "Alt down" { ScrollToNextPrompt; }
+        bind "m" { SelectCommandAtScrollPosition; }
+        bind "c" "Alt y" { CopyLastCommandOutput; SwitchToMode "normal"; }
         bind "Alt v" { SwitchToMode "normal"; }
     }
     entersearch {

@@ -447,6 +447,26 @@ if (( $+commands[starship] )); then
   source "$ZSH_CACHE_DIR/starship.zsh"
 fi
 
+# OSC 133 shell integration (FinalTerm / Zellij 0.45+ prompt jumping & command output copy)
+typeset -g _zsh_osc133_in_cmd=0
+_zsh_osc133_precmd() {
+    local ret=$?
+    if (( _zsh_osc133_in_cmd )); then
+        printf '\e]133;D;%d\a' "$ret"
+        _zsh_osc133_in_cmd=0
+    fi
+    return $ret
+}
+_zsh_osc133_preexec() {
+    _zsh_osc133_in_cmd=1
+    printf '\e]133;C\a'
+}
+precmd_functions=(_zsh_osc133_precmd ${precmd_functions:#_zsh_osc133_precmd})
+preexec_functions=(${preexec_functions:#_zsh_osc133_preexec} _zsh_osc133_preexec)
+if [[ "$PROMPT" != *$'\e]133;A\a'* ]]; then
+    PROMPT='%{'$'\e]133;A\a''%}'"${PROMPT}"'%{'$'\e]133;B\a''%}'
+fi
+
 # Tell Zellij the pane's cwd synchronously, so zjstatus can invalidate its
 # focused-cwd widgets the instant we switch panes instead of waiting for the
 # server's background cwd poll. Pure parameter expansion: no subprocess.
