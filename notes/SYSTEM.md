@@ -120,8 +120,8 @@ This document represents the current, living ground truth for this cross-platfor
 * `<A-[>` / `<A-]>`: Break Zellij pane left/right.
 * `<A-+>` / `<A-=>` / `<A-->`: Increase/decrease Zellij pane size.
 * `<A-z>`: Switch Zellij back to normal unlocked mode.
-* `Alt + y` (`<A-y>`): `CopyLastCommandOutput` — copies the output of the last finished OSC 133 shell command to the clipboard (also bound to `c` and `Alt + y` in Zellij `Scroll`/`Search` mode).
-* `Alt + Up` / `Alt + Down` (`<A-Up>` / `<A-Down>`): `ScrollToPreviousPrompt` / `ScrollToNextPrompt` — jumps between OSC 133 shell prompts in the focused pane (and automatically syncs Zellij `Scroll` / `Normal` mode).
+* `Alt + y`: `CopyLastCommandOutput` — copies the output of the last finished OSC 133 shell command in the active Zellij terminal pane to the clipboard (bound in Zellij `shared_except "locked"` and `Scroll`/`Search` modes).
+* `Alt + Up` / `Alt + Down` (and `Ctrl + k` / `Ctrl + j` / `[` / `]` in `Scroll`/`Search` mode): `ScrollToPreviousPrompt` / `ScrollToNextPrompt` — jumps between OSC 133 shell prompts in the focused Zellij terminal pane (and automatically syncs Zellij `Scroll` / `Normal` mode).
 * `Alt + e` (or `Ctrl + s` -> `e`): Instant `EditScrollback` — dumps active pane scrollback into Neovim.
 * `Alt + d` / `Alt + q`: Smart close — in floating popups (like `fzf-lua`), dismisses the float; in editor/splits, closes window; in terminal pane, closes pane.
 * `Alt + Shift + q` (`<A-S-q>` / `<A-Q>`): Force quit (`:q!<CR>`).
@@ -145,7 +145,6 @@ This document represents the current, living ground truth for this cross-platfor
 * `<leader>nd`: `<cmd>Noice dismiss<CR>` (dismiss active notification popups).
 * `<leader>t`: `:Tabby jump_to_tab<CR>`.
 * `<leader>w`: `:Tabby pick_window<CR>`.
-* `<C-k>` / `<C-j>`: Jump backwards / forwards between OSC 133 shell prompts (`zellij action scroll-to-previous-prompt` / `scroll-to-next-prompt` in Neovim; `ScrollToPreviousPrompt` / `ScrollToNextPrompt` on `Ctrl+k`/`Ctrl+j`/`[`/`]` in Zellij `Scroll`/`Search` mode).
 * `gd`: Jump to LSP definition in current buffer (`fzf-lua.lsp_definitions`).
 * `gD`: Open LSP definition in a new nvim tab (`fzf-lua.lsp_definitions` with `jump1_action` and `actions.enter` set to `actions.file_tabedit`).
 * `gh` / `[`: Switch between header and source file (`clangd` LSP `textDocument/switchSourceHeader` with sister-directory filesystem fallback).

@@ -39,4 +39,4 @@ We needed to:
   - Bound `Alt + y` to `CopyLastCommandOutput; SwitchToMode "normal";` and `Alt + Up` / `Alt + Down` to `ScrollToPreviousPrompt;` / `ScrollToNextPrompt;` in `shared_except "locked"`.
   - Bound `Ctrl + k` / `[` / `Alt + Up` to `ScrollToPreviousPrompt;`, `Ctrl + j` / `]` / `Alt + Down` to `ScrollToNextPrompt;`, `m` to `SelectCommandAtScrollPosition;`, and `c` / `Alt + y` to `CopyLastCommandOutput; SwitchToMode "normal";` in `shared_among "scroll" "search"`.
 - **[dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua)**:
-  - Removed legacy `jump_prompt` function and mapped `<C-k>` / `<C-j>` and `<A-Up>` / `<A-Down>` to `zellij('scroll-to-previous-prompt')` / `zellij('scroll-to-next-prompt')`, and `<A-y>` to `zellij('copy-last-command-output')`.
+  - Removed legacy `jump_prompt` function and its `<C-k>` / `<C-j>` mappings (since prompt jumping and command output copying now happen directly in Zellij terminal panes).
