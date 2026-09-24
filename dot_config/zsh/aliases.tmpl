@@ -48,7 +48,10 @@ if (( $+commands[imv-wayland] )); then
 fi
 
 if (( $+commands[sccache] )); then
-  export RUSTC_WRAPPER=sccache
+  export RUSTC_WRAPPER="${commands[sccache]}"
+  export CARGO_BUILD_RUSTC_WRAPPER="${commands[sccache]}"
+  export SCCACHE_IDLE_TIMEOUT=0
+  export SCCACHE_CACHE_SIZE="50G"
 fi
 
 if (( $+commands[tag] )); then

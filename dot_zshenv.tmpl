@@ -2,6 +2,18 @@ export google_zsh_flysolo=1
 [[ -n "$ZELLIJ" ]] && setopt NO_GLOBAL_RCS
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
+if (( $+commands[sccache] )); then
+  export RUSTC_WRAPPER="${commands[sccache]}"
+  export CARGO_BUILD_RUSTC_WRAPPER="${commands[sccache]}"
+  export SCCACHE_IDLE_TIMEOUT=0
+  export SCCACHE_CACHE_SIZE="50G"
+elif [[ -x "/opt/homebrew/bin/sccache" ]]; then
+  export RUSTC_WRAPPER="/opt/homebrew/bin/sccache"
+  export CARGO_BUILD_RUSTC_WRAPPER="/opt/homebrew/bin/sccache"
+  export SCCACHE_IDLE_TIMEOUT=0
+  export SCCACHE_CACHE_SIZE="50G"
+fi
+
 # Ensure non-interactive SSH attach invocations (e.g. `ssh host 'zellij a -c persist ...'`)
 # sync client environment descriptors and SSH agent sockets before attaching.
 if (( $+commands[zellij] )); then
