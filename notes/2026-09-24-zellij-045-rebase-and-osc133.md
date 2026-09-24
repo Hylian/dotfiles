@@ -36,6 +36,7 @@ We needed to:
 - **[dot_zshrc.tmpl](../dot_zshrc.tmpl)**:
   - Added `_zsh_osc133_precmd`, `_zsh_osc133_preexec`, and `PROMPT` `133;A`/`133;B` wrapping.
 - **[dot_config/zellij/config.kdl.tmpl](../dot_config/zellij/config.kdl.tmpl)**:
+  - Set `pane_frames true` and `pane_frame_style "full"` to preserve full 4-sided rounded-corner pane frames (upstream `v0.45.0` changed `PaneFrameStyle::default()` from `Full` to `Titles`).
   - Bound `Alt + y` to `CopyLastCommandOutput; SwitchToMode "normal";` and `Alt + Up` / `Alt + Down` to `ScrollToPreviousPrompt;` / `ScrollToNextPrompt;` in `shared_except "locked"`.
   - Bound `Ctrl + k` / `[` / `Alt + Up` to `ScrollToPreviousPrompt;`, `Ctrl + j` / `]` / `Alt + Down` to `ScrollToNextPrompt;`, `m` to `SelectCommandAtScrollPosition;`, and `c` / `Alt + y` to `CopyLastCommandOutput; SwitchToMode "normal";` in `shared_among "scroll" "search"`.
 - **[dot_config/nvim/lua/keybindings.lua](../dot_config/nvim/lua/keybindings.lua)**:
