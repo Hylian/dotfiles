@@ -1,10 +1,15 @@
 export google_zsh_flysolo=1
 [[ -n "$ZELLIJ" ]] && setopt NO_GLOBAL_RCS
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 for _p in "/usr/local/bin" "/opt/homebrew/bin" "$HOME/.local/bin"; do
-  [[ -d "$_p" && ":$PATH:" != *":$_p:"* ]] && export PATH="$_p:$PATH"
+  if [[ -d "$_p" ]]; then
+    PATH="${PATH//:$_p:/:}"
+    PATH="${PATH/#$_p:/}"
+    PATH="${PATH/%:$_p/}"
+    export PATH="$_p:$PATH"
+  fi
 done
 unset _p
-[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 if (( $+commands[sccache] )); then
   export RUSTC_WRAPPER="${commands[sccache]}"
