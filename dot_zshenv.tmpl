@@ -1,5 +1,9 @@
 export google_zsh_flysolo=1
 [[ -n "$ZELLIJ" ]] && setopt NO_GLOBAL_RCS
+for _p in "/usr/local/bin" "/opt/homebrew/bin" "$HOME/.local/bin"; do
+  [[ -d "$_p" && ":$PATH:" != *":$_p:"* ]] && export PATH="$_p:$PATH"
+done
+unset _p
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 if (( $+commands[sccache] )); then
