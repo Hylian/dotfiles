@@ -12,6 +12,13 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/builds"
 mkdir -p "$STATE_DIR"
 
+# Ensure Rust toolchain and Homebrew binaries are on PATH in non-interactive subshells
+for p in "/opt/homebrew/bin" "$HOME/.cargo/bin" "/opt/homebrew/opt/rustup/bin" "$HOME/.local/bin"; do
+  if [[ -d "$p" && ":$PATH:" != *":$p:"* ]]; then
+    export PATH="$p:$PATH"
+  fi
+done
+
 # Inherit Zellij dynamic SSH agent socket if running in a non-interactive subshell
 if [[ -z "${SSH_AUTH_SOCK:-}" && -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/zellij-env/ssh-auth-sock" ]]; then
   export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/zellij-env/ssh-auth-sock"
@@ -64,9 +71,8 @@ EOF
 
 get_submodule_commit() {
   local path="$1"
-  if [[ -d "${REPO_ROOT}/${path}/.git" || -f "${REPO_ROOT}/${path}/.git" ]]; then
+  git -C "$REPO_ROOT" rev-parse "HEAD:${path}" 2>/dev/null || \
     git -C "${REPO_ROOT}/${path}" rev-parse HEAD 2>/dev/null || true
-  fi
 }
 
 prune_zjstatus_cache() {
@@ -264,8 +270,15 @@ cmd_build() {
 
 cmd_sync() {
   echo "🔍 Checking submodules in ${REPO_ROOT}..."
-  GIT_SSH_COMMAND="ssh -o BatchMode=yes" git -C "$REPO_ROOT" submodule update --init --recursive 2>/dev/null || \
-    git -C "$REPO_ROOT" -c url."https://github.com/".insteadOf="git@github.com:" submodule update --init --recursive
+  for entry in "${FORKS[@]}"; do
+    IFS="|" read -r name rel_path target_bin branch <<< "$entry"
+    if [[ -d "${REPO_ROOT}/${rel_path}/.git" || -f "${REPO_ROOT}/${rel_path}/.git" ]]; then
+      GIT_SSH_COMMAND="ssh -o BatchMode=yes" git -C "${REPO_ROOT}/${rel_path}" fetch origin "+refs/heads/*:refs/remotes/origin/*" 2>/dev/null || \
+        git -C "${REPO_ROOT}/${rel_path}" -c url."https://github.com/".insteadOf="git@github.com:" fetch origin "+refs/heads/*:refs/remotes/origin/*" 2>/dev/null || true
+    fi
+  done
+  GIT_SSH_COMMAND="ssh -o BatchMode=yes" git -C "$REPO_ROOT" submodule update --init --recursive --force 2>/dev/null || \
+    git -C "$REPO_ROOT" -c url."https://github.com/".insteadOf="git@github.com:" submodule update --init --recursive --force
 
   local built_any=0
   for entry in "${FORKS[@]}"; do
@@ -276,7 +289,9 @@ cmd_sync() {
     rec_commit="$(get_receipt_commit "$name")"
 
     if [[ ! -f "$target_bin" || -z "$rec_commit" || "$sub_commit" != "$rec_commit" ]]; then
-      echo "⚡ Updating $name (installed: ${rec_commit:0:8:-none} -> submodule: ${sub_commit:0:8})..."
+      local rec_short="${rec_commit:0:8}"
+      [[ -z "$rec_short" ]] && rec_short="none"
+      echo "⚡ Updating $name (installed: ${rec_short} -> submodule: ${sub_commit:0:8})..."
       case "$name" in
         zellij)   build_zellij; built_any=1 ;;
         zjstatus) build_zjstatus; built_any=1 ;;
