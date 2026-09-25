@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-09-24*
+*Last Updated: 2026-09-25*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -38,6 +38,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Linux (Wayland):** `sway`, `niri`, `waybar`, `dunst`, `kanshi`, `swaylock`, `swayidle`, `tofi`.
   - **Notifications (Dunst):** Configured via [dot_config/dunst/dunstrc.tmpl](../dot_config/dunst/dunstrc.tmpl) with `origin = bottom-left` and `offset = 4x4`, pinned to the rightmost 4K vertical monitor (`DP-2` on `shined` / `natura`).
 * **macOS:** `aerospace`, `sketchybar`, `borders`.
+  - **AeroSpace Ghostty Launchers ([dot_config/aerospace/aerospace.toml.tmpl](../dot_config/aerospace/aerospace.toml.tmpl)):** `cmd-enter` launches a standard Ghostty instance (which autolaunches local Zellij via `zellij.zsh`). On `shined-mac`, `cmd-shift-enter` launches Ghostty with `--env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -ic rwd` so `.zshrc` loads full interactive aliases and environment variables (`rwd`) while skipping local `zellij.zsh` autolaunch (`[[ -z "$ZELLIJ_NO_AUTOSTART" ]]` in [dot_zshrc.tmpl](../dot_zshrc.tmpl)).
 
 ### B. Terminal Emulator (Ghostty)
 * **Configuration:** Shared chezmoi template (`dot_config/ghostty/config.tmpl`).

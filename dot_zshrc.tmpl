@@ -428,7 +428,9 @@ if (( $+commands[zellij] )); then
     zellij setup --generate-auto-start zsh >! "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
     zcompile "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
   fi
-  source "$ZSH_CACHE_DIR/zellij.zsh"
+  if [[ -z "$ZELLIJ_NO_AUTOSTART" ]]; then
+    source "$ZSH_CACHE_DIR/zellij.zsh"
+  fi
 fi
 
 if (( $+commands[zoxide] )); then
