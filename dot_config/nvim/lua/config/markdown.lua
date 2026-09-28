@@ -221,7 +221,131 @@ local function scan_compound_token(text, start_pos)
   return text:sub(start_pos, j - 1)
 end
 
+local function is_bold_delim(text, pos)
+  return text:sub(pos, pos + 1) == '**'
+    and text:sub(pos + 2, pos + 2) ~= '*'
+    and (pos == 1 or text:sub(pos - 1, pos - 1) ~= '*')
+end
+
+local function has_closing_bold(text, start_pos)
+  local pos = start_pos
+  local n = #text
+  while pos <= n do
+    local ch = text:sub(pos, pos)
+    if ch == '`' then
+      local code_end = find_code_span_end(text, pos)
+      if code_end then
+        pos = code_end + 1
+      else
+        local _, tick_end = text:find('^`+', pos)
+        pos = (tick_end or pos) + 1
+      end
+    elseif ch == '[' or (ch == '!' and text:sub(pos + 1, pos + 1) == '[') then
+      local link_end = find_markdown_link_end(text, pos)
+      if link_end then
+        pos = link_end + 1
+      else
+        pos = pos + 1
+      end
+    elseif ch == '\\' then
+      pos = pos + 2
+    elseif is_bold_delim(text, pos) then
+      return true
+    else
+      pos = pos + 1
+    end
+  end
+  return false
+end
+
+local function normalize_bold_spacing(text)
+  local out = {}
+  local n = #text
+  local pos = 1
+  local in_bold = false
+  local last_was_code_or_link = false
+
+  while pos <= n do
+    local ch = text:sub(pos, pos)
+    if ch == '`' then
+      local code_end = find_code_span_end(text, pos)
+      if code_end then
+        table.insert(out, text:sub(pos, code_end))
+        pos = code_end + 1
+        last_was_code_or_link = true
+      else
+        local _, tick_end = text:find('^`+', pos)
+        local stop = tick_end or pos
+        table.insert(out, text:sub(pos, stop))
+        pos = stop + 1
+        last_was_code_or_link = false
+      end
+    elseif ch == '[' or (ch == '!' and text:sub(pos + 1, pos + 1) == '[') then
+      local link_end = find_markdown_link_end(text, pos)
+      if link_end then
+        table.insert(out, text:sub(pos, link_end))
+        pos = link_end + 1
+        last_was_code_or_link = true
+      else
+        table.insert(out, ch)
+        pos = pos + 1
+        last_was_code_or_link = false
+      end
+    elseif ch == '\\' and pos < n then
+      table.insert(out, text:sub(pos, pos + 1))
+      pos = pos + 2
+      last_was_code_or_link = false
+    elseif is_bold_delim(text, pos) then
+      if not in_bold then
+        if has_closing_bold(text, pos + 2) then
+          in_bold = true
+          table.insert(out, '**')
+          pos = pos + 2
+          local _, ws_end = text:find('^%s+', pos)
+          if ws_end then
+            pos = ws_end + 1
+          end
+        else
+          local after = text:sub(pos + 2, pos + 2)
+          if last_was_code_or_link and (after == '' or after:match('^[%s.,;:!?)%]]')) then
+            if #out > 0 and out[#out]:match('^%s+$') then
+              table.remove(out)
+            elseif #out > 0 then
+              out[#out] = out[#out]:gsub('%s+$', '')
+            end
+          end
+          table.insert(out, '**')
+          pos = pos + 2
+        end
+      else
+        if #out > 0 and out[#out]:match('^%s+$') then
+          table.remove(out)
+        elseif #out > 0 then
+          out[#out] = out[#out]:gsub('%s+$', '')
+        end
+        in_bold = false
+        table.insert(out, '**')
+        pos = pos + 2
+      end
+      last_was_code_or_link = false
+    else
+      local s, e = text:find('^%s+', pos)
+      if s then
+        table.insert(out, text:sub(s, e))
+        pos = e + 1
+      else
+        table.insert(out, ch)
+        pos = pos + 1
+        last_was_code_or_link = false
+      end
+    end
+  end
+
+  return table.concat(out)
+end
+
 local function tokenize_markdown(text, cont_width, max_width)
+  text = normalize_bold_spacing(text)
   local tokens = {}
   local n = #text
   local i = 1

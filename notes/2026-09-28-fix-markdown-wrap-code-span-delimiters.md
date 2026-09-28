@@ -3,8 +3,9 @@
 **Date:** 2026-09-28  
 **Context:** When formatting Markdown in Neovim (`config.markdown`), an inline
 code span immediately followed by a closing bold/emphasis delimiter (such as
-`**hello `world`**`) had a space inserted between the closing backtick and the
-asterisks (`**hello `world` **`).
+`` **hello `world`** ``) had a space inserted between the closing backtick and
+the asterisks (`` **hello `world` ** ``), and existing files with spaces inside
+bold delimiters around code spans needed automatic cleanup on save.
 
 ## Root Cause
 
@@ -21,6 +22,13 @@ was `*` or `(` rather than `` ` `` or `[`.
 
 ## Solution
 
+- Added `normalize_bold_spacing` ahead of tokenization in `tokenize_markdown`
+  to track paired `**...**` bold state outside of inline code spans and links,
+  automatically stripping erroneous spaces immediately after an opening `**` or
+  immediately before a closing `**` (healing `` **hello `world` ** ``,
+  `` ** hello `world`** ``, and `` ** hello `world` ** `` into
+  `` **hello `world`** `` while preserving spaces before subsequent opening bold
+  spans such as `` `foo` **bar** ``).
 - Replaced the fixed-prefix regexes in `tokenize_markdown` with a compound
   token scanner (`scan_compound_token`, `find_code_span_end`, and
   `find_markdown_link_end`) that scans across contiguous non-whitespace and
@@ -28,7 +36,7 @@ was `*` or `(` rather than `` ` `` or `[`.
   or Markdown links/images (`[label](url)`, including code spans inside link
   labels) along with all adjacent non-whitespace prefixes and suffixes (such as
   `**`, `*`, `_`, `~~`, parentheses, quotes, and punctuation).
-- Token boundaries now strictly coincide with whitespace in the source text,
-  ensuring `wrap_tokens` never injects spaces inside contiguous non-whitespace
-  sequences while keeping compound spans like `` **`hello world`** `` atomic
-  whenever they fit within `80 - cont_width`.
+- Token boundaries now strictly coincide with whitespace in the normalized
+  text, ensuring `wrap_tokens` never injects spaces inside contiguous
+  non-whitespace sequences while keeping compound spans like
+  `` **`hello world`** `` atomic whenever they fit within `80 - cont_width`.
