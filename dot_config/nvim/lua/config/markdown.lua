@@ -132,6 +132,95 @@ local function parse_prose_line(line)
   return indent, indent, content
 end
 
+local function find_code_span_end(text, start_pos)
+  local ticks = text:match('^(`+)', start_pos)
+  if not ticks then
+    return nil
+  end
+  local tick_len = #ticks
+  local pos = start_pos + tick_len
+  local n = #text
+  while pos <= n do
+    local s, e = text:find('`+', pos)
+    if not s then
+      return nil
+    end
+    if e - s + 1 == tick_len then
+      return e
+    end
+    pos = e + 1
+  end
+  return nil
+end
+
+local function find_markdown_link_end(text, start_pos)
+  local pos
+  if text:sub(start_pos, start_pos) == '[' then
+    pos = start_pos + 1
+  elseif text:sub(start_pos, start_pos + 1) == '![' then
+    pos = start_pos + 2
+  else
+    return nil
+  end
+
+  local n = #text
+  while pos <= n do
+    local ch = text:sub(pos, pos)
+    if ch == '`' then
+      local code_end = find_code_span_end(text, pos)
+      if code_end then
+        pos = code_end + 1
+      else
+        local _, tick_end = text:find('^`+', pos)
+        pos = (tick_end or pos) + 1
+      end
+    elseif ch == '\\' then
+      pos = pos + 2
+    elseif ch == '[' then
+      return nil
+    elseif ch == ']' then
+      local _, link_end = text:find('^%([^%s%)]+%)', pos + 1)
+      if link_end then
+        return link_end
+      end
+      return nil
+    else
+      pos = pos + 1
+    end
+  end
+
+  return nil
+end
+
+local function scan_compound_token(text, start_pos)
+  local n = #text
+  local j = start_pos
+
+  while j <= n and not text:sub(j, j):match('^%s') do
+    local ch = text:sub(j, j)
+    if ch == '`' then
+      local code_end = find_code_span_end(text, j)
+      if code_end then
+        j = code_end + 1
+      else
+        local _, tick_end = text:find('^`+', j)
+        j = (tick_end or j) + 1
+      end
+    elseif ch == '[' or (ch == '!' and text:sub(j + 1, j + 1) == '[') then
+      local link_end = find_markdown_link_end(text, j)
+      if link_end then
+        j = link_end + 1
+      else
+        j = j + 1
+      end
+    else
+      j = j + 1
+    end
+  end
+
+  return text:sub(start_pos, j - 1)
+end
+
 local function tokenize_markdown(text, cont_width, max_width)
   local tokens = {}
   local n = #text
@@ -143,40 +232,15 @@ local function tokenize_markdown(text, cont_width, max_width)
     if s then
       i = e + 1
     else
-      local matched = false
-
-      -- 1. Atomic inline code span (`...`) if it fits on a continuation line
-      if text:sub(i, i) == '`' then
-        local ticks = text:match('^(`+)', i)
-        local close_pat = '^(' .. ticks .. '.-' .. ticks .. '[.,;:!?)%]]*)'
-        local span = text:match(close_pat, i)
-        if span and display_width(span) <= max_span_width then
-          table.insert(tokens, span)
-          i = i + #span
-          matched = true
-        end
-      end
-
-      -- 2. Atomic Markdown link/image ([label](url) or ![alt](url)) if it fits on a continuation line
-      if not matched and (text:sub(i, i) == '[' or text:sub(i, i + 1) == '![') then
-        local span = text:match('^(!?%[[^%]]+%]%([^%s%)]+%)[.,;:!?)%]]*)', i)
-        if span and display_width(span) <= max_span_width then
-          table.insert(tokens, span)
-          i = i + #span
-          matched = true
-        end
-      end
-
-      -- 3. Default whitespace-delimited token
-      if not matched then
-        local word = text:match('^%S+', i)
-        if word then
+      local span = scan_compound_token(text, i)
+      if display_width(span) <= max_span_width then
+        table.insert(tokens, span)
+      else
+        for word in span:gmatch('%S+') do
           table.insert(tokens, word)
-          i = i + #word
-        else
-          break
         end
       end
+      i = i + #span
     end
   end
 
