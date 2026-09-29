@@ -160,14 +160,6 @@ return {
     ft = { "markdown" },
     opts = {
       render_modes = true,
-      anti_conceal = {
-        disabled_modes = { 'n' },
-      },
-      win_options = {
-        concealcursor = {
-          rendered = 'nc',
-        },
-      },
     },
   },
   {

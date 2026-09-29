@@ -25,17 +25,14 @@ disappear and the entire buffer text to shift left by one column.
 
 ## Fix
 
-1. **Keep `render-markdown.nvim` Active Across Modes & Conceal Cursor Line in Normal Mode:**
+1. **Keep `render-markdown.nvim` Active Across Modes & Unconceal Active Cursor Line:**
    - Configured `MeanderingProgrammer/render-markdown.nvim` in
      [dot_config/nvim/lua/plugins/init.lua](../dot_config/nvim/lua/plugins/init.lua)
-     with `render_modes = true`, `anti_conceal = { disabled_modes = { 'n' } }`,
-     and `win_options = { concealcursor = { rendered = 'nc' } }`.
-   - In Normal mode (`'n'`), both `render-markdown.nvim`'s `anti_conceal` and
-     Neovim's window `concealcursor` keep the active cursor line completely
-     rendered (no raw Markdown syntax revealed when moving the cursor).
-   - In Insert mode (`'i'`), `anti_conceal` unconceals only the active cursor
-     line for raw Markdown editing while keeping section icons (`󰫎 `) in the
-     gutter and all other lines rendered.
+     with `render_modes = true` (leaving default `anti_conceal` enabled and
+     `concealcursor = ''`).
+   - Across both Normal (`'n'`) and Insert (`'i'`) modes, `anti_conceal`
+     unconceals the active cursor line to show raw Markdown syntax while keeping
+     section icons (`󰫎 `) in the gutter and all other lines rendered.
 2. **Pin `vim.opt.signcolumn = 'yes'`:**
    - Set `vim.opt.signcolumn = 'yes'` in
      [dot_config/nvim/init.lua.tmpl](../dot_config/nvim/init.lua.tmpl) so the
