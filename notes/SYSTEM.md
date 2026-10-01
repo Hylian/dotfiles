@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-09-29*
+*Last Updated: 2026-10-01*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -55,7 +55,7 @@ This document represents the current, living ground truth for this cross-platfor
   - `manage-forks.sh status`: Compares submodule commits against local machine receipts and binary targets.
   - `manage-forks.sh check`: Fast non-zero exit if any installed binary is missing or behind submodule HEAD.
   - `manage-forks.sh sync`: Recursively updates submodules (with automatic `SSH_AUTH_SOCK` discovery from `zellij-env/` and BatchMode SSH + HTTPS fallback for non-interactive subshells) and triggers builds for any outdated fork, recording fresh receipts.
-  - `manage-forks.sh build <fork>`: Rebuilds and installs a fork, cleanly handling macOS inode preservation / ad-hoc codesigning (`codesign -s - --force`) and zjstatus plugin cache pruning.
+  - `manage-forks.sh build <fork>`: Rebuilds and installs a fork, installing via a temporary target to replace the binary on a fresh inode (preventing Linux `ETXTBSY` against running sessions and macOS vnode CDHash mismatch `SIGKILL`), ad-hoc codesigning on macOS (`codesign -s - --force`), and pruning zjstatus plugin cache.
   - `manage-forks.sh record <fork> [commit]`: Seeds or updates machine receipts for existing builds.
 * **Cache & Plugin Reload (macOS):** the cache dir is `~/Library/Caches/org.Zellij-Contributors.Zellij` (`zellij setup --check` prints it). A new `zjstatus.wasm` on disk is **not** enough after a rebuild — the tree also holds per-plugin state (`<url-path-safe>/plugin_cache`), hash-named blobs downloaded for URL-sourced plugins, per-session UUID data dirs, and per-version dirs. Clear it, but keep two things: `permissions.kdl` (the `RunCommands` grants; [run_onchange_after_20-zjstatus-plugin-permissions.sh.tmpl](../run_onchange_after_20-zjstatus-plugin-permissions.sh.tmpl) will not re-seed unless its rendered contents change) and `contract_version_1/` (holds `session_info`, which is how `list-sessions`/`attach` find a **live** server — deleting it while a long-lived session is running risks orphaning it). Compiled modules are not cached on disk in 0.45.x — `Module::new` runs on every load — so the stale-plugin risk is entirely the plugin_cache and download blobs. Running servers keep the old binary and old plugin in memory: a rebuild only reaches a session started afterwards.
 * **Session Reaping Leaves Residue:** `zellij delete-session <name>` removes the resurrection data, so the session stops appearing in `list-sessions`, but it does **not** clean two other places: `contract_version_1/session_info/<name>/session-metadata.kdl` and the session's UUID data dir at the cache root (an empty `file:`/`https:` path scaffold per plugin the session loaded). `list-sessions` ignores both — 143 UUID scaffolds and 6 orphaned `session-metadata.kdl` files had accumulated on `baumkuchen` before the 2026-08-19 sweep — so they are cosmetic clutter, not resurrectable sessions. Reap only entries older than the live session's start (`find … -mtime +0`) and never the UUID dir of a running server.

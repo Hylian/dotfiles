@@ -137,22 +137,23 @@ build_zellij() {
   setup_sccache
   mkdir -p "$(dirname "$target")"
 
-  # Build using xtask install
+  # Build using xtask install into a temporary file so running servers never block
+  # installation with Linux ETXTBSY ("Text file busy") or suffer macOS vnode CDHash mismatch
+  local tmp_target="${target}.tmp.$$"
   (
     cd "$dir"
-    cargo xtask install "$target"
+    cargo xtask install "$tmp_target"
   )
 
   print_sccache_stats
 
-  # On macOS, ensure fresh inode to prevent kernel CDHash vnode signature mismatch SIGKILL
+  # Atomically replace target on a fresh inode
+  rm -f "$target"
+  mv "$tmp_target" "$target"
+
+  # On macOS, ad-hoc codesign the new binary
   if [[ "$(uname -s)" == "Darwin" ]]; then
-    local release_bin="${dir}/target/release/zellij"
-    if [[ -f "$release_bin" ]]; then
-      rm -f "$target"
-      cp "$release_bin" "$target"
-      codesign -s - --force "$target" >/dev/null 2>&1 || true
-    fi
+    codesign -s - --force "$target" >/dev/null 2>&1 || true
   fi
 
   # Remove any stale ~/.cargo/bin/zellij so it never shadows ~/.local/bin/zellij
