@@ -16,7 +16,7 @@ This document represents the current, living ground truth for this cross-platfor
 
 ### Privacy & Security Policy
 * **Public Repository:** Absolute zero-secrets policy. No API tokens, credentials, or private work paths.
-* **Work Separation:** Work-specific aliases and paths live in external untracked files (e.g. `~/.config/zsh/paths`, `aliases`, `gemini`).
+* **Work Separation & Host-Local Alias Overlay:** Work-specific aliases, internal hostnames, and private paths live strictly in external untracked files (e.g. `~/.config/zsh/galiases`, `paths`, `aliases`, `gemini`) sourced conditionally by [dot_zshrc.tmpl](../dot_zshrc.tmpl). Public templates (such as [dot_config/aerospace/aerospace.toml.tmpl](../dot_config/aerospace/aerospace.toml.tmpl)) reference only opaque semantic alias names (`rwd`, `rwc`) rather than internal flags or script paths.
 
 ### Repository Upstream Synchronization & SSH Key Caching
 * **Autonomous Git Push/Pull:** `chez` automatically pulls upstream (`GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --ff-only`) upon session activation to sync changes made across machines, and pushes (`GIT_SSH_COMMAND="ssh -o BatchMode=yes" git push origin main`) following each conventional commit.

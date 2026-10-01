@@ -20,7 +20,12 @@ We wanted an analogous keybinding (`cmd-ctrl-enter`) that launches Ghostty direc
      ```
    - Passes `ZELLIJ_NO_AUTOSTART=1` so local Zellij is bypassed.
    - Uses `/bin/zsh -lic` (login + interactive + command) to ensure full environment, `PATH`, and alias sourcing.
-3. **Verification & Deployment:**
+   - Retired the legacy `cmd-semicolon` binding (superseded by `cmd-shift-enter`).
+3. **Skill & Workflow Refinements ([SKILL.md](../.agents/skills/chez/SKILL.md) & [.rgignore](../.rgignore)):**
+   - Added `chezmoi status` / `chezmoi diff` inspection and automatic clean upstream application to Step 2 (**Context Priming on Activation**).
+   - Added root [.rgignore](../.rgignore) excluding `software/` so `rg` searches dotfiles and notes instantaneously without scanning submodule source trees or multi-GB Rust `target/` directories, and documented `rg`-first and headless Lazy plugin sync (`nvim --headless "+Lazy! sync" +qa`) in Step 5 (**Modification Lifecycle**).
+   - Documented the `~/.config/zsh/galiases` privacy boundary pattern in [SYSTEM.md](SYSTEM.md).
+4. **Verification & Deployment:**
    - Applied configuration via `chezmoi apply --no-pager`.
    - Reloaded live AeroSpace configuration via `aerospace reload-config`.
    - Verified `rwc` alias resolution via `/bin/zsh -lic "which rwc"`.
