@@ -18,3 +18,5 @@
   module, headless Neovim starts with empty `:messages` after Lazy installed
   `git-conflict.nvim`/`diffview.nvim` and treesitter fetched its parsers.
 - Running Zellij servers keep the old binary/plugin in memory until restarted.
+- Follow-up: Rachel chose to drop the Gemini rule; `aerospace.toml` applied
+  and `aerospace reload-config` succeeded. `chezmoi status` is clean.
