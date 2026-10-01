@@ -33,6 +33,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 cmd-enter = "exec-and-forget open -n /Applications/Ghostty.app"
 {{ if eq .chezmoi.hostname "shined-mac" -}}
 cmd-shift-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwd"
+cmd-ctrl-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwc"
 cmd-semicolon = "exec-and-forget open -n /Applications/Ghostty.app --args -e zsh -c ~/dotfiles/scripts/ssh/desktop.sh"
 {{- end -}}
 {{ if eq .chezmoi.hostname "fbkpro" -}}
