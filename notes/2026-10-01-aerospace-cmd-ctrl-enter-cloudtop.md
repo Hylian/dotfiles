@@ -6,12 +6,12 @@
 
 On `shined-mac`, `cmd-enter` launches local Ghostty (with local Zellij autostart), while `cmd-shift-enter` launches Ghostty directly into the `rwd` remote workstation workflow without autolaunching a local Zellij session.
 
-We wanted an analogous keybinding (`cmd-ctrl-enter`) that launches Ghostty directly into `cloudtop` via an `rwc` workflow (`rw -r cloudtop`) without local Zellij autostart.
+We wanted an analogous keybinding (`cmd-ctrl-enter`) that launches Ghostty directly into `cloudtop` via an `rwc` workflow (attaching/creating the `persist` Zellij session on the remote) without local Zellij autostart.
 
 ## Solution
 
 1. **`rwc` Alias in Local `~/.config/zsh/galiases`:**
-   - Defined `alias rwc="rw -r cloudtop"`.
+   - Defined `rwc` matching `rwd` with `-i 'zellij a -c persist options --on-force-close detach'` so it attaches to (or creates) the `persist` Zellij session on the remote machine.
    - Loaded conditionally by [dot_zshrc.tmpl](../dot_zshrc.tmpl) for interactive shells.
 2. **AeroSpace Binding in [dot_config/aerospace/aerospace.toml.tmpl](../dot_config/aerospace/aerospace.toml.tmpl):**
    - Added `cmd-ctrl-enter` under `{{ if eq .chezmoi.hostname "shined-mac" -}}`:
