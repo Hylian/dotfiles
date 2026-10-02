@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-10-01*
+*Last Updated: 2026-10-02*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -38,7 +38,7 @@ This document represents the current, living ground truth for this cross-platfor
 * **Linux (Wayland):** `sway`, `niri`, `waybar`, `dunst`, `kanshi`, `swaylock`, `swayidle`, `tofi`.
   - **Notifications (Dunst):** Configured via [dot_config/dunst/dunstrc.tmpl](../dot_config/dunst/dunstrc.tmpl) with `origin = bottom-left` and `offset = 4x4`, pinned to the rightmost 4K vertical monitor (`DP-2` on `shined` / `natura`).
 * **macOS:** `aerospace`, `sketchybar`, `borders`.
-  - **AeroSpace Ghostty Launchers ([dot_config/aerospace/aerospace.toml.tmpl](../dot_config/aerospace/aerospace.toml.tmpl)):** `cmd-enter` launches a standard Ghostty instance (which autolaunches local Zellij via `zellij.zsh`). On `shined-mac`, `cmd-shift-enter` launches Ghostty with `--env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwd` (connecting to desktop) and `cmd-ctrl-enter` launches Ghostty with `--env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwc` (connecting to cloudtop). Both execute Zsh as a login + interactive shell (`/etc/zprofile` `path_helper` + [dot_zshenv.tmpl](../dot_zshenv.tmpl) `PATH` initialization for `/usr/local/bin`, `/opt/homebrew/bin`, and `~/.local/bin`) and load `~/.config/zsh/galiases` (`rwd` / `rwc`) while skipping local `zellij.zsh` autolaunch (`[[ -z "$ZELLIJ_NO_AUTOSTART" ]]` in [dot_zshrc.tmpl](../dot_zshrc.tmpl)).
+  - **AeroSpace Ghostty Launchers ([dot_config/aerospace/aerospace.toml.tmpl](../dot_config/aerospace/aerospace.toml.tmpl)):** `cmd-enter` launches a standard Ghostty instance (which autolaunches local Zellij via `zellij.zsh`). On `shined-mac`, `cmd-shift-enter` launches Ghostty with `--env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwd` (connecting to desktop) and `cmd-ctrl-enter` launches Ghostty with `--env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwc` (connecting to cloudtop). On `baumkuchen`, `cmd-shift-enter` launches Ghostty with `--env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic "ssh -t studio 'zellij a -c persist options --on-force-close detach'"`. All remote launchers execute Zsh as a login + interactive shell (`/etc/zprofile` `path_helper` + [dot_zshenv.tmpl](../dot_zshenv.tmpl) `PATH` initialization for `/usr/local/bin`, `/opt/homebrew/bin`, and `~/.local/bin`) while skipping local `zellij.zsh` autolaunch (`[[ -z "$ZELLIJ_NO_AUTOSTART" ]]` in [dot_zshrc.tmpl](../dot_zshrc.tmpl)).
 
 ### B. Terminal Emulator (Ghostty)
 * **Configuration:** Shared chezmoi template (`dot_config/ghostty/config.tmpl`).

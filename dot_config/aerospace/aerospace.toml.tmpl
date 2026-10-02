@@ -34,6 +34,8 @@ cmd-enter = "exec-and-forget open -n /Applications/Ghostty.app"
 {{ if eq .chezmoi.hostname "shined-mac" -}}
 cmd-shift-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwd"
 cmd-ctrl-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwc"
+{{- else if eq .chezmoi.hostname "baumkuchen" -}}
+cmd-shift-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic \"ssh -t studio 'zellij a -c persist options --on-force-close detach'\""
 {{- end -}}
 {{ if eq .chezmoi.hostname "fbkpro" -}}
 cmd-shift-q = 'exec-and-forget open -n /Applications/Zen\ Browser.app'
