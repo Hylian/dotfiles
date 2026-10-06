@@ -244,7 +244,7 @@ fzf-git-pick-commit() {
     --bind "ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down"
     --bind "ctrl-q:abort"
     --bind "enter:accept"
-    --preview-window=right:65%
+    --preview-window=down:85%
   )
 
   echo $($gitlog | $fzf | awk '{print $1}')
