@@ -14,7 +14,12 @@ Previously, `fzf-git-pick-commit` in [dot_config/zsh/aliases.tmpl](../dot_config
    - The commit picker is positioned in the top 15% with `--reverse`, keeping the prompt at line 1 and displaying the latest matching commits across the entire terminal width without truncation.
    - The Delta diff preview occupies the bottom 85% below the commit picker, providing full-width rendering for commit diffs.
 
-2. **Beneficiaries:**
+2. **Preview Scrolling Keybindings:**
+   - Bound `ctrl-e` and `down` to `preview-down` for scrolling the preview window down line-by-line.
+   - Bound `ctrl-y` and `up` to `preview-up` for scrolling the preview window up line-by-line.
+   - Preserved `ctrl-u`/`ctrl-d` and `pgup`/`pgdn` for half-page preview scrolling, while commit selection list navigation remains accessible via `ctrl-j`/`ctrl-k` and `ctrl-n`/`ctrl-p`.
+
+3. **Beneficiaries:**
    - `gshow` and `gshow.`, as well as `fzf-git-difftool` (`gdiff`), `fzf-git-difftool-to` (`gdiffto`), and the `^n` / `git-pick-fzf` widget, inherit this layout when picking commits.
 
 ## Verification
