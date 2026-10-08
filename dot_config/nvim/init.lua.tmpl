@@ -38,13 +38,15 @@ vim.opt.clipboard = 'unnamedplus'
 vim.opt.updatetime = 300
 vim.opt.undofile = true
 vim.opt.undolevels = 1000
+vim.opt.swapfile = true
+vim.opt.directory = vim.fn.stdpath('state') .. '/swap//'
 vim.opt.backspace = 'indent,eol,start'
 vim.opt.hidden = true
 vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.cmdheight = 0
 vim.opt.colorcolumn = '80'
-vim.opt.shortmess = 'ostTAcCWFSI'
+vim.opt.shortmess = 'ostTcCWFSI'
 vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
@@ -238,6 +240,7 @@ vim.api.nvim_create_autocmd("VimLeave", {
 
 require('config.root').setup()
 require('config.markdown').setup()
+require('config.swap').setup()
 require('config.everforest')
 require('config.lualine')
 require('config.nvim-web-devicons')
