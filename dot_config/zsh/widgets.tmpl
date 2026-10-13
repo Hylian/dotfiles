@@ -209,7 +209,7 @@ if (( $+commands[batcat] )); then
 fi
 local file_path
 {
-  file_path=$(${FD_COMMAND:-fd} --type f | fzf --ansi \
+  file_path=$(QUOTING_STYLE=literal ${FD_COMMAND:-fd} --type f --strip-cwd-prefix -X ls -1td -- | fzf --ansi \
       --color prompt:green \
       --prompt "nvim> " \
       --header "" \

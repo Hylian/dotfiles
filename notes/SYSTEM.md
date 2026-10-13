@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-10-12*
+*Last Updated: 2026-10-13*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -172,6 +172,6 @@ This document represents the current, living ground truth for this cross-platfor
 * **`^j` is reserved for `accept-line` and MUST NOT be bound to a widget.** `^J` is LF, and the tty line discipline runs in cooked mode with `ICRNL` between `accept-line` and the next ZLE read — an Enter autorepeated into that window is enqueued as LF and dispatched as `^J`, making Enter and Ctrl-J the same byte with no way to distinguish them. A held Enter therefore fires whatever `^j` is bound to; widening the window (hook forks on `chpwd`) widens the race. `widgets.tmpl` rebinds `^j` to `accept-line` explicitly in all three keymaps so re-sourcing it in a live shell cannot leave a stale binding. See [2026-07-26-held-enter-triggers-zoxide-widget.md](2026-07-26-held-enter-triggers-zoxide-widget.md). No other control key in this set has a CR relationship.
 * `^g`: `cd-fzf` (interactive directory navigator).
 * `^f`: `rg-fzf` (interactive ripgrep file/line search into Neovim).
-* `^v`: `vim-fzf` (interactive fd file search into Neovim).
+* `^v`: `vim-fzf` (interactive file search into Neovim via fd and ls, sorted by modification date with most recent selected first).
 * `^n`: `git-pick-fzf` (interactive git commit picker with delta preview, pastes/appends selected commit SHA(s) to current line).
 * `^b`: `git-branch-fzf` (interactive git branch picker sorted with current branch on top, local branches by most recent, then remote branches, with pretty short log preview).
