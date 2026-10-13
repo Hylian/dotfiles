@@ -191,6 +191,8 @@ map('n', '<leader>nh',    "<cmd>Noice history<CR>")
 map('n', '<leader>nl',    "<cmd>Noice last<CR>")
 map('n', '<leader>ne',    "<cmd>Noice errors<CR>")
 map('n', '<leader>nd',    "<cmd>Noice dismiss<CR>")
+map('n', '<leader>d',     function() require('toggle_lsp_diagnostics').toggle_diagnostics() end, { desc = "Toggle LSP diagnostics" })
+map('n', '<leader>D',     function() require('toggle_lsp_diagnostics').toggle_virtual_text() end, { desc = "Toggle LSP inline virtual text" })
 map('n', '\\',            ":NvimTreeFindFileToggle<CR>")
 
 map('n', '<C-p>',     ":set paste<CR>o<ESC>p:set nopaste<CR>")
