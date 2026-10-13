@@ -40,3 +40,8 @@ vim.lsp.enable('clangd')
 
 vim.lsp.enable('rust_analyzer')
 
+-- Enable LSP inlay hints (type annotations, parameter hints) by default
+if vim.lsp.inlay_hint then
+  vim.lsp.inlay_hint.enable(true)
+end
+
