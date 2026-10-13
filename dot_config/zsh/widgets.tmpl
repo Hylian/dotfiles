@@ -219,15 +219,15 @@ local file_path
   file_path=$(eval "$cmd_local" | fzf --ansi \
       --color prompt:green \
       --prompt "nvim> " \
-      --header "Tab: all files" \
+      --header "<Tab>: all files" \
       --height '40%' \
       --freeze-left=1 \
       --freeze-right=1 \
       --delimiter=/ \
       --preview "$BAT_BIN --color=always {}" \
       --preview-window 'right,50%' \
-      --bind "tab:transform:[ -f '$state_file' ] && { rm -f '$state_file'; echo 'change-prompt(nvim> )+change-header(Tab: all files)+reload($cmd_local)'; } || { touch '$state_file'; echo 'change-prompt(nvim [all]> )+change-header(Tab: current dir)+reload($cmd_all)'; }" \
-      --bind "btab:transform:[ -f '$state_file' ] && { rm -f '$state_file'; echo 'change-prompt(nvim> )+change-header(Tab: all files)+reload($cmd_local)'; } || { touch '$state_file'; echo 'change-prompt(nvim [all]> )+change-header(Tab: current dir)+reload($cmd_all)'; }" \
+      --bind "tab:transform:[ -f '$state_file' ] && { rm -f '$state_file'; echo 'change-prompt(nvim> )+change-header(<Tab>: all files)+reload($cmd_local)'; } || { touch '$state_file'; echo 'change-prompt(nvim [all]> )+change-header(<Tab>: current dir)+reload($cmd_all)'; }" \
+      --bind "btab:transform:[ -f '$state_file' ] && { rm -f '$state_file'; echo 'change-prompt(nvim> )+change-header(<Tab>: all files)+reload($cmd_local)'; } || { touch '$state_file'; echo 'change-prompt(nvim [all]> )+change-header(<Tab>: current dir)+reload($cmd_all)'; }" \
       --bind 'change:first' \
       --bind 'enter:become(echo {})' \
       --bind 'pgup:preview-half-page-up' \
