@@ -131,15 +131,16 @@ keybinds clear-defaults=true {
         bind "Alt right" { GoToNextTab; }
         bind "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
-        bind "Alt 1" { GoToTab 1; SwitchToMode "normal"; }
-        bind "Alt 2" { GoToTab 2; SwitchToMode "normal"; }
-        bind "Alt 3" { GoToTab 3; SwitchToMode "normal"; }
-        bind "Alt 4" { GoToTab 4; SwitchToMode "normal"; }
-        bind "Alt 5" { GoToTab 5; SwitchToMode "normal"; }
-        bind "Alt 6" { GoToTab 6; SwitchToMode "normal"; }
-        bind "Alt 7" { GoToTab 7; SwitchToMode "normal"; }
-        bind "Alt 8" { GoToTab 8; SwitchToMode "normal"; }
-        bind "Alt 9" { GoToTab 9; SwitchToMode "normal"; }
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
+        bind "Alt 0" { GoToTab 10; }
         bind "Alt `" { ToggleTab; }
         bind "Alt ~" { ToggleTab; }
         bind "Alt Shift `" { ToggleTab; }
@@ -255,9 +256,8 @@ plugins {
     about location="zellij:about"
     autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
         is_enabled true
-        print_to_log false
-        reaction_seconds "0.2"
-        triggers "nvim"
+        lock_regex "^(nvim|vim)$"
+        log_level "warn"
     }
     compact-bar location="zellij:compact-bar"
     configuration location="zellij:configuration"
