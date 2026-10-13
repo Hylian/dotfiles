@@ -207,24 +207,34 @@ BAT_BIN="bat"
 if (( $+commands[batcat] )); then
   BAT_BIN="batcat"
 fi
+local state_file
+state_file=$(mktemp "${TMPDIR:-/tmp}/vim-fzf.XXXXXX")
+rm -f "$state_file"
+
+local cmd_local="QUOTING_STYLE=literal ${FD_COMMAND:-fd} --type f --max-depth 1 --strip-cwd-prefix -X ls -1td --"
+local cmd_all="QUOTING_STYLE=literal ${FD_COMMAND:-fd} --type f --strip-cwd-prefix -X ls -1td --"
+
 local file_path
 {
-  file_path=$(QUOTING_STYLE=literal ${FD_COMMAND:-fd} --type f --strip-cwd-prefix -X ls -1td -- | fzf --ansi \
+  file_path=$(eval "$cmd_local" | fzf --ansi \
       --color prompt:green \
       --prompt "nvim> " \
-      --header "" \
+      --header "Tab: all files" \
       --height '40%' \
       --freeze-left=1 \
       --freeze-right=1 \
       --delimiter=/ \
       --preview "$BAT_BIN --color=always {}" \
       --preview-window 'right,50%' \
+      --bind "tab:transform:[ -f '$state_file' ] && { rm -f '$state_file'; echo 'change-prompt(nvim> )+change-header(Tab: all files)+reload($cmd_local)'; } || { touch '$state_file'; echo 'change-prompt(nvim [all]> )+change-header(Tab: current dir)+reload($cmd_all)'; }" \
+      --bind "btab:transform:[ -f '$state_file' ] && { rm -f '$state_file'; echo 'change-prompt(nvim> )+change-header(Tab: all files)+reload($cmd_local)'; } || { touch '$state_file'; echo 'change-prompt(nvim [all]> )+change-header(Tab: current dir)+reload($cmd_all)'; }" \
       --bind 'change:first' \
       --bind 'enter:become(echo {})' \
       --bind 'pgup:preview-half-page-up' \
       --bind 'pgdn:preview-half-page-down' \
       --bind 'ctrl-delete:clear-query')
 } always {
+  rm -f "$state_file"
   zle reset-prompt
 }
 
