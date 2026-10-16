@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-10-13*
+*Last Updated: 2026-10-16*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -152,6 +152,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `<leader>nd`: `<cmd>Noice dismiss<CR>` (dismiss active notification popups).
 * `<leader>t`: `:Tabby jump_to_tab<CR>`.
 * `<leader>w`: `:Tabby pick_window<CR>`.
+* `:cppwd` / `:Cppwd`: Yanks the full filepath of the current buffer (`expand('%:p')`) into the system/OSC 52 clipboard (`+`) and unnamed (`"`) registers.
 * `gd`: Jump to LSP definition in current buffer (`fzf-lua.lsp_definitions`).
 * `gD`: Open LSP definition in a new nvim tab (`fzf-lua.lsp_definitions` with `jump1_action` and `actions.enter` set to `actions.file_tabedit`).
 * `gh` / `[`: Switch between header and source file (`clangd` LSP `textDocument/switchSourceHeader` with sister-directory filesystem fallback).

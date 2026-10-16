@@ -729,6 +729,21 @@ map('i', '<C-Del>', '<C-o>dw')
 
 map('n', 'yp', '<cmd>lua vim.fn.setreg("\\\"", vim.fn.expand("%:p:h"))<CR>')
 
+-- Yank current buffer's full filepath to clipboard (:cppwd / :Cppwd)
+vim.api.nvim_create_user_command('Cppwd', function()
+  local path = vim.fn.expand('%:p')
+  if path == '' then
+    vim.notify('No filepath for current buffer', vim.log.levels.WARN)
+    return
+  end
+  vim.fn.setreg('+', path)
+  vim.fn.setreg('"', path)
+  vim.notify('Yanked: ' .. path, vim.log.levels.INFO)
+end, {
+  desc = 'Yank filepath of current buffer into clipboard',
+})
+vim.cmd([[cnoreabbrev <expr> cppwd (getcmdtype() == ':' && getcmdline() =~# '^\s*cppwd$') ? 'Cppwd' : 'cppwd']])
+
 -- File-level jumplist navigation (skip intra-file jumps & ghost/deleted files)
 local function is_valid_jump_target(bufnr, cur_buf)
   if bufnr == cur_buf or not vim.api.nvim_buf_is_valid(bufnr) then
