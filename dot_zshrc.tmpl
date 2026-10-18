@@ -39,6 +39,10 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 VI_MODE_SET_CURSOR=true
 
+if [[ -d "/opt/homebrew/share/zsh/site-functions" ]] && (( ! ${fpath[(Ie)/opt/homebrew/share/zsh/site-functions]} )); then
+  fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
+fi
+
 _ANTIGEN_BUNDLES="$HOME/.antigen/bundles"
 if [[ -d "$_ANTIGEN_BUNDLES/robbyrussell/oh-my-zsh" && \
       -d "$_ANTIGEN_BUNDLES/jeffreytse/zsh-vi-mode" && \
