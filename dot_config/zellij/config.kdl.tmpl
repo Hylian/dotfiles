@@ -173,6 +173,7 @@ keybinds clear-defaults=true {
         bind "Alt k" { MoveFocus "up"; }
         bind "Alt l" { MoveFocus "right"; }
         bind "Alt n" { NewTab; }
+        bind "Alt o" { LinkHints; }
         bind "Ctrl q" { Quit; }
         bind "Ctrl Alt s" {
             LaunchOrFocusPlugin "session-manager" {
@@ -232,6 +233,7 @@ keybinds clear-defaults=true {
         bind "Ctrl j" "]" "Alt down" { ScrollToNextPrompt; }
         bind "m" { SelectCommandAtScrollPosition; }
         bind "c" "Alt y" { CopyLastCommandOutput; SwitchToMode "normal"; }
+        bind "f" "Alt o" { LinkHints; }
         bind "Alt v" { SwitchToMode "normal"; }
     }
     entersearch {

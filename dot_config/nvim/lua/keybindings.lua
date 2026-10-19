@@ -129,6 +129,7 @@ map(zellij_modes, '<A-n>',         function()
   zellij('new-tab', '--cwd', cwd, '--name', name)
 end)
 map(zellij_modes, '<A-f>',         function() zellij('toggle-fullscreen') end)
+map(zellij_modes, '<A-o>',         function() zellij('link-hints') end)
 
 -- Window / Pane management & quit
 map({ 'n', 't' }, '<A-S-s>',       function() require('focus').split_command('l') end)
