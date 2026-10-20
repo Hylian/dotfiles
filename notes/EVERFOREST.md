@@ -70,32 +70,59 @@ Mapped directly into [dot_config/ghostty/config.tmpl](../dot_config/ghostty/conf
 
 ## 4. Repository Synthesis & Tool Integrations
 
+All tools consume the centralized colorscheme architecture defined in [`.chezmoidata.toml`](../.chezmoidata.toml). Templates resolve the active scheme and palette at the header:
+```gotemplate
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
+```
+
 ### A. Ghostty Terminal Emulator
 * **File:** [dot_config/ghostty/config.tmpl](../dot_config/ghostty/config.tmpl)
-* **Background:** `fffbef` (Warm cream)
-* **Foreground:** `5c6a72` (Charcoal text)
-* **Selection:** Foreground `D3C6AA`, Background `1E2326` (high-contrast terminal drag select).
+* **Background:** `{{ trimPrefix "#" $p.bg0 }}` (`fffbef` warm cream)
+* **Foreground:** `{{ trimPrefix "#" $p.fg }}` (`5c6a72` charcoal text)
+* **Palette:** Directly mapped 16-color ANSI palette (`0..15`) using `$p.grey0`, `$p.red`, `$p.green`, ..., `$p.br_white`.
+* **Selection:** Foreground `{{ trimPrefix "#" ($p.sel_fg | upper) }}` (`D3C6AA`), Background `{{ trimPrefix "#" ($p.sel_bg | upper) }}` (`1E2326`) for high-contrast terminal drag select.
 
 ### B. Neovim 0.11
+* **File:** [dot_config/nvim/init.lua.tmpl](../dot_config/nvim/init.lua.tmpl) and [dot_config/nvim/lua/config/deadcolumn.lua.tmpl](../dot_config/nvim/lua/config/deadcolumn.lua.tmpl)
+* **Appearance:** Dynamically sets `vim.opt.background = '{{ $cs.appearance }}'`.
+* **Deadcolumn:** Blend color mapped to `$p.bg_bar` (`#fffbef`), warning blend mapped to `$p.bg_red` (`#fceced`).
 * **Plugin & Config:** `neanias/everforest-nvim` loaded in [dot_config/nvim/lua/config/everforest.lua](../dot_config/nvim/lua/config/everforest.lua).
 * **Settings:** `background = "hard"`, `ui_contrast = "medium"`, `transparent_background_level = 2`.
 * **Tabline:** `TabLineCurrent` set to `#8da101` (Green), inactive tab titles `#5c6a72`.
 
-### C. Zellij Multiplexer
-* **Themes & Layouts:** [dot_config/zellij/themes/everforest-light.kdl](../dot_config/zellij/themes/everforest-light.kdl) and [dot_config/zellij/layouts/default.kdl.tmpl](../dot_config/zellij/layouts/default.kdl.tmpl).
-* **Mode Badges:** 
-  - `NORMAL`, `RESIZE`, `PANE`, `TAB`, `SCROLL`, `SEARCH`: `#8da101` (Green badge with `#f2efdf` text).
-  - `LOCKED`: `#f85552` (Red badge).
-* **Statusline Ribbons:** Git branch (`#df69ba` Magenta), Session (`#3a94c5` Blue), Hostname (`#8da101` Green) over `#fffbef`.
+### C. Zellij Multiplexer & ZJStatus
+* **Configuration:** [dot_config/zellij/config.kdl.tmpl](../dot_config/zellij/config.kdl.tmpl) sets `theme "{{ $cs.zellij_theme }}"`.
+* **Layouts & ZJStatus:** [dot_config/zellij/layouts/default.kdl.tmpl](../dot_config/zellij/layouts/default.kdl.tmpl) renders a unified statusline driven by `$p`:
+  - Mode Badges (`NORMAL`, `RESIZE`, `PANE`, `TAB`, `SCROLL`, `SEARCH`): `$p.green` badge (`#8DA101`) with `$p.fg_reverse` (`#F2EFDF`) text.
+  - `LOCKED`: `$p.red` badge (`#F85552`).
+  - Statusline Ribbons: Git branch (`$p.purple` `#DF69BA`), Session (`$p.blue` `#3A94C5`), Hostname (`$p.green` `#8DA101`) over `$p.bg_bar` (`#FFFBEF`).
+  - Tabs: Inactive tab pill `$p.bg1` (`#F8F5E4`) with `$p.grey2` (`#BEC5B2`) text; active tab pill `$p.tab_active_bg` (`#FCECED`) with `$p.tab_active_fg` (`#5C6A72`) text.
 
-### D. Zsh, FZF & ZVM
-* **FZF Options ([dot_zshrc.tmpl](../dot_zshrc.tmpl#L275-L280)):**
-  `--color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987`
-* **Zsh Vi Mode (`zvm`):**
-  - Selection Highlight Background (`ZVM_VI_HIGHLIGHT_BACKGROUND`): `#e5e8c5` (Sage).
-  - Selection Highlight Text (`ZVM_VI_HIGHLIGHT_FOREGROUND`): `#5c6a72` (Charcoal).
-  - Extra Style (`ZVM_VI_HIGHLIGHT_EXTRASTYLE`): `bold`.
+### D. Zsh, FZF, ZVM & CLI
+* **Zsh Vi Mode (`zvm`):** [dot_zshrc.tmpl](../dot_zshrc.tmpl) sets `ZVM_VI_HIGHLIGHT_BACKGROUND="{{ $p.bg_visual }}"` (`#e5e8c5`) and `ZVM_VI_HIGHLIGHT_FOREGROUND="{{ $p.fg }}"` (`#5c6a72`) with `extra_style="bold"`.
+* **FZF Options:** Unified `$fzfColors` string in [dot_zshrc.tmpl](../dot_zshrc.tmpl) and [dot_config/zsh/widgets.tmpl](../dot_config/zsh/widgets.tmpl) parameterized with `$p.bg2`, `$p.fg`, `$p.green`, `$p.red`, `$p.yellow`, `$p.aqua`, `$p.bg0`, `$p.br_red`.
+* **Git Delta:** [dot_config/git/shared_config.tmpl](../dot_config/git/shared_config.tmpl) dynamically binds `[delta]` `syntax-theme = "{{ $cs.delta_syntax_theme }}"`, `dark = {{ eq $cs.appearance "dark" }}`, and maps diff background colors to `$p.diff_add`, `$p.diff_add_emph`, `$p.diff_del`, `$p.diff_del_emph`.
+* **Bat:** [dot_config/bat/config.tmpl](../dot_config/bat/config.tmpl) sets `--theme="{{ $cs.bat_theme }}"`.
+* **Tuicr:** [dot_config/tuicr/config.toml.tmpl](../dot_config/tuicr/config.toml.tmpl) sets `theme = "{{ $cs.tuicr_theme }}"` and `appearance = "{{ $cs.appearance }}"`.
 
-### E. Window Management & Desktop (Sway, Waybar, Tofi)
-* **Sway ([dot_config/sway/config.tmpl](../dot_config/sway/config.tmpl#L158-L162)):** Focused border `#8da101c0` / `#93b259c0`, focused title bar text `#fffbef`.
-* **Tofi Launcher ([dot_config/tofi/config](../dot_config/tofi/config)):** Border color `#8da101e0` (Moss Green).
+### E. Window Management & Desktop (Sway, Dunst)
+* **Sway ([dot_config/sway/config.tmpl](../dot_config/sway/config.tmpl)):** Window borders parameterized with `{{ $p.moss }}c0`, `{{ $p.green }}c0`, `{{ $p.bg0 }}`, and `{{ $p.fg }}`.
+* **Dunst ([dot_config/dunst/dunstrc.tmpl](../dot_config/dunst/dunstrc.tmpl)):** Notification background `{{ $p.bg0 }}a0`, foreground `{{ $p.fg }}f0`.
+
+---
+
+## 5. Centralized Colorscheme Architecture
+
+Defined centrally in [`.chezmoidata.toml`](../.chezmoidata.toml):
+
+1. **Hierarchy & Precedence:**
+   - Local override: `~/.config/chezmoi/chezmoi.toml` (`[data] colorscheme = "..."`)
+   - Host mapping: `.chezmoidata.toml` `[host_colorschemes.<hostname>]`
+   - Global default: `.chezmoidata.toml` `default_colorscheme = "everforest-light"`
+2. **First-Class Schemes:**
+   - `everforest-light`: Hard warm cream contrast (`#fffbef`), charcoal body (`#5c6a72`), moss green accent (`#8da101`), `OneHalfLight` syntax highlighting.
+   - `everforest-dark`: Hard dark background (`#1e2326`), warm cream text (`#d3c6aa`), sage green accent (`#a7c080`), `OneHalfDark` syntax highlighting.
+3. **Template Contract:**
+   Consuming templates resolve `$csName`, `$cs`, and `$p = $cs.palette`. Individual dotfiles do not maintain independent branching or duplicated color constants.

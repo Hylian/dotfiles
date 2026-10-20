@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 include /etc/sway/config.d/*
 
 {{ if eq .chezmoi.hostname "shined3" -}}
@@ -156,9 +159,9 @@ layer_effects 'launcher' 'blur enable; shadows enable; corner_radius 20'
 
 # Colors
 # class                  border    backgr.   text     indicator child_border
-client.focused           #93b259c0 #8da101c0 #fffbef  #93b259c0 #93b25990
-client.focused_inactive  #93b259c0 #fffbefc0 #5c6a72  #5f676a00 #5f676a00
-client.unfocused         #00000000 #fffbefc0 #5c6a72  #484e5000 #5f676a00
+client.focused           {{ $p.moss }}c0 {{ $p.green }}c0 {{ $p.bg0 }}  {{ $p.moss }}c0 {{ $p.moss }}90
+client.focused_inactive  {{ $p.moss }}c0 {{ $p.bg0 }}c0 {{ $p.fg }}  #5f676a00 #5f676a00
+client.unfocused         #00000000 {{ $p.bg0 }}c0 {{ $p.fg }}  #484e5000 #5f676a00
 client.background        #ffffff
 
 for_window {

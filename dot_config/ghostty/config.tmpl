@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 # Fonts
 
 font-family = PragmataPro Mono
@@ -14,53 +17,28 @@ font-size = 18
 {{ end }}
 
 # Colors
-{{ if ne .theme "dark" -}}
-background = fffbef
-foreground = 5c6a72
+background = {{ trimPrefix "#" $p.bg0 }}
+foreground = {{ trimPrefix "#" $p.fg }}
 
-palette =  0=#829181
-palette =  1=#f85552
-palette =  2=#8da101
-palette =  3=#dfa000
-palette =  4=#3a94c5
-palette =  5=#df69ba
-palette =  6=#35a77c
-palette =  7=#f3f5d9
-palette =  8=#a6b0a0
-palette =  9=#fa8987
-palette = 10=#bbd411
-palette = 11=#f2cd6d
-palette = 12=#8fcff2
-palette = 13=#f7c1e6
-palette = 14=#85e6c1
-palette = 16=#fdffe8
+palette =  0={{ $p.grey0 }}
+palette =  1={{ $p.red }}
+palette =  2={{ $p.green }}
+palette =  3={{ $p.yellow }}
+palette =  4={{ $p.blue }}
+palette =  5={{ $p.purple }}
+palette =  6={{ $p.aqua }}
+palette =  7={{ $p.bg2 }}
+palette =  8={{ $p.br_black }}
+palette =  9={{ $p.br_red }}
+palette = 10={{ $p.br_green }}
+palette = 11={{ $p.br_yellow }}
+palette = 12={{ $p.br_blue }}
+palette = 13={{ $p.br_purple }}
+palette = 14={{ $p.br_aqua }}
+palette = 15={{ $p.br_white }}
 
-selection-foreground = D3C6AA
-selection-background = 1E2326
-{{- else -}}
-background = 1E2326
-foreground = D3C6AA
-
-palette =  0=#272E33
-palette =  1=#E67E80
-palette =  2=#A7C080
-palette =  3=#DBBC7F
-palette =  4=#7FBBB3
-palette =  5=#D699B6
-palette =  6=#83C092
-palette =  7=#D3C6AA
-palette =  8=#374145
-palette =  9=#E69875
-palette = 10=#A7C080
-palette = 11=#DBBC7F
-palette = 12=#7FBBB3
-palette = 13=#D699B6
-palette = 14=#83C092
-palette = 15=#F3EACA
-
-selection-foreground = 1E2326
-selection-background = D3C6AA
-{{- end }}
+selection-foreground = {{ trimPrefix "#" ($p.sel_fg | upper) }}
+selection-background = {{ trimPrefix "#" ($p.sel_bg | upper) }}
 
 # Layout
 {{ if eq .chezmoi.hostname "shined" -}}

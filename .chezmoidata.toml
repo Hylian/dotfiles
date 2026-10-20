@@ -1,1 +1,131 @@
-theme = "light"
+# Global & Per-Host Colorscheme Selection
+# Precedence in templates:
+#   1. Local override in ~/.config/chezmoi/chezmoi.toml ([data] colorscheme = "...")
+#   2. Host mapping in [host_colorschemes] below
+#   3. Fallback to default_colorscheme
+default_colorscheme = "everforest-light"
+
+[host_colorschemes]
+shined = "everforest-light"
+eterna = "everforest-light"
+shined-mac = "everforest-light"
+baumkuchen = "everforest-light"
+midnight-future = "everforest-light"
+
+# ==============================================================================
+# Named Colorscheme Definitions
+# ==============================================================================
+
+[colorschemes.everforest-light]
+name = "everforest-light"
+appearance = "light"
+zellij_theme = "everforest-light"
+delta_syntax_theme = "OneHalfLight"
+bat_theme = "OneHalfLight"
+tuicr_theme = "everforest-light"
+
+[colorschemes.everforest-light.palette]
+# Base backgrounds & surfaces
+bg0 = "#fffbef"            # Primary window & terminal background (warm cream)
+bg_bar = "#fffbef"         # Statusbar / deadcolumn blend background
+bg1 = "#f8f5e4"            # Soft cream surface (inactive tab pill)
+bg2 = "#f3f5d9"            # Subtle highlight (FZF bg+, ANSI 7, cursorline)
+bg3 = "#efebd4"            # Medium muted background
+bg4 = "#e5dfc5"            # Softest contrast background
+bg_visual = "#e5e8c5"      # Vi-mode visual selection highlight (sage)
+bg_red = "#fceced"         # Soft blush pink (active tab pill, deadcolumn warning)
+
+# Foregrounds & neutrals
+fg = "#5c6a72"             # Primary charcoal text
+fg_reverse = "#f2efdf"     # Light badge text on colored statusline ribbons
+grey0 = "#829181"          # Muted grey (ANSI 0, comments, inactive borders)
+grey1 = "#a6b0a0"          # Light muted sage grey (ANSI 8)
+grey2 = "#bec5b2"          # Subtle secondary text (inactive tab fg)
+
+# Semantic & ANSI normal accents (1-6)
+red = "#f85552"            # ANSI 1: Errors, LOCKED mode badge, FZF pointers/matches
+orange = "#f57d26"         # Constants, warnings
+yellow = "#dfa000"         # ANSI 3: Golden ochre, FZF headers
+green = "#8da101"          # ANSI 2: Primary accent (NORMAL mode, borders, host ribbon)
+moss = "#93b259"           # Soft moss green (window borders)
+aqua = "#35a77c"           # ANSI 6: Seafoam cyan, FZF info
+blue = "#3a94c5"           # ANSI 4: Sky slate blue, session ribbon
+purple = "#df69ba"         # ANSI 5: Blossom magenta, git branch ribbon
+
+# Bright ANSI accents (8-15)
+br_black = "#a6b0a0"       # ANSI 8
+br_red = "#fa8987"         # ANSI 9, FZF hl+
+br_green = "#bbd411"       # ANSI 10
+br_yellow = "#f2cd6d"      # ANSI 11
+br_blue = "#8fcff2"        # ANSI 12
+br_purple = "#f7c1e6"      # ANSI 13
+br_aqua = "#85e6c1"        # ANSI 14
+br_white = "#fdffe8"       # ANSI 15
+
+# Terminal selection & diff highlights
+sel_fg = "#d3c6aa"
+sel_bg = "#1e2326"
+tab_active_bg = "#fceced"
+tab_active_fg = "#5c6a72"
+diff_add = "#f3f5d9"
+diff_add_emph = "#d7dea4"
+diff_del = "#ffe7de"
+diff_del_emph = "#f4bfb9"
+
+# ------------------------------------------------------------------------------
+
+[colorschemes.everforest-dark]
+name = "everforest-dark"
+appearance = "dark"
+zellij_theme = "everforest-dark"
+delta_syntax_theme = "OneHalfDark"
+bat_theme = "Monokai Extended (default dark)"
+tuicr_theme = "everforest-dark"
+
+[colorschemes.everforest-dark.palette]
+# Base backgrounds & surfaces
+bg0 = "#1e2326"            # Primary hard dark background
+bg_bar = "#272e33"         # Statusbar / deadcolumn blend background
+bg1 = "#495156"            # Surface background (inactive tab pill)
+bg2 = "#374145"            # Subtle highlight (FZF bg+)
+bg3 = "#414b50"            # Medium muted background
+bg4 = "#495156"            # Soft contrast background
+bg_visual = "#374145"      # Vi-mode visual selection highlight
+bg_red = "#4f5b58"         # Deadcolumn warning blend
+
+# Foregrounds & neutrals
+fg = "#d3c6aa"             # Primary warm cream text
+fg_reverse = "#374145"     # Dark badge text on colored statusline ribbons
+grey0 = "#272e33"          # ANSI 0
+grey1 = "#374145"          # ANSI 8
+grey2 = "#859289"          # Subtle secondary text (inactive tab fg)
+
+# Semantic & ANSI normal accents (1-6)
+red = "#e67e80"            # ANSI 1
+orange = "#e69875"         # Constants, warnings
+yellow = "#dbbc7f"         # ANSI 3
+green = "#a7c080"          # ANSI 2: Primary accent
+moss = "#a7c080"           # Window borders
+aqua = "#83c092"           # ANSI 6
+blue = "#7fbbb3"           # ANSI 4
+purple = "#d699b6"         # ANSI 5
+
+# Bright ANSI accents (8-15)
+br_black = "#374145"       # ANSI 8
+br_red = "#e69875"         # ANSI 9, FZF hl+
+br_green = "#a7c080"       # ANSI 10
+br_yellow = "#dbbc7f"      # ANSI 11
+br_blue = "#7fbbb3"        # ANSI 12
+br_purple = "#d699b6"      # ANSI 13
+br_aqua = "#83c092"        # ANSI 14
+br_white = "#f3eaca"       # ANSI 15
+
+# Terminal selection & diff highlights
+sel_fg = "#1e2326"
+sel_bg = "#d3c6aa"
+tab_active_bg = "#272e33"
+tab_active_fg = "#a7c080"
+diff_add = "#2e383c"
+diff_add_emph = "#425047"
+diff_del = "#3c2b33"
+diff_del_emph = "#543a48"

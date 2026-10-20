@@ -1,7 +1,10 @@
-theme = "everforest-light"
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
+theme = "{{ $cs.tuicr_theme }}"
 diff_view = "side-by-side"   # or "unified"
 ignore_whitespace = false    # ignore all whitespace in local VCS diffs
-appearance = "light"        # or "dark" / "light"
+appearance = "{{ $cs.appearance }}"        # or "dark" / "light"
 mouse = true
 leader = ";"                  # configurable prefix for leader shortcuts
 comment_vim = false           # vim modal editing in the review comment box

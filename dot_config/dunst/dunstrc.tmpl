@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 [global]
 {{ if or (eq .chezmoi.hostname "natura") (eq .chezmoi.hostname "shined") }}
 monitor = DP-2
@@ -26,8 +29,8 @@ alignment = left
 corner_radius = 0
 frame_width = 0
 frame_color = "#00000000"
-background = "#fffbefa0"
-foreground = "#5c6a72f0"
+background = "{{ $p.bg0 }}a0"
+foreground = "{{ $p.fg }}f0"
 
 [urgency_low]
 timeout = 1

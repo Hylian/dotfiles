@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 {{- /* A locally built zjstatus is assumed to carry the patch that repaints on a
        command result change; ZJSTATUS_AUTORENDER tells the git widget to skip its
        own repaint kick. Hosts without a local build fall back to the release. */ -}}
@@ -7,10 +10,9 @@ layout {
     default_tab_template {
         pane size=1 borderless=true {
             plugin location="{{ if $patched }}file:{{ $zjstatus }}{{ else }}https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm{{ end }}" {
-                {{ if ne .theme "dark" -}}
                 format_left   "{mode} {tabs}"
-                format_right  "#[fg=#DF69BA,bg=#FFFBEF]#[bg=#DF69BA,fg=#F2EFDF]  {command_git_branch} #[fg=#3A94C5,bg=#DF69BA]#[bg=#3A94C5,fg=#F2EFDF] {session} #[fg=#8DA101,bg=#3A94C5]#[bg=#8DA101,fg=#F2EFDF] {{ .chezmoi.fqdnHostname }}{command_host} #[fg=#8DA101]"
-                format_space  "#[fg=#8DA101,bg=#FFFBEF]"
+                format_right  "#[fg={{ $p.purple | upper }},bg={{ $p.bg_bar | upper }}]#[bg={{ $p.purple | upper }},fg={{ $p.fg_reverse | upper }}]  {command_git_branch} #[fg={{ $p.blue | upper }},bg={{ $p.purple | upper }}]#[bg={{ $p.blue | upper }},fg={{ $p.fg_reverse | upper }}] {session} #[fg={{ $p.green | upper }},bg={{ $p.blue | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] {{ .chezmoi.fqdnHostname }}{command_host} #[fg={{ $p.green | upper }}]"
+                format_space  "#[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
 
                 border_enabled  "false"
 
@@ -19,22 +21,22 @@ layout {
                 format_hide_on_overlength "true"
                 format_precedence "lrc"
 
-                mode_normal        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] NORMAL #[fg=#8DA101,bg=#FFFBEF]"
-                mode_locked        "#[fg=#F85552]#[bg=#F85552,fg=#F2EFDF] LOCKED #[fg=#F85552,bg=#FFFBEF]"
-                mode_resize        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] RESIZE #[fg=#8DA101,bg=#FFFBEF]"
-                mode_pane          "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF]  PANE  #[fg=#8DA101,bg=#FFFBEF]"
-                mode_tab           "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF]  TAB   #[fg=#8DA101,bg=#FFFBEF]"
-                mode_scroll        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SCROLL #[fg=#8DA101,bg=#FFFBEF]"
-                mode_enter_search  "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SEARCH #[fg=#8DA101,bg=#FFFBEF]"
-                mode_search        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SEARCH #[fg=#8DA101,bg=#FFFBEF]"
-                mode_rename_tab    "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] RENAME #[fg=#8DA101,bg=#FFFBEF]"
-                mode_rename_pane   "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] RENAME #[fg=#8DA101,bg=#FFFBEF]"
-                mode_session       "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] SESSN  #[fg=#8DA101,bg=#FFFBEF]"
-                mode_move          "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] MOVE   #[fg=#8DA101,bg=#FFFBEF]"
-                mode_prompt        "#[fg=#8DA101]#[bg=#8DA101,fg=#F2EFDF] PROMPT #[fg=#8DA101,bg=#FFFBEF]"
+                mode_normal        "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] NORMAL #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_locked        "#[fg={{ $p.red | upper }}]#[bg={{ $p.red | upper }},fg={{ $p.fg_reverse | upper }}] LOCKED #[fg={{ $p.red | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_resize        "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] RESIZE #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_pane          "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}]  PANE  #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_tab           "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}]  TAB   #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_scroll        "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] SCROLL #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_enter_search  "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] SEARCH #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_search        "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] SEARCH #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_rename_tab    "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] RENAME #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_rename_pane   "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] RENAME #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_session       "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] SESSN  #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_move          "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] MOVE   #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
+                mode_prompt        "#[fg={{ $p.green | upper }}]#[bg={{ $p.green | upper }},fg={{ $p.fg_reverse | upper }}] PROMPT #[fg={{ $p.green | upper }},bg={{ $p.bg_bar | upper }}]"
 
-                tab_normal   "#[fg=#F8F5E4,bg=#FFFBEF]#[bg=#F8F5E4,fg=#BEC5B2] {name} #[fg=#F8F5E4,bg=#FFFBEF]#[fg=#F8F5E4,bg=#FFFBEF] "
-                tab_active   "#[fg=#FFFBEF,bg=#FCECED]#[fg=#5C6A72,bg=#FCECED] {name} #[fg=#FFFBEF,bg=#FCECED]#[fg=#FCECED,bg=#FFFBEF] "
+                tab_normal   "#[fg={{ $p.bg1 | upper }},bg={{ $p.bg_bar | upper }}]#[bg={{ $p.bg1 | upper }},fg={{ $p.grey2 | upper }}] {name} #[fg={{ $p.bg1 | upper }},bg={{ $p.bg_bar | upper }}]#[fg={{ $p.bg1 | upper }},bg={{ $p.bg_bar | upper }}] "
+                tab_active   "#[fg={{ $p.bg_bar | upper }},bg={{ $p.tab_active_bg | upper }}]#[fg={{ $p.tab_active_fg | upper }},bg={{ $p.tab_active_bg | upper }}] {name} #[fg={{ $p.bg_bar | upper }},bg={{ $p.tab_active_bg | upper }}]#[fg={{ $p.tab_active_bg | upper }},bg={{ $p.bg_bar | upper }}] "
 
                 command_git_branch_command    "{{ .chezmoi.homeDir }}/.config/zellij/widgets/git-status.sh"
                 command_git_branch_format     "{stdout}"
@@ -50,56 +52,9 @@ layout {
                 command_host_rendermode "static"
                 command_host_interval   "2"
 
-                datetime        "#[fg=#F2EFDF,bold] {format} "
+                datetime        "#[fg={{ $p.fg_reverse | upper }},bold] {format} "
                 datetime_format "%A, %d %b %Y %H:%M"
                 datetime_timezone "America/New_York"
-                {{- else -}}
-                format_left   "{mode} {tabs}"
-                format_right  "{command_git_branch}#[bg=#7FBBB3,fg=#374145]{session} #[fg=#A7C080,bg=#7FBBB3]#[bg=#A7C080,fg=#374145] {{ .chezmoi.fqdnHostname }}{command_host} #[fg=#A7C080]"
-                format_space  "#[fg=#A7C080,bg=#272E33]"
-
-                border_enabled  "false"
-
-                hide_frame_for_single_pane "false"
-
-                format_hide_on_overlength "true"
-                format_precedence "lrc"
-
-                mode_normal        "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] NORMAL #[fg=#A7C080,bg=#272E33]"
-                mode_locked        "#[fg=#E67E80]#[bg=#E67E80,fg=#374145] LOCKED #[fg=#E67E80,bg=#272E33]"
-                mode_resize        "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] RESIZE #[fg=#A7C080,bg=#272E33]"
-                mode_pane          "#[fg=#A7C080]#[bg=#A7C080,fg=#374145]  PANE  #[fg=#A7C080,bg=#272E33]"
-                mode_tab           "#[fg=#A7C080]#[bg=#A7C080,fg=#374145]  TAB   #[fg=#A7C080,bg=#272E33]"
-                mode_scroll        "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] SCROLL #[fg=#A7C080,bg=#272E33]"
-                mode_enter_search  "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] SEARCH #[fg=#A7C080,bg=#272E33]"
-                mode_search        "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] SEARCH #[fg=#A7C080,bg=#272E33]"
-                mode_rename_tab    "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] RENAME #[fg=#A7C080,bg=#272E33]"
-                mode_rename_pane   "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] RENAME #[fg=#A7C080,bg=#272E33]"
-                mode_session       "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] SESSN  #[fg=#A7C080,bg=#272E33]"
-                mode_move          "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] MOVE   #[fg=#A7C080,bg=#272E33]"
-                mode_prompt        "#[fg=#A7C080]#[bg=#A7C080,fg=#374145] PROMPT #[fg=#A7C080,bg=#272E33]"
-
-                tab_normal   "#[fg=#495156,bg=#272E33]#[bg=#495156,fg=#859289] {name} #[fg=#495156,bg=#272E33]#[fg=#495156,bg=#272E33] "
-                tab_active   "#[fg=#272E33]#[fg=#A7C080,bold] {name} #[fg=#272E33]#[fg=#495156,bg=#272E33] "
-
-                command_git_branch_command    "{{ .chezmoi.homeDir }}/.config/zellij/widgets/git-status.sh"
-                command_git_branch_format     "#[fg=#DF69BA,bg=#272E33]#[bg=#DF69BA,fg=#374145]  {stdout} #[fg=#7FBBB3,bg=#DF69BA]"
-                command_git_branch_rendermode "static"
-                command_git_branch_interval   "5"
-                command_git_branch_cwd        "{focused_pane_cwd}"
-{{- if $patched }}
-                command_git_branch_env        "ZJSTATUS_AUTORENDER \"1\""
-{{- end }}
-
-                command_host_command    "{{ .chezmoi.homeDir }}/.config/zellij/widgets/host-status.sh"
-                command_host_format     "{stdout}"
-                command_host_rendermode "static"
-                command_host_interval   "2"
-
-                datetime        "#[fg=#374145,bold] {format} "
-                datetime_format "%A, %d %b %Y %H:%M"
-                datetime_timezone "America/New_York"
-                {{- end }}
             }
         }
         children

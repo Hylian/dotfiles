@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 require('deadcolumn').setup({
     scope = 'line', ---@type string|fun(): integer
     ---@type string[]|fun(mode: string): boolean
@@ -6,21 +9,13 @@ require('deadcolumn').setup({
     end,
     blending = {
         threshold = 0.75,
-        {{ if ne .theme "dark" -}}
-        colorcode = '#fffbef',
-        {{- else -}}
-        colorcode = '#272e33',
-        {{- end }}
+        colorcode = '{{ $p.bg_bar }}',
         hlgroup = { 'Normal', 'bg' },
     },
     warning = {
         alpha = 0.4,
         offset = 0,
-        {{ if ne .theme "dark" -}}
-        colorcode = '#fceced',
-        {{- else -}}
-        colorcode = '#4f5b58',
-        {{- end }}
+        colorcode = '{{ $p.bg_red }}',
         hlgroup = { 'Error', 'bg' },
     },
     extra = {

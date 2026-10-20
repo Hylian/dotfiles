@@ -1,3 +1,7 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
+{{- $fzfColors := printf "--color=bg+:%s,fg:%s,fg+:%s,border:%s,spinner:%s,hl:%s,header:%s,info:%s,pointer:%s,marker:%s,prompt:%s,hl+:%s" $p.bg2 $p.fg $p.fg $p.green $p.red $p.red $p.yellow $p.aqua $p.red $p.red $p.bg0 $p.br_red -}}
 # Setup Zsh Initialization Cache
 ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 [[ -d "$ZSH_CACHE_DIR" ]] || mkdir -p "$ZSH_CACHE_DIR"
@@ -249,13 +253,8 @@ ZVM_ESCAPE_KEYTIMEOUT=0.01
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 ZVM_CLIPBOARD_COPY_CMD='zsh_clipboard_copy'
 ZVM_CLIPBOARD_PASTE_CMD='zsh_clipboard_paste'
-{{ if ne .theme "dark" -}}
-ZVM_VI_HIGHLIGHT_BACKGROUND="#e5e8c5"
-ZVM_VI_HIGHLIGHT_FOREGROUND="#5c6a72"
-{{- else -}}
-ZVM_VI_HIGHLIGHT_BACKGROUND="#374145"
-ZVM_VI_HIGHLIGHT_FOREGROUND="#d3c6aa"
-{{- end }}
+ZVM_VI_HIGHLIGHT_BACKGROUND="{{ $p.bg_visual }}"
+ZVM_VI_HIGHLIGHT_FOREGROUND="{{ $p.fg }}"
 ZVM_VI_HIGHLIGHT_EXTRASTYLE="bold"
 
 function zvm_config() {
@@ -265,13 +264,8 @@ function zvm_config() {
   ZVM_SYSTEM_CLIPBOARD_ENABLED=true
   ZVM_CLIPBOARD_COPY_CMD='zsh_clipboard_copy'
   ZVM_CLIPBOARD_PASTE_CMD='zsh_clipboard_paste'
-{{ if ne .theme "dark" -}}
-  ZVM_VI_HIGHLIGHT_BACKGROUND="#e5e8c5"
-  ZVM_VI_HIGHLIGHT_FOREGROUND="#5c6a72"
-{{- else -}}
-  ZVM_VI_HIGHLIGHT_BACKGROUND="#374145"
-  ZVM_VI_HIGHLIGHT_FOREGROUND="#d3c6aa"
-{{- end }}
+  ZVM_VI_HIGHLIGHT_BACKGROUND="{{ $p.bg_visual }}"
+  ZVM_VI_HIGHLIGHT_FOREGROUND="{{ $p.fg }}"
   ZVM_VI_HIGHLIGHT_EXTRASTYLE="bold"
 }
 
@@ -552,11 +546,7 @@ export FZF_CTRL_R_OPTS="
   --with-nth 2..
   --bind 'ctrl-t:track+clear-query'
   --bind 'ctrl-y:execute-silent(echo -n {2..} | wl-copy)+abort'"
-{{ if ne .theme "dark" -}}
-export FZF_DEFAULT_OPTS='--bind=ctrl-z:ignore --color=bg+:#f3f5d9,fg:#5c6a72,fg+:#5c6a72,border:#8da101,spinner:#f85552,hl:#f85552,header:#dfa000,info:#35a77c,pointer:#f85552,marker:#f85552,prompt:#fffbef,hl+:#fa8987'
-{{- else -}}
-export FZF_DEFAULT_OPTS='--bind=ctrl-z:ignore'
-{{- end }}
+export FZF_DEFAULT_OPTS='--bind=ctrl-z:ignore {{ $fzfColors }}'
 
 if (( $+commands[fzf] )); then
   if [[ ! -f "$ZSH_CACHE_DIR/fzf.zsh" || "$commands[fzf]" -nt "$ZSH_CACHE_DIR/fzf.zsh" ]]; then

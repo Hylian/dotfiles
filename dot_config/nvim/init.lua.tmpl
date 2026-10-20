@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 require("keybindings")
 require("config.lazy")
 
@@ -50,11 +53,7 @@ vim.opt.shortmess = 'ostTcCWFSI'
 vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
-{{ if ne .theme "dark" -}}
-vim.opt.background = 'light'
-{{- else -}}
-vim.opt.background = 'dark'
-{{- end }}
+vim.opt.background = '{{ $cs.appearance }}'
 vim.opt.scrolloff = 4
 vim.opt.showtabline = 2
 --vim.opt.lazyredraw = true

@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 keybinds clear-defaults=true {
     locked {
         bind "Alt z" { SwitchToMode "normal"; }
@@ -299,11 +302,7 @@ ui {
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
-{{ if ne .theme "dark" -}}
-theme "everforest-light"
-{{- else -}}
-theme "everforest-dark"
-{{- end }}
+theme "{{ $cs.zellij_theme }}"
 
 
 // Choose the base input mode of zellij.
