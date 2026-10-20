@@ -6,7 +6,7 @@
 default_colorscheme = "everforest-light"
 
 [host_colorschemes]
-shined = "natsu-hiru"
+shined = "everforest-light"
 eterna = "everforest-light"
 shined-mac = "everforest-light"
 baumkuchen = "everforest-light"
