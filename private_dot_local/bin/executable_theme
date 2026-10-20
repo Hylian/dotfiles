@@ -1,0 +1,432 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# theme - Interactive colorscheme switcher & Truecolor previewer for chezmoi
+# ==============================================================================
+set -euo pipefail
+
+export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+
+get_repo_dir() {
+    local dir
+    dir="$(chezmoi source-path 2>/dev/null || true)"
+    if [[ -z "$dir" || ! -d "$dir" ]]; then
+        dir="$HOME/.local/share/chezmoi"
+    fi
+    echo "$dir"
+}
+
+get_hostname() {
+    local host
+    host="$(chezmoi execute-template '{{ .chezmoi.hostname }}' 2>/dev/null || true)"
+    if [[ -z "$host" ]]; then
+        host="$(hostname -s 2>/dev/null || echo "default")"
+    fi
+    echo "$host"
+}
+
+get_current_theme() {
+    local cur
+    cur="$(chezmoi execute-template '{{ get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme }}' 2>/dev/null || true)"
+    if [[ -z "$cur" ]]; then
+        cur="everforest-light"
+    fi
+    echo "$cur"
+}
+
+check_dirty_worktree() {
+    local repo_dir="$1"
+    local dirty
+    dirty="$(git -C "$repo_dir" status --porcelain --untracked-files=no | grep -v '\.chezmoidata\.toml$' || true)"
+    if [[ -n "$dirty" ]]; then
+        echo "Error: Uncommitted changes detected in chezmoi repository outside of .chezmoidata.toml:" >&2
+        echo "$dirty" >&2
+        echo "" >&2
+        echo "Please commit or stash your work before changing the colorscheme." >&2
+        exit 1
+    fi
+}
+
+list_themes() {
+    local repo_dir="$1"
+    python3 - "$repo_dir/.chezmoidata.toml" <<'EOF'
+import sys, tomllib
+with open(sys.argv[1], 'rb') as f:
+    data = tomllib.load(f)
+for name in data.get('colorschemes', {}).keys():
+    print(name)
+EOF
+}
+
+render_preview() {
+    local repo_dir="$1"
+    local theme_name="$2"
+    python3 - "$repo_dir/.chezmoidata.toml" "$theme_name" <<'EOF'
+import os, sys, re, shutil, tomllib
+
+toml_path = sys.argv[1]
+theme_name = sys.argv[2]
+
+with open(toml_path, 'rb') as f:
+    data = tomllib.load(f)
+
+cs = data.get('colorschemes', {}).get(theme_name)
+if not cs:
+    print(f"Error: Unknown theme '{theme_name}'")
+    sys.exit(1)
+
+p = cs['palette']
+bg0 = p['bg0']
+fg = p['fg']
+
+# Determine preview canvas width
+cols_env = os.environ.get('FZF_PREVIEW_COLUMNS')
+if cols_env and cols_env.isdigit():
+    width = int(cols_env)
+else:
+    width = min(shutil.get_terminal_size().columns, 100)
+if width < 50:
+    width = 80
+
+def hex_to_rgb(h):
+    h = h.lstrip('#')
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+def fg_col(h):
+    r, g, b = hex_to_rgb(h)
+    return f"\033[38;2;{r};{g};{b}m"
+
+def bg_col(h):
+    r, g, b = hex_to_rgb(h)
+    return f"\033[48;2;{r};{g};{b}m"
+
+RESET = "\033[0m"
+BOLD = "\033[1m"
+DIM = "\033[2m"
+BASE = bg_col(bg0) + fg_col(fg)
+RST = RESET + BASE
+
+import unicodedata
+
+def disp_len(s):
+    clean = re.sub(r'\033\[[0-9;]*m', '', s)
+    return sum(2 if unicodedata.east_asian_width(c) in ('W', 'F') else 1 for c in clean)
+
+def line(content=""):
+    pad = max(0, width - disp_len(content))
+    return f"{BASE}{content}{BASE}{' ' * pad}{RESET}"
+
+lines = []
+lines.append(line())
+
+# Title & Metadata
+app = cs.get('appearance', 'light').upper()
+syntax = cs.get('delta_syntax_theme', 'OneHalf')
+bat = cs.get('bat_theme', 'OneHalf')
+
+descriptions = {
+    'everforest-light': 'Comfortable natural green / warm cream day palette (Sainnhe Park)',
+    'everforest-dark': 'Comfortable natural green / hard dark night palette (Sainnhe Park)',
+    'haru-hiru': 'Madoromi Spring Day — Pilot Iroshizuku kiri-same (Misty Rain) mauve grey',
+    'natsu-hiru': 'Madoromi Summer Day — Pilot Iroshizuku fukagawa-nezu (Fukagawa) ocean sage',
+    'aki-hiru': 'Madoromi Autumn Day — Pilot Iroshizuku yama-guri (Wild Chestnut) sepia grey',
+    'fuyu-hiru': 'Madoromi Winter Day — Pilot Iroshizuku fuyu-syogun (Old Man Winter) slate grey',
+    'haru-yoru': 'Madoromi Spring Night — Deep wash with bright seasonal blooming accents',
+    'natsu-yoru': 'Madoromi Summer Night — Deep wash with ocean teals, vivid pink & gold',
+    'aki-yoru': 'Madoromi Autumn Night — Deep wash with chestnut neutrals, warm gold & red',
+    'fuyu-yoru': 'Madoromi Winter Night — Deep wash with crisp slate neutrals, indigo & violet',
+}
+desc = descriptions.get(theme_name, f"Appearance: {app}")
+
+lines.append(line(f"  {BOLD}{theme_name}{RST}   [{BOLD}{app}{RST}]   delta: {syntax}   bat: {bat}"))
+lines.append(line(f"  {fg_col(p['grey0'])}{desc}{RST}"))
+lines.append(line(f"  {fg_col(p['grey1'])}" + "─" * (width - 4) + f"{RST}"))
+
+# Simulated Zellij Statusbar
+sb_bg = p.get('bg_bar', p['bg0'])
+sb_pill = (
+    f"{bg_col(sb_bg)}"
+    f"{fg_col(p['green'])}{bg_col(p['green'])}{fg_col(p['fg_reverse'])}{BOLD} NORMAL {RESET}{bg_col(sb_bg)}{fg_col(p['green'])}"
+    f"{bg_col(sb_bg)} "
+    f"{fg_col(p['bg1'])}{bg_col(p['bg1'])}{fg_col(p['grey2'])} 1:shell {RESET}{bg_col(sb_bg)}{fg_col(p['bg1'])}"
+    f"{bg_col(sb_bg)} "
+    f"{fg_col(p['tab_active_bg'])}{bg_col(p['tab_active_bg'])}{fg_col(p['tab_active_fg'])}{BOLD} 2:nvim {RESET}{bg_col(sb_bg)}{fg_col(p['tab_active_bg'])}"
+    f"{bg_col(sb_bg)}  "
+    f"{fg_col(p['purple'])}{bg_col(p['purple'])}{fg_col(p['fg_reverse'])}  main "
+    f"{fg_col(p['blue'])}{bg_col(p['purple'])}{bg_col(p['blue'])}{fg_col(p['fg_reverse'])} dev "
+    f"{fg_col(p['green'])}{bg_col(p['blue'])}{bg_col(p['green'])}{fg_col(p['fg_reverse'])} shined 🌐 {RESET}{bg_col(sb_bg)}{fg_col(p['green'])}{RST}"
+)
+lines.append(line(f"  {BOLD}STATUSBAR (Zellij / zjstatus):{RST}"))
+lines.append(line(f"  {sb_pill}"))
+lines.append(line())
+
+# Color Swatches: ANSI Normal & Bright
+ansi_normal_labels = ["0:blk", "1:red", "2:grn", "3:yel", "4:blu", "5:mag", "6:cya", "7:wht"]
+ansi_normal_keys = ['ansi_black', 'red', 'green', 'yellow', 'blue', 'purple', 'aqua', 'ansi_white']
+
+ansi_bright_labels = ["8:brb", "9:brr", "10:brg", "11:bry", "12:brb", "13:brm", "14:brc", "15:brw"]
+ansi_bright_keys = ['br_black', 'br_red', 'br_green', 'br_yellow', 'br_blue', 'br_purple', 'br_aqua', 'br_white']
+
+lines.append(line(f"  {BOLD}ANSI 0–7 & 8–15 TERMINAL PALETTE:{RST}"))
+row_normal = "  "
+for lbl, k in zip(ansi_normal_labels, ansi_normal_keys):
+    c = p.get(k, p.get('grey0' if 'black' in k else 'bg2'))
+    row_normal += f"{bg_col(c)}{fg_col(p['fg_reverse'])}{BOLD} {lbl} {RST} "
+lines.append(line(row_normal))
+
+row_bright = "  "
+for lbl, k in zip(ansi_bright_labels, ansi_bright_keys):
+    c = p.get(k, p['fg'])
+    row_bright += f"{bg_col(c)}{fg_col(p['fg_reverse'])}{BOLD} {lbl} {RST} "
+lines.append(line(row_bright))
+lines.append(line())
+
+# Surfaces & Accents Swatches
+lines.append(line(f"  {BOLD}SURFACES & ACCENTS:{RST}"))
+surf_row = f"  surfaces: {bg_col(p['bg0'])}{fg_col(p['fg'])} bg0 {RST} {bg_col(p['bg1'])}{fg_col(p['fg'])} bg1 {RST} {bg_col(p['bg2'])}{fg_col(p['fg'])} bg2 {RST} {bg_col(p['bg3'])}{fg_col(p['fg'])} bg3 {RST} {bg_col(p['bg4'])}{fg_col(p['fg'])} bg4 {RST} {bg_col(p['bg_visual'])}{fg_col(p['fg'])} visual {RST}"
+lines.append(line(surf_row))
+
+acc_row = f"  accents:  {fg_col(p['red'])}● red  {fg_col(p['orange'])}● orange  {fg_col(p['yellow'])}● yellow  {fg_col(p['green'])}● green  {fg_col(p['moss'])}● moss  {fg_col(p['aqua'])}● aqua  {fg_col(p['blue'])}● blue  {fg_col(p['purple'])}● purple{RST}"
+lines.append(line(acc_row))
+lines.append(line())
+
+# Code sample
+lines.append(line(f"  {BOLD}SYNTAX HIGHLIGHTING (Neovim / Treesitter):{RST}"))
+c_kw = fg_col(p['purple']) + BOLD
+c_fn = fg_col(p['blue'])
+c_ty = fg_col(p['yellow'])
+c_st = fg_col(p['green'])
+c_nu = fg_col(p['orange'])
+c_cm = fg_col(p['grey0'])
+c_op = fg_col(p['aqua'])
+c_fg = fg_col(p['fg'])
+c_id = fg_col(p['fg'])
+
+lines.append(line(f"    {c_cm}// Japanese fountain pen ink palette rendering{RST}"))
+lines.append(line(f"    {c_kw}pub fn {RST}{c_fn}render_wash{c_fg}({c_id}surface{c_op}: &{c_kw}mut {RST}{c_ty}Surface{c_fg}, {c_id}ink{c_op}: {c_ty}Ink{c_fg}) {c_op}-> {c_ty}Result{c_op}<{c_ty}Wash{c_op}> {c_fg}{{{RST}"))
+lines.append(line(f"        {c_kw}let {RST}{c_id}ramp {c_op}= {c_id}ink{c_op}.{c_fn}oklab_curve{c_fg}();{RST}"))
+lines.append(line(f"        {c_kw}let {RST}{c_id}color {c_op}= {c_id}ramp{c_op}.{c_fn}sample{c_fg}({c_nu}0.85{c_fg});{RST}"))
+lines.append(line(f"        {c_id}surface{c_op}.{c_fn}apply_wash{c_fg}({c_st}\"kami\"{c_fg}, {c_id}color{c_fg}){c_op}?;{RST}"))
+lines.append(line(f"        {c_ty}Ok{c_fg}({c_ty}Wash{c_op}::{c_fn}new{c_fg}({c_id}surface{c_op}.{c_fn}bounds{c_fg}()))"))
+lines.append(line(f"    {c_fg}}}{RST}"))
+lines.append(line())
+
+# Git Delta Diff
+lines.append(line(f"  {BOLD}GIT DELTA DIFF PREVIEW:{RST}"))
+del_bg = bg_col(p['diff_del'])
+del_emph_bg = bg_col(p.get('diff_del_emph', p['diff_del']))
+add_bg = bg_col(p['diff_add'])
+add_emph_bg = bg_col(p.get('diff_add_emph', p['diff_add']))
+
+del_line = f"    {del_bg}{fg_col(p['red'])}{BOLD} - {RESET}{del_bg}{fg_col(p['fg'])}let active_theme = {del_emph_bg}{BOLD}\"everforest-light\"{RESET}{del_bg}{fg_col(p['fg'])};  {RST}"
+add_line = f"    {add_bg}{fg_col(p['green'])}{BOLD} + {RESET}{add_bg}{fg_col(p['fg'])}let active_theme = {add_emph_bg}{BOLD}\"{theme_name}\"{RESET}{add_bg}{fg_col(p['fg'])};  {RST}"
+lines.append(line(del_line))
+lines.append(line(add_line))
+lines.append(line())
+
+print("\n".join(lines))
+EOF
+}
+
+emit_terminal_osc() {
+    local theme_name="$1"
+    local repo_dir="$2"
+    if [[ ! -w /dev/tty ]]; then
+        return 0
+    fi
+    python3 - "$repo_dir/.chezmoidata.toml" "$theme_name" <<'EOF' > /dev/tty 2>/dev/null || true
+import sys, tomllib
+
+toml_path = sys.argv[1]
+theme_name = sys.argv[2]
+
+with open(toml_path, 'rb') as f:
+    data = tomllib.load(f)
+
+cs = data.get('colorschemes', {}).get(theme_name)
+if not cs:
+    sys.exit(0)
+
+p = cs['palette']
+
+# OSC 11: background, OSC 10: foreground
+sys.stdout.write(f"\033]11;{p['bg0']}\007")
+sys.stdout.write(f"\033]10;{p['fg']}\007")
+
+# OSC 12: cursor
+cursor_col = p.get('cursor', p.get('sel_bg'))
+if cursor_col:
+    sys.stdout.write(f"\033]12;{cursor_col}\007")
+
+# OSC 4: ANSI palette 0-15
+ansi_keys = [
+    p.get('ansi_black', p.get('grey0')),
+    p['red'], p['green'], p['yellow'], p['blue'], p['purple'], p['aqua'],
+    p.get('ansi_white', p.get('bg2')),
+    p['br_black'], p['br_red'], p['br_green'], p['br_yellow'],
+    p['br_blue'], p['br_purple'], p['br_aqua'], p['br_white']
+]
+for i, color in enumerate(ansi_keys):
+    sys.stdout.write(f"\033]4;{i};{color}\007")
+sys.stdout.flush()
+EOF
+}
+
+apply_theme() {
+    local theme="$1"
+    local repo_dir="$2"
+    local host="$3"
+
+    check_dirty_worktree "$repo_dir"
+
+    # Validate that theme exists
+    if ! list_themes "$repo_dir" | grep -Fxq "$theme"; then
+        echo "Error: Unknown theme '$theme'." >&2
+        echo "Available themes:" >&2
+        list_themes "$repo_dir" | sed 's/^/  - /' >&2
+        exit 1
+    fi
+
+    # Update [host_colorschemes] in .chezmoidata.toml
+    python3 - "$repo_dir/.chezmoidata.toml" "$host" "$theme" <<'EOF'
+import sys, re
+
+toml_path, host, theme = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(toml_path, 'r', encoding='utf-8') as f:
+    content = f.read()
+
+if re.search(rf'^\s*{re.escape(host)}\s*=', content, re.MULTILINE):
+    content = re.sub(rf'^(\s*{re.escape(host)}\s*=\s*)[^\n#]+', rf'\g<1>"{theme}"', content, flags=re.MULTILINE)
+else:
+    content = re.sub(r'(\[host_colorschemes\]\n)', rf'\g<1>{host} = "{theme}"\n', content)
+
+with open(toml_path, 'w', encoding='utf-8') as f:
+    f.write(content)
+EOF
+
+    echo "Applying colorscheme '$theme' for host '$host' via chezmoi..."
+    chezmoi apply --no-pager
+
+    # Recompile zsh wordcode caches if zsh is available
+    if command -v zsh >/dev/null 2>&1; then
+        zsh -c 'zcompile ~/.zshrc ~/.config/zsh/widgets ~/.config/zsh/aliases 2>/dev/null || true' 2>/dev/null || true
+    fi
+
+    # Emit dynamic OSC sequences to live terminal
+    emit_terminal_osc "$theme" "$repo_dir"
+
+    # Re-check dirty worktree before git commit
+    check_dirty_worktree "$repo_dir"
+
+    # Commit and push if .chezmoidata.toml actually changed
+    if ! git -C "$repo_dir" diff --quiet -- .chezmoidata.toml; then
+        echo "Committing theme change in $repo_dir..."
+        git -C "$repo_dir" add .chezmoidata.toml
+        git -C "$repo_dir" commit -m "chore(theme): set ${host} colorscheme to ${theme}"
+
+        # Discover SSH agent for push
+        if [[ -z "${SSH_AUTH_SOCK:-}" || ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+            if [[ -S "${XDG_RUNTIME_DIR:-}/zellij-env/ssh-auth-sock" ]]; then
+                export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/zellij-env/ssh-auth-sock"
+            elif [[ -S "/run/user/$(id -u)/openssh_agent" ]]; then
+                export SSH_AUTH_SOCK="/run/user/$(id -u)/openssh_agent"
+            fi
+        fi
+
+        echo "Pushing to origin main..."
+        if ! GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentitiesOnly=no" git -C "$repo_dir" push origin main; then
+            echo "Warning: git push failed (offline or unauthenticated). Changes remain committed locally." >&2
+        fi
+    else
+        echo "Colorscheme for '$host' was already set to '$theme'."
+    fi
+
+    echo "Successfully activated '$theme'!"
+}
+
+# ==============================================================================
+# CLI Entrypoint
+# ==============================================================================
+REPO_DIR="$(get_repo_dir)"
+
+if [[ "${1:-}" == "--preview" ]]; then
+    if [[ -z "${2:-}" ]]; then
+        echo "Usage: $0 --preview <theme-name>" >&2
+        exit 1
+    fi
+    render_preview "$REPO_DIR" "$2"
+    exit 0
+fi
+
+if [[ "${1:-}" == "--list" ]]; then
+    list_themes "$REPO_DIR"
+    exit 0
+fi
+
+if [[ "${1:-}" == "--current" ]]; then
+    get_current_theme
+    exit 0
+fi
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    echo "Usage: theme [options] [theme-name]"
+    echo ""
+    echo "Interactive colorscheme switcher & 24-bit Truecolor previewer."
+    echo ""
+    echo "Options:"
+    echo "  --preview <name>   Render Truecolor preview for specified theme and exit"
+    echo "  --list             List all available colorscheme names and exit"
+    echo "  --current          Print active colorscheme for this machine and exit"
+    echo "  -h, --help         Show this help message and exit"
+    echo ""
+    echo "If [theme-name] is provided, applies it directly."
+    echo "If run with no arguments, opens an interactive fzf theme picker."
+    exit 0
+fi
+
+HOST="$(get_hostname)"
+CURRENT_THEME="$(get_current_theme)"
+
+# Non-interactive direct application
+if [[ $# -ge 1 && "${1:0:1}" != "-" ]]; then
+    apply_theme "$1" "$REPO_DIR" "$HOST"
+    exit 0
+fi
+
+# Interactive fzf mode
+check_dirty_worktree "$REPO_DIR"
+
+if ! command -v fzf >/dev/null 2>&1; then
+    echo "Error: fzf is required for interactive theme selection." >&2
+    echo "Run 'theme <name>' or 'theme --list' for non-interactive use." >&2
+    exit 1
+fi
+
+SELF_PATH="${BASH_SOURCE[0]}"
+
+# Prepare candidate list with current theme marked
+THEME_LIST="$(
+    list_themes "$REPO_DIR" | while read -r t; do
+        if [[ "$t" == "$CURRENT_THEME" ]]; then
+            printf "%-20s * (active)\n" "$t"
+        else
+            printf "%-20s\n" "$t"
+        fi
+    done
+)"
+
+SELECTED_RAW="$(
+    echo "$THEME_LIST" | fzf \
+        --height="100%" \
+        --prompt="Colorscheme > " \
+        --header="Host: ${HOST} | Active: ${CURRENT_THEME}" \
+        --preview="${SELF_PATH} --preview {1}" \
+        --preview-window="right:68%:wrap"
+)"
+
+if [[ -z "$SELECTED_RAW" ]]; then
+    echo "No theme selected."
+    exit 0
+fi
+
+SELECTED_THEME="$(echo "$SELECTED_RAW" | awk '{print $1}')"
+apply_theme "$SELECTED_THEME" "$REPO_DIR" "$HOST"

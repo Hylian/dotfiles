@@ -20,14 +20,14 @@ font-size = 18
 background = {{ trimPrefix "#" $p.bg0 }}
 foreground = {{ trimPrefix "#" $p.fg }}
 
-palette =  0={{ $p.grey0 }}
+palette =  0={{ get $p "ansi_black" | default $p.grey0 }}
 palette =  1={{ $p.red }}
 palette =  2={{ $p.green }}
 palette =  3={{ $p.yellow }}
 palette =  4={{ $p.blue }}
 palette =  5={{ $p.purple }}
 palette =  6={{ $p.aqua }}
-palette =  7={{ $p.bg2 }}
+palette =  7={{ get $p "ansi_white" | default $p.bg2 }}
 palette =  8={{ $p.br_black }}
 palette =  9={{ $p.br_red }}
 palette = 10={{ $p.br_green }}

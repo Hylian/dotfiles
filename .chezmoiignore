@@ -18,7 +18,12 @@
 .config/swayidle
 .config/swaylock
 .config/waybar
-.local/bin
+.local/bin/change_volume.sh
+.local/bin/fc_set.sh
+.local/bin/rearrange_workspaces.sh
+.local/bin/restart_waybar_dual.sh
+.local/bin/restart_waybar.sh
+.local/bin/zellij-edit
 .local/share/applications
 {{ end }}
 

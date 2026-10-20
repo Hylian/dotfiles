@@ -34,6 +34,8 @@ bg3 = "#efebd4"            # Medium muted background
 bg4 = "#e5dfc5"            # Softest contrast background
 bg_visual = "#e5e8c5"      # Vi-mode visual selection highlight (sage)
 bg_red = "#fceced"         # Soft blush pink (active tab pill, deadcolumn warning)
+bg_blue = "#ecf5ed"        # Soft blue-green wash
+bg_yellow = "#fef2d5"      # Soft golden wash
 
 # Foregrounds & neutrals
 fg = "#5c6a72"             # Primary charcoal text
@@ -51,6 +53,10 @@ moss = "#93b259"           # Soft moss green (window borders)
 aqua = "#35a77c"           # ANSI 6: Seafoam cyan, FZF info
 blue = "#3a94c5"           # ANSI 4: Sky slate blue, session ribbon
 purple = "#df69ba"         # ANSI 5: Blossom magenta, git branch ribbon
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#829181"     # ANSI 0
+ansi_white = "#f3f5d9"     # ANSI 7
 
 # Bright ANSI accents (8-15)
 br_black = "#a6b0a0"       # ANSI 8
@@ -92,6 +98,8 @@ bg3 = "#414b50"            # Medium muted background
 bg4 = "#495156"            # Soft contrast background
 bg_visual = "#374145"      # Vi-mode visual selection highlight
 bg_red = "#4f5b58"         # Deadcolumn warning blend
+bg_blue = "#384b55"        # Soft blue wash
+bg_yellow = "#45443c"      # Soft golden wash
 
 # Foregrounds & neutrals
 fg = "#d3c6aa"             # Primary warm cream text
@@ -109,6 +117,10 @@ moss = "#a7c080"           # Window borders
 aqua = "#83c092"           # ANSI 6
 blue = "#7fbbb3"           # ANSI 4
 purple = "#d699b6"         # ANSI 5
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#272e33"     # ANSI 0
+ansi_white = "#d3c6aa"     # ANSI 7
 
 # Bright ANSI accents (8-15)
 br_black = "#374145"       # ANSI 8
@@ -129,3 +141,531 @@ diff_add = "#2e383c"
 diff_add_emph = "#425047"
 diff_del = "#3c2b33"
 diff_del_emph = "#543a48"
+
+# ------------------------------------------------------------------------------
+# Madoromi Haru - Hiru (Day / Light)
+# ------------------------------------------------------------------------------
+
+[colorschemes.haru-hiru]
+name = "haru-hiru"
+appearance = "light"
+zellij_theme = "haru-hiru"
+delta_syntax_theme = "OneHalfLight"
+bat_theme = "OneHalfLight"
+tuicr_theme = "everforest-light"
+
+[colorschemes.haru-hiru.palette]
+# Base backgrounds & surfaces
+bg0 = "#f6eff8"
+bg_bar = "#f6eff8"
+bg1 = "#ece5ef"
+bg2 = "#d9ccdd"
+bg3 = "#e2dbe5"
+bg4 = "#c8bccd"
+bg_visual = "#d9ccdd"
+bg_red = "#f4cfd0"
+bg_blue = "#dbddf3"
+bg_yellow = "#ffc5bd"
+
+# Foregrounds & neutrals
+fg = "#584a5c"
+fg_reverse = "#f6eff8"
+grey0 = "#877b8c"
+grey1 = "#998d9e"
+grey2 = "#a99cad"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#ce2700"
+orange = "#fd5217"
+yellow = "#bda343"
+green = "#5e8933"
+moss = "#009162"
+aqua = "#009162"
+blue = "#1955bf"
+purple = "#b25d9d"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#6b5d70"
+ansi_white = "#b8acbd"
+
+# Bright ANSI accents (8-15)
+br_black = "#77697c"
+br_red = "#ce2700"
+br_green = "#4c7635"
+br_yellow = "#ad8f3a"
+br_blue = "#1b43a5"
+br_purple = "#a1488d"
+br_aqua = "#007d4f"
+br_white = "#c8bccd"
+
+# Terminal selection & diff highlights
+sel_fg = "#584a5c"
+sel_bg = "#b8acbd"
+tab_active_bg = "#f4cfd0"
+tab_active_fg = "#584a5c"
+diff_add = "#d9ddd5"
+diff_add_emph = "#c7d0be"
+diff_del = "#f4cfd0"
+diff_del_emph = "#f1bab5"
+
+# ------------------------------------------------------------------------------
+# Madoromi Natsu - Hiru (Day / Light)
+# ------------------------------------------------------------------------------
+
+[colorschemes.natsu-hiru]
+name = "natsu-hiru"
+appearance = "light"
+zellij_theme = "natsu-hiru"
+delta_syntax_theme = "OneHalfLight"
+bat_theme = "OneHalfLight"
+tuicr_theme = "everforest-light"
+
+[colorschemes.natsu-hiru.palette]
+# Base backgrounds & surfaces
+bg0 = "#e9f4f8"
+bg_bar = "#e9f4f8"
+bg1 = "#ddeaf0"
+bg2 = "#bed6df"
+bg3 = "#d3e1e6"
+bg4 = "#aec5ce"
+bg_visual = "#bed6df"
+bg_red = "#e5d3d9"
+bg_blue = "#d5e4f4"
+bg_yellow = "#f8cac1"
+
+# Foregrounds & neutrals
+fg = "#3b545e"
+fg_reverse = "#e9f4f8"
+grey0 = "#6f848d"
+grey1 = "#80969f"
+grey2 = "#8fa6ae"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#b53753"
+orange = "#ff5735"
+yellow = "#e3940b"
+green = "#00915c"
+moss = "#028e7f"
+aqua = "#028e7f"
+blue = "#526ccb"
+purple = "#b0599b"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#4e6872"
+ansi_white = "#9fb5be"
+
+# Bright ANSI accents (8-15)
+br_black = "#57717a"
+br_red = "#b53753"
+br_green = "#007d4e"
+br_yellow = "#e3940b"
+br_blue = "#4259ba"
+br_purple = "#9e458a"
+br_aqua = "#087971"
+br_white = "#aec5ce"
+
+# Terminal selection & diff highlights
+sel_fg = "#3b545e"
+sel_bg = "#9fb5be"
+tab_active_bg = "#e5d3d9"
+tab_active_fg = "#3b545e"
+diff_add = "#c7e2db"
+diff_add_emph = "#b1d6c8"
+diff_del = "#e5d3d9"
+diff_del_emph = "#e0bdc4"
+
+# ------------------------------------------------------------------------------
+# Madoromi Aki - Hiru (Day / Light)
+# ------------------------------------------------------------------------------
+
+[colorschemes.aki-hiru]
+name = "aki-hiru"
+appearance = "light"
+zellij_theme = "aki-hiru"
+delta_syntax_theme = "OneHalfLight"
+bat_theme = "OneHalfLight"
+tuicr_theme = "everforest-light"
+
+[colorschemes.aki-hiru.palette]
+# Base backgrounds & surfaces
+bg0 = "#f8f0e9"
+bg_bar = "#f8f0e9"
+bg1 = "#f0e6dd"
+bg2 = "#dfcebf"
+bg3 = "#e6dcd3"
+bg4 = "#cebeaf"
+bg_visual = "#dfcebf"
+bg_red = "#eccfc8"
+bg_blue = "#dfdde3"
+bg_yellow = "#ffc7b7"
+
+# Foregrounds & neutrals
+fg = "#5d4c3c"
+fg_reverse = "#f8f0e9"
+grey0 = "#8d7d6f"
+grey1 = "#9f8f81"
+grey2 = "#ae9e90"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#a43b3b"
+orange = "#ff5635"
+yellow = "#e3940b"
+green = "#7e8418"
+moss = "#008b57"
+aqua = "#008b57"
+blue = "#384dad"
+purple = "#a1488d"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#715f4f"
+ansi_white = "#beae9f"
+
+# Bright ANSI accents (8-15)
+br_black = "#7d6b5a"
+br_red = "#a43b3b"
+br_green = "#6d721d"
+br_yellow = "#e3940b"
+br_blue = "#323b94"
+br_purple = "#8f357b"
+br_aqua = "#00764a"
+br_white = "#cebeaf"
+
+# Terminal selection & diff highlights
+sel_fg = "#5d4c3c"
+sel_bg = "#beae9f"
+tab_active_bg = "#eccfc8"
+tab_active_fg = "#5d4c3c"
+diff_add = "#e1dcc6"
+diff_add_emph = "#d2cfaf"
+diff_del = "#eccfc8"
+diff_del_emph = "#e3bab2"
+
+# ------------------------------------------------------------------------------
+# Madoromi Fuyu - Hiru (Day / Light)
+# ------------------------------------------------------------------------------
+
+[colorschemes.fuyu-hiru]
+name = "fuyu-hiru"
+appearance = "light"
+zellij_theme = "fuyu-hiru"
+delta_syntax_theme = "OneHalfLight"
+bat_theme = "OneHalfLight"
+tuicr_theme = "everforest-light"
+
+[colorschemes.fuyu-hiru.palette]
+# Base backgrounds & surfaces
+bg0 = "#f0f1f8"
+bg_bar = "#f0f1f8"
+bg1 = "#e5e7f3"
+bg2 = "#ccd0e4"
+bg3 = "#dbdde9"
+bg4 = "#bcc0d3"
+bg_visual = "#ccd0e4"
+bg_red = "#ebd1da"
+bg_blue = "#dae0f3"
+bg_yellow = "#fcc8c1"
+
+# Foregrounds & neutrals
+fg = "#4a4e63"
+fg_reverse = "#f0f1f8"
+grey0 = "#7b7f91"
+grey1 = "#8d91a4"
+grey2 = "#9ca0b3"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#bb355a"
+orange = "#ff5635"
+yellow = "#e3940b"
+green = "#618c32"
+moss = "#028e7f"
+aqua = "#028e7f"
+blue = "#4a63c3"
+purple = "#a74f93"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#5e6277"
+ansi_white = "#acb0c3"
+
+# Bright ANSI accents (8-15)
+br_black = "#696d83"
+br_red = "#bb355a"
+br_green = "#4f7935"
+br_yellow = "#e3940b"
+br_blue = "#3b50b0"
+br_purple = "#953b81"
+br_aqua = "#087971"
+br_white = "#bcc0d3"
+
+# Terminal selection & diff highlights
+sel_fg = "#4a4e63"
+sel_bg = "#acb0c3"
+tab_active_bg = "#ebd1da"
+tab_active_fg = "#4a4e63"
+diff_add = "#d5dfd5"
+diff_add_emph = "#c3d3be"
+diff_del = "#ebd1da"
+diff_del_emph = "#e6bbc6"
+
+# ------------------------------------------------------------------------------
+# Madoromi Haru - Yoru (Night / Dark)
+# ------------------------------------------------------------------------------
+
+[colorschemes.haru-yoru]
+name = "haru-yoru"
+appearance = "dark"
+zellij_theme = "haru-yoru"
+delta_syntax_theme = "OneHalfDark"
+bat_theme = "Monokai Extended (default dark)"
+tuicr_theme = "everforest-dark"
+
+[colorschemes.haru-yoru.palette]
+# Base backgrounds & surfaces
+bg0 = "#241c26"
+bg_bar = "#1c151f"
+bg1 = "#392e3c"
+bg2 = "#392e3c"
+bg3 = "#160f18"
+bg4 = "#4e4352"
+bg_visual = "#392e3c"
+bg_red = "#462f35"
+bg_blue = "#2d2b3c"
+bg_yellow = "#5e473f"
+
+# Foregrounds & neutrals
+fg = "#e1d1e7"
+fg_reverse = "#241c26"
+grey0 = "#9f93a4"
+grey1 = "#8a7e8f"
+grey2 = "#756a7a"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#ff8b79"
+orange = "#ffbb74"
+yellow = "#ffc849"
+green = "#c1dd4a"
+moss = "#7bd6b6"
+aqua = "#7bd6b6"
+blue = "#6eadff"
+purple = "#fe8dc0"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#4e4352"
+ansi_white = "#cdbed3"
+
+# Bright ANSI accents (8-15)
+br_black = "#615665"
+br_red = "#ffaba3"
+br_green = "#dcee73"
+br_yellow = "#ffe387"
+br_blue = "#8ac3ff"
+br_purple = "#f9b3d1"
+br_aqua = "#9de6cd"
+br_white = "#b7a8bd"
+
+# Terminal selection & diff highlights
+sel_fg = "#e1d1e7"
+sel_bg = "#615665"
+tab_active_bg = "#1c151f"
+tab_active_fg = "#c1dd4a"
+diff_add = "#3c3b32"
+diff_add_emph = "#4e5039"
+diff_del = "#462f35"
+diff_del_emph = "#5e3b3f"
+
+# ------------------------------------------------------------------------------
+# Madoromi Natsu - Yoru (Night / Dark)
+# ------------------------------------------------------------------------------
+
+[colorschemes.natsu-yoru]
+name = "natsu-yoru"
+appearance = "dark"
+zellij_theme = "natsu-yoru"
+delta_syntax_theme = "OneHalfDark"
+bat_theme = "Monokai Extended (default dark)"
+tuicr_theme = "everforest-dark"
+
+[colorschemes.natsu-yoru.palette]
+# Base backgrounds & surfaces
+bg0 = "#132227"
+bg_bar = "#0e1a1f"
+bg1 = "#23363d"
+bg2 = "#23363d"
+bg3 = "#091317"
+bg4 = "#374b53"
+bg_visual = "#23363d"
+bg_red = "#3b343b"
+bg_blue = "#1a313d"
+bg_yellow = "#534b3e"
+
+# Foregrounds & neutrals
+fg = "#c0dde8"
+fg_reverse = "#132227"
+grey0 = "#869da5"
+grey1 = "#728790"
+grey2 = "#5d737b"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#ff8c9f"
+orange = "#ffb66d"
+yellow = "#eec307"
+green = "#b9d740"
+moss = "#6cd2cc"
+aqua = "#6cd2cc"
+blue = "#4ab8ff"
+purple = "#f894d8"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#374b53"
+ansi_white = "#adcad4"
+
+# Bright ANSI accents (8-15)
+br_black = "#4a5f66"
+br_red = "#ffacc0"
+br_green = "#d3e864"
+br_yellow = "#f6dd00"
+br_blue = "#74ccff"
+br_purple = "#ffb1e6"
+br_aqua = "#95e1de"
+br_white = "#97b3be"
+
+# Terminal selection & diff highlights
+sel_fg = "#c0dde8"
+sel_bg = "#4a5f66"
+tab_active_bg = "#0e1a1f"
+tab_active_fg = "#b9d740"
+diff_add = "#2d3f31"
+diff_add_emph = "#3f5337"
+diff_del = "#3b343b"
+diff_del_emph = "#554148"
+
+# ------------------------------------------------------------------------------
+# Madoromi Aki - Yoru (Night / Dark)
+# ------------------------------------------------------------------------------
+
+[colorschemes.aki-yoru]
+name = "aki-yoru"
+appearance = "dark"
+zellij_theme = "aki-yoru"
+delta_syntax_theme = "OneHalfDark"
+bat_theme = "Monokai Extended (default dark)"
+tuicr_theme = "everforest-dark"
+
+[colorschemes.aki-yoru.palette]
+# Base backgrounds & surfaces
+bg0 = "#271d14"
+bg_bar = "#20160e"
+bg1 = "#3d3024"
+bg2 = "#3d3024"
+bg3 = "#181008"
+bg4 = "#534538"
+bg_visual = "#3d3024"
+bg_red = "#492e23"
+bg_blue = "#312b2b"
+bg_yellow = "#614035"
+
+# Foregrounds & neutrals
+fg = "#e8d3c1"
+fg_reverse = "#271d14"
+grey0 = "#a59587"
+grey1 = "#908072"
+grey2 = "#7b6c5e"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#ff8672"
+orange = "#ff9b8f"
+yellow = "#ffae1e"
+green = "#bac105"
+moss = "#58c59f"
+aqua = "#58c59f"
+blue = "#7f9bea"
+purple = "#f68fd6"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#534538"
+ansi_white = "#d4c0ae"
+
+# Bright ANSI accents (8-15)
+br_black = "#66584b"
+br_red = "#ffa69c"
+br_green = "#ced500"
+br_yellow = "#ffcd53"
+br_blue = "#95aff3"
+br_purple = "#ffabe4"
+br_aqua = "#7bd6b6"
+br_white = "#beaa98"
+
+# Terminal selection & diff highlights
+sel_fg = "#e8d3c1"
+sel_bg = "#66584b"
+tab_active_bg = "#20160e"
+tab_active_fg = "#bac105"
+diff_add = "#3e371b"
+diff_add_emph = "#4f491e"
+diff_del = "#492e23"
+diff_del_emph = "#613a2e"
+
+# ------------------------------------------------------------------------------
+# Madoromi Fuyu - Yoru (Night / Dark)
+# ------------------------------------------------------------------------------
+
+[colorschemes.fuyu-yoru]
+name = "fuyu-yoru"
+appearance = "dark"
+zellij_theme = "fuyu-yoru"
+delta_syntax_theme = "OneHalfDark"
+bat_theme = "Monokai Extended (default dark)"
+tuicr_theme = "everforest-dark"
+
+[colorschemes.fuyu-yoru.palette]
+# Base backgrounds & surfaces
+bg0 = "#1c1e2a"
+bg_bar = "#151722"
+bg1 = "#2f3241"
+bg2 = "#2f3241"
+bg3 = "#0f111b"
+bg4 = "#434757"
+bg_visual = "#2f3241"
+bg_red = "#41303c"
+bg_blue = "#272c3e"
+bg_yellow = "#594247"
+
+# Foregrounds & neutrals
+fg = "#d2d6eb"
+fg_reverse = "#1c1e2a"
+grey0 = "#9397aa"
+grey1 = "#7e8294"
+grey2 = "#6a6e7f"
+
+# Semantic & ANSI normal accents (1-6)
+red = "#ff8799"
+orange = "#ff9b8f"
+yellow = "#ecba09"
+green = "#aece34"
+moss = "#5eccc5"
+aqua = "#5eccc5"
+blue = "#829eeb"
+purple = "#d18bb7"
+
+# Explicit ANSI normal extremes (0 & 7)
+ansi_black = "#434757"
+ansi_white = "#bec3db"
+
+# Bright ANSI accents (8-15)
+br_black = "#565a6b"
+br_red = "#ffa7bb"
+br_green = "#c6e050"
+br_yellow = "#f3d401"
+br_blue = "#99b2f5"
+br_purple = "#dfa3c0"
+br_aqua = "#87dcd8"
+br_white = "#a8adc4"
+
+# Terminal selection & diff highlights
+sel_fg = "#d2d6eb"
+sel_bg = "#565a6b"
+tab_active_bg = "#151722"
+tab_active_fg = "#aece34"
+diff_add = "#323b33"
+diff_add_emph = "#434e38"
+diff_del = "#41303c"
+diff_del_emph = "#5a3d49"

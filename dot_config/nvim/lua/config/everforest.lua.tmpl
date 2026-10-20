@@ -1,3 +1,6 @@
+{{- $csName := get . "colorscheme" | default (get .host_colorschemes .chezmoi.hostname) | default .default_colorscheme -}}
+{{- $cs := get .colorschemes $csName -}}
+{{- $p := $cs.palette -}}
 require("everforest").setup({
   -- Controls the "hardness" of the background. Options are "soft", "medium" or "hard".
   -- Default is "medium".
@@ -15,6 +18,35 @@ require("everforest").setup({
   disable_italic_comments = true,
   ui_contrast = "medium",
   colours_override = function(palette)
+{{- if and (ne $cs.name "everforest-light") (ne $cs.name "everforest-dark") }}
+    palette.bg_dim = "{{ $p.bg0 }}"
+    palette.bg0 = "{{ $p.bg0 }}"
+    palette.bg1 = "{{ $p.bg1 }}"
+    palette.bg2 = "{{ $p.bg2 }}"
+    palette.bg3 = "{{ $p.bg3 }}"
+    palette.bg4 = "{{ $p.bg4 }}"
+    palette.bg5 = "{{ $p.grey2 }}"
+    palette.bg_visual = "{{ $p.bg_visual }}"
+    palette.bg_red = "{{ $p.bg_red }}"
+    palette.bg_green = "{{ $p.diff_add }}"
+    palette.bg_blue = "{{ $p.bg_blue }}"
+    palette.bg_yellow = "{{ $p.bg_yellow }}"
+    palette.bg_purple = "{{ $p.bg_red }}"
+    palette.fg = "{{ $p.fg }}"
+    palette.red = "{{ $p.red }}"
+    palette.orange = "{{ $p.orange }}"
+    palette.yellow = "{{ $p.yellow }}"
+    palette.green = "{{ $p.green }}"
+    palette.aqua = "{{ $p.aqua }}"
+    palette.blue = "{{ $p.blue }}"
+    palette.purple = "{{ $p.purple }}"
+    palette.grey0 = "{{ $p.grey0 }}"
+    palette.grey1 = "{{ $p.grey1 }}"
+    palette.grey2 = "{{ $p.grey2 }}"
+    palette.statusline1 = "{{ $p.green }}"
+    palette.statusline2 = "{{ $p.fg }}"
+    palette.statusline3 = "{{ $p.red }}"
+{{- else }}
     --palette.fg = "#4b575e"
     --palette.bg0 = "#fffbef"
     --palette.bg1_medium = "#f4f0d9"
@@ -25,6 +57,7 @@ require("everforest").setup({
       --palette.bg0 = "#fffbef"
       --pallete.fg = "#1a1e20"
     --end
+{{- end }}
   end,
   on_highlights = function(hl, palette)
     hl.TabLineFill = { fg = palette.none, bg = palette.bg1, sp = palette.red }

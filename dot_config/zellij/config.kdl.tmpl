@@ -304,6 +304,24 @@ ui {
 //
 theme "{{ $cs.zellij_theme }}"
 
+{{- if and (ne $cs.zellij_theme "everforest-light") (ne $cs.zellij_theme "everforest-dark") }}
+themes {
+    {{ $cs.zellij_theme }} {
+        fg "{{ $p.fg }}"
+        bg "{{ $p.bg0 }}"
+        black "{{ $p.bg1 }}"
+        red "{{ $p.red }}"
+        green "{{ $p.green }}"
+        yellow "{{ $p.yellow }}"
+        blue "{{ $p.blue }}"
+        magenta "{{ $p.purple }}"
+        cyan "{{ $p.aqua }}"
+        white "{{ $p.fg }}"
+        orange "{{ $p.orange }}"
+    }
+}
+{{- end }}
+
 
 // Choose the base input mode of zellij.
 // Default: normal

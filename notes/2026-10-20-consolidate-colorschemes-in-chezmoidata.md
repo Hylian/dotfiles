@@ -81,6 +81,16 @@ Consuming templates resolve the scheme name and palette at the top:
 7. **Window Manager & Notifications (Sway, Dunst):**
    - [`dot_config/sway/config.tmpl`](../dot_config/sway/config.tmpl): Window border/titlebar colors dynamically parameterized with `$p.moss`, `$p.green`, `$p.bg0`, `$p.fg`.
    - [`dot_config/dunst/dunstrc.tmpl`](../dot_config/dunst/dunstrc.tmpl): Notification backgrounds parameterized with `$p.bg0` and `$p.fg`.
+8. **Madoromi Japanese Ink Palette Integration (8 Schemes):**
+   - Added all 8 Madoromi flavours to `.chezmoidata.toml` (`haru-hiru`, `natsu-hiru`, `aki-hiru`, `fuyu-hiru`, `haru-yoru`, `natsu-yoru`, `aki-yoru`, `fuyu-yoru`) with complete Pilot Iroshizuku ink ramps, Oklab blends, diffs, search, and ANSI 0–15 tables.
+   - Added explicit `ansi_black` and `ansi_white` to `everforest-light` and `everforest-dark` so Ghostty uses exact ANSI slot extremes without drift.
+   - Added custom `themes` definition block to [`dot_config/zellij/config.kdl.tmpl`](../dot_config/zellij/config.kdl.tmpl) for non-Everforest themes.
+   - Converted [`dot_config/nvim/lua/config/everforest.lua`](../dot_config/nvim/lua/config/everforest.lua) to [`dot_config/nvim/lua/config/everforest.lua.tmpl`](../dot_config/nvim/lua/config/everforest.lua.tmpl) with dynamic `colours_override = function(palette)` mapping `$p` into treesitter, tabby, lualine, and diffview highlights.
+9. **Interactive Colorscheme Switcher & Truecolor Preview (`theme`):**
+   - Added `~/.local/bin/theme` via [private_dot_local/bin/executable_theme](../private_dot_local/bin/executable_theme) deployed on Linux and macOS (whitelisted in [.chezmoiignore](../.chezmoiignore)).
+   - Implemented strict dirty-worktree guard checking `git status --porcelain --untracked-files=no` outside of `.chezmoidata.toml`.
+   - Added rich 24-bit Truecolor (`\e[38;2;R;G;Bm` / `\e[48;2;R;G;Bm`) preview rendering simulated Zellij statusbar, ANSI swatches, syntax highlighting, and git diff on full-width `bg0` canvas.
+   - Added live terminal OSC 11/10/4 retheming, zsh wordcode recompilation, and automatic git commit & push.
 
 ---
 
@@ -89,9 +99,10 @@ Consuming templates resolve the scheme name and palette at the top:
 1. **Stale Reference Check:**
    - `rg "\.theme\b"`: Confirmed 0 stale `.theme` references remaining across dotfiles.
 2. **Chezmoi Diff Fidelity:**
-   - `chezmoi diff`: Exactly matches expectations — only fixes Ghostty's `palette = 15=#fdffe8` typo and cleans up indentation in `.zshrc` and `widgets`. All other deployed files produced zero diff.
+   - `chezmoi diff`: Exactly matches expectations — only fixes Ghostty's `palette = 15=#fdffe8` typo and cleans up indentation in `.zshrc` and `widgets`. All other deployed files produced zero diff under `everforest-light`.
 3. **Alternate Scheme Rendering:**
    - Simulated `everforest-dark` via `chezmoi execute-template --config-format toml -c <(echo '[data] colorscheme = "everforest-dark"')`: Verified proper dark background (`#1e2326`), dark zjstatus ribbon styling, dark Delta config (`OneHalfDark`), and dark FZF options.
+   - Simulated `haru-hiru` and `fuyu-yoru`: Verified custom Zellij theme blocks, exact Madoromi ANSI 0–15 terminal colors, and Neovim `colours_override` palette tables.
 4. **Shell Syntax:**
    - `zsh -n <(chezmoi execute-template < dot_zshrc.tmpl)`: Exit code 0.
    - `zsh -n <(chezmoi execute-template < dot_config/zsh/widgets.tmpl)`: Exit code 0.
