@@ -1,4 +1,7 @@
 export google_zsh_flysolo=1
+{{ if eq .chezmoi.os "darwin" -}}
+export HOMEBREW_NO_ENV_HINTS=1
+{{ end -}}
 [[ -n "$ZELLIJ" ]] && setopt NO_GLOBAL_RCS
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 for _p in "/usr/local/bin" "/opt/homebrew/bin" "$HOME/.local/bin"; do
