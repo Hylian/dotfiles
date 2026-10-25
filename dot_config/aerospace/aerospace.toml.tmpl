@@ -134,11 +134,11 @@ outer.right =      [{monitor.'built-in' = 6}, 4]
 {{ if eq .chezmoi.hostname "baumkuchen" -}}
 [[on-window-detected]]
     if.app-id = 'org.whispersystems.signal-desktop'
-    run = ['move-node-to-workspace 3', 'move left', 'resize width 605']
+    run = ['move-node-to-workspace 3', 'move left', 'balance-sizes --workspace 3', 'resize width 605']
 
 [[on-window-detected]]
     if.app-id = 'com.hnc.Discord'
-    run = ['move-node-to-workspace 3', 'move right', 'resize width 907']
+    run = ['move-node-to-workspace 3', 'move right', 'balance-sizes --workspace 3', 'resize width 907']
 
 [[on-window-detected]]
     if.app-id = 'jcsalterego.Sky'
