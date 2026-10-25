@@ -432,8 +432,15 @@ if (( $+commands[zellij] )); then
     zellij setup --generate-auto-start zsh >! "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
     zcompile "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
   fi
-  if [[ -z "$ZELLIJ_NO_AUTOSTART" ]]; then
-    source "$ZSH_CACHE_DIR/zellij.zsh"
+  if [[ -z "$ZELLIJ_NO_AUTOSTART" && -z "$ZELLIJ" ]]; then
+    if [[ -n "$ZELLIJ_MOBILE_SESSION" && "$ZELLIJ_MOBILE_SESSION" != "0" && "$ZELLIJ_MOBILE_SESSION" != "false" ]]; then
+      zellij a -c mobile options --on-force-close detach
+      if [[ "$ZELLIJ_AUTO_EXIT" == "true" ]]; then
+        exit
+      fi
+    else
+      source "$ZSH_CACHE_DIR/zellij.zsh"
+    fi
   fi
 fi
 
