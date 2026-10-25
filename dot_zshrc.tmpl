@@ -433,7 +433,9 @@ if (( $+commands[zellij] )); then
     zcompile "$ZSH_CACHE_DIR/zellij.zsh" 2>/dev/null
   fi
   if [[ -z "$ZELLIJ_NO_AUTOSTART" && -z "$ZELLIJ" ]]; then
-    if [[ -n "$ZELLIJ_MOBILE_SESSION" && "$ZELLIJ_MOBILE_SESSION" != "0" && "$ZELLIJ_MOBILE_SESSION" != "false" ]]; then
+    local _mobile_session="${ZELLIJ_MOBILE_SESSION:-${LC_ZELLIJ_MOBILE_SESSION:-${LC_ZELLIJ_MOBILE:-}}}"
+    if [[ -n "$_mobile_session" && "$_mobile_session" != "0" && "$_mobile_session" != "false" ]]; then
+      export ZELLIJ_MOBILE_SESSION="$_mobile_session"
       zellij a -c mobile options --on-force-close detach
       if [[ "$ZELLIJ_AUTO_EXIT" == "true" ]]; then
         exit

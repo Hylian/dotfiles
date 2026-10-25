@@ -13,7 +13,10 @@ instead of launching the normal anonymous Zellij session.
 ## Implementation Details
 1. **Interactive Shell Auto-Start Guard in [dot_zshrc.tmpl](../dot_zshrc.tmpl):**
    - Wrapped the Zellij auto-start sequence behind `if [[ -z "$ZELLIJ_NO_AUTOSTART" && -z "$ZELLIJ" ]]; then`.
-   - Checked for `$ZELLIJ_MOBILE_SESSION` (`[[ -n "$ZELLIJ_MOBILE_SESSION" && "$ZELLIJ_MOBILE_SESSION" != "0" && "$ZELLIJ_MOBILE_SESSION" != "false" ]]`):
+   - Checked for `_mobile_session="${ZELLIJ_MOBILE_SESSION:-${LC_ZELLIJ_MOBILE_SESSION:-${LC_ZELLIJ_MOBILE:-}}}"`:
+     - OpenSSH client (`ssh`) only forwards `LANG` and `LC_*` by default via `SendEnv`, and OpenSSH server (`sshd`) discards all incoming environment variables except `LANG` and `LC_*` unless explicitly listed in `/etc/ssh/sshd_config` (`AcceptEnv`).
+     - By accepting `LC_ZELLIJ_MOBILE_SESSION` (and `LC_ZELLIJ_MOBILE`) alongside `ZELLIJ_MOBILE_SESSION`, clients can tunnel the environment variable directly through standard OpenSSH connections (e.g. `LC_ZELLIJ_MOBILE_SESSION=1 ssh host`) without requiring root access or sshd configuration.
+     - Automatically exports canonical `ZELLIJ_MOBILE_SESSION` in the shell environment.
      - When set, launches `zellij a -c mobile options --on-force-close detach`.
      - Invokes the `zellij()` shell wrapper in `.zshrc`, ensuring `_zellij_sync_client_env` records the client SSH status into `$env_dir/mobile` and updates `zjstatus` (`command_host`).
      - Respects `$ZELLIJ_AUTO_EXIT == "true"` to cleanly exit the outer shell if configured when Zellij exits.
