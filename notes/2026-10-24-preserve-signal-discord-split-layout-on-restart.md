@@ -15,15 +15,16 @@ On `baumkuchen`, workspace 3 hosts a horizontal split between Signal (left side,
      ```toml
      [[on-window-detected]]
          if.app-id = 'org.whispersystems.signal-desktop'
-         run = ['move-node-to-workspace 3', 'move left', 'balance-sizes --workspace 3', 'resize width 605']
+         run = ['move-node-to-workspace 3', 'move left', 'balance-sizes --workspace 3', 'resize smart -143']
      ```
    - Added `'move right'` and `'balance-sizes --workspace 3'` to Discord's `on-window-detected` callback sequence:
      ```toml
      [[on-window-detected]]
          if.app-id = 'com.hnc.Discord'
-         run = ['move-node-to-workspace 3', 'move right', 'balance-sizes --workspace 3', 'resize width 907']
+         run = ['move-node-to-workspace 3', 'move right', 'balance-sizes --workspace 3', 'resize smart +143']
      ```
-   - Running `balance-sizes --workspace 3` before `resize width` resets the workspace container partitions, shrinking Discord from its full-screen 1500px footprint to a balanced 50/50 partition (~748px each). Then `resize width 605` adjusts Signal to 605px while Discord expands cleanly into the remaining 907px, preventing window overlap.
+   - In AeroSpace, `resize` arguments are parsed as signed relative adjustments (`[+|-]<number>`). Passing unsigned `605` was treated as `+605`, which added 605px onto the balanced 748px partition (yielding 1353px) and pushed Discord off-screen.
+   - To achieve a target width of ~605px for Signal from a balanced 748px split (on a 1512px display with 16px gaps, usable width 1496px), Signal needs a relative decrease of 143px: `resize smart -143` (748 - 143 = 605px). Discord symmetrically receives `resize smart +143` (748 + 143 = 891px), perfectly distributing the container width without pushing windows off-screen.
 2. **Validation:**
    - Applied via `chezmoi apply --no-pager` and reloaded live via `aerospace reload-config`.
    - Verified callback command registration via `aerospace debug-windows`.
