@@ -41,6 +41,8 @@
 .config/waybar/config
 {{ end }}
 
-resources/
+AGENTS.md
 notes/
+resources/
+scripts/
 software/

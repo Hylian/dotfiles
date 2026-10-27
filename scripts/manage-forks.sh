@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # manage-forks.sh — Autonomous management, receipts, and build/sync for maintained software forks.
-# Maintained by `chez` skill for Hylian/dotfiles.
+# Maintained by `chez` (AGENTS.md) for Hylian/dotfiles.
 
 set -euo pipefail
 
 # Determine dotfiles repository root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
+REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || (cd "${SCRIPT_DIR}/.." && pwd))"
 
 # Machine-local state directory for build receipts
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/builds"
