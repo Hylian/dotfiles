@@ -45,6 +45,12 @@ diffview.setup({
       width = 35,
     },
   },
+  file_history_panel = {
+    win_config = {
+      position = "bottom",
+      height = 10,
+    },
+  },
   default_args = {
     DiffviewOpen = {},
     DiffviewFileHistory = {},

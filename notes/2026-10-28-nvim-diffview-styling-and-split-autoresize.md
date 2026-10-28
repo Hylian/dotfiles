@@ -55,3 +55,8 @@
      in [dot_config/nvim/lua/config/focus.lua](../dot_config/nvim/lua/config/focus.lua)
      and disabled `focus.nvim` whenever a Diffview tabpage (`vim.t.diffview_view_initialized`
      or `diffview.lib.get_current_view()`) or diff window (`vim.wo.diff`) is active.
+4. **Compact File History Panel (`height = 10`):**
+   - Set `file_history_panel.win_config = { position = "bottom", height = 10 }`
+     (down from the default 16 rows) in
+     [dot_config/nvim/lua/config/diffview.lua](../dot_config/nvim/lua/config/diffview.lua)
+     so side-by-side diffs get 6 extra rows of vertical breathing room.
