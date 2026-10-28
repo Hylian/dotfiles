@@ -1,6 +1,6 @@
 # System Profile & Living Ground Truth ٩(◕‿◕｡)۶
 
-*Last Updated: 2026-10-27*
+*Last Updated: 2026-10-28*
 
 This document represents the current, living ground truth for this cross-platform dotfiles repository (`Hylian/dotfiles`). It is maintained autonomously by `chez` ([AGENTS.md](../AGENTS.md)) to preserve preferences, quirks, and architectural decisions across sessions.
 
@@ -169,6 +169,7 @@ This document represents the current, living ground truth for this cross-platfor
 * `<leader>gh` (`;gh`): `:DiffviewFileHistory` (open Diffview commit and file history; visual mode diffs selected lines).
 * **Git Diff & Merge Conflict Resolution:**
   * **Diffview (`diffview.nvim`):** `[c` / `]c` jump between diff hunks; `q` / `<leader>q` closes Diffview; in files panel: `<CR>` opens diff view, `<S-CR>` / `Shift+Enter` opens highlighted file on its own in a new tab (not the diff view), `-` or `s` stages/unstages, `S` stages all, `U` unstages all, `X` restores working copy, `R` refreshes; in 3-way merge tool (`diff3_mixed`): `[x` / `]x` jump conflicts, `<leader>co` (ours), `<leader>ct` (theirs), `<leader>cb` (base), `<leader>ca` (all), `<leader>c0` (none).
+  * **Delta-Grade Side-by-Side Diff Styling & Auto-Resize:** [dot_config/nvim/init.lua.tmpl](../dot_config/nvim/init.lua.tmpl) sets `fillchars` `diff = '╱'` (diagonal hatch shading for deleted/empty filler lines in muted `{{ $p.grey2 }}` via `DiffviewDiffDeleteDim`) and tunes `diffopt` with `algorithm:histogram` and `linematch:60` (on top of Neovim 0.12's `indent-heuristic` and `inline:char`). [dot_config/nvim/lua/config/everforest.lua.tmpl](../dot_config/nvim/lua/config/everforest.lua.tmpl) and [dot_config/nvim/lua/config/diffview.lua](../dot_config/nvim/lua/config/diffview.lua) (`hooks.view_post_layout`) map the left ("old") diff split to soft red (`diff_del`) with deeper red inline character emphasis (`diff_del_emph` on `DiffText`/`DiffTextAdd`) and the right ("new") diff split to soft green (`diff_add`) with deeper green inline character emphasis (`diff_add_emph`), keeping `fg = palette.none` so Treesitter syntax highlighting is preserved instead of clobbered by `everforest-nvim`'s default opaque blue `DiffText`. Split balancing on window/pane resize is handled via a `VimResized` autocmd in [dot_config/nvim/init.lua.tmpl](../dot_config/nvim/init.lua.tmpl) (`view.panel:resize()` + `wincmd =` across tabs), and [dot_config/nvim/lua/config/focus.lua](../dot_config/nvim/lua/config/focus.lua) registers `FocusDisable` before `focus.setup()` while disabling `focus.nvim` across Diffview tabpages (`vim.t.diffview_view_initialized` / `diffview.lib.get_current_view()`) and diff windows so golden-ratio autoresize never crushes or unbalances Diffview splits. See [2026-10-28-nvim-diffview-styling-and-split-autoresize.md](2026-10-28-nvim-diffview-styling-and-split-autoresize.md).
   * **In-Buffer Conflict Picker (`git-conflict.nvim`):** Inline virtual-text conflict markers during merges/rebases: `co` (ours), `ct` (theirs), `cb` (both), `c0` (none), `]x` / `[x` (next/prev conflict).
 
 ### Zsh Interactive Widgets

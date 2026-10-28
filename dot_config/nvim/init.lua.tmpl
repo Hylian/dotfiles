@@ -53,6 +53,14 @@ vim.opt.shortmess = 'ostTcCWFSI'
 vim.opt.timeoutlen = 250
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.fillchars:append({
+  diff = '╱',
+  foldopen = '',
+  foldclose = '',
+  foldsep = ' ',
+})
+vim.opt.diffopt:remove({ 'linematch:40' })
+vim.opt.diffopt:append({ 'algorithm:histogram', 'linematch:60' })
 vim.opt.background = '{{ $cs.appearance }}'
 vim.opt.scrolloff = 4
 vim.opt.showtabline = 2
@@ -229,6 +237,30 @@ vim.api.nvim_create_autocmd({'BufWinEnter'}, {
   desc = 'Cursor history across file opens',
   pattern = '*',
   command = 'silent! normal! g`"zv',
+})
+
+vim.api.nvim_create_autocmd('VimResized', {
+  desc = 'Automatically equalize split sizes when terminal window is resized',
+  pattern = '*',
+  callback = function()
+    local cur_tab = vim.api.nvim_get_current_tabpage()
+    local dv_lib = package.loaded['diffview.lib']
+    for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+      if vim.api.nvim_tabpage_is_valid(tab) then
+        vim.api.nvim_set_current_tabpage(tab)
+        if dv_lib then
+          local view = dv_lib.get_current_view()
+          if view and view.panel and view.panel:is_open() then
+            view.panel:resize()
+          end
+        end
+        vim.cmd('wincmd =')
+      end
+    end
+    if vim.api.nvim_tabpage_is_valid(cur_tab) then
+      vim.api.nvim_set_current_tabpage(cur_tab)
+    end
+  end,
 })
 
 vim.api.nvim_create_autocmd("VimLeave", {

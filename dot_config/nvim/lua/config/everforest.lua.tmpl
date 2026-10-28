@@ -66,6 +66,21 @@ require("everforest").setup({
     hl.TabLineInactiveSep = { fg = palette.blue, bg = palette.bg1, sp = palette.red }
     hl.TabLineInactive = { fg = palette.fg, bg = palette.bg4, sp = palette.red }
     hl.TabLineCurrent = { fg = palette.green, bg = palette.none, sp = palette.red }
+
+    -- Delta-style diff highlights that preserve Treesitter syntax foregrounds
+    hl.DiffAdd = { fg = palette.none, bg = "{{ $p.diff_add }}" }
+    hl.DiffDelete = { fg = palette.none, bg = "{{ $p.diff_del }}" }
+    hl.DiffChange = { fg = palette.none, bg = palette.bg_blue }
+    hl.DiffText = { fg = palette.none, bg = "{{ $p.diff_add_emph }}" }
+    hl.DiffTextAdd = { fg = palette.none, bg = "{{ $p.diff_add_emph }}" }
+    hl.DiffviewDiffAdd = { fg = palette.none, bg = "{{ $p.diff_add }}" }
+    hl.DiffviewDiffAddAsDelete = { fg = palette.none, bg = "{{ $p.diff_del }}" }
+    hl.DiffviewDiffDelete = { fg = "{{ $p.grey2 }}", bg = palette.none }
+    hl.DiffviewDiffDeleteDim = { fg = "{{ $p.grey2 }}", bg = palette.none }
+    hl.DiffviewDiffChangeDelete = { fg = palette.none, bg = "{{ $p.diff_del }}" }
+    hl.DiffviewDiffTextDelete = { fg = palette.none, bg = "{{ $p.diff_del_emph }}" }
+    hl.DiffviewDiffChangeAdd = { fg = palette.none, bg = "{{ $p.diff_add }}" }
+    hl.DiffviewDiffTextAdd = { fg = palette.none, bg = "{{ $p.diff_add_emph }}" }
   end,
 })
 

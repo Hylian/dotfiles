@@ -49,7 +49,30 @@ diffview.setup({
     DiffviewOpen = {},
     DiffviewFileHistory = {},
   },
-  hooks = {},
+  hooks = {
+    view_post_layout = function(view)
+      if view.winopts and view.winopts.diff2 then
+        view.winopts.diff2.a.winhl = {
+          "DiffAdd:DiffviewDiffAddAsDelete",
+          "DiffDelete:DiffviewDiffDeleteDim",
+          "DiffChange:DiffviewDiffChangeDelete",
+          "DiffText:DiffviewDiffTextDelete",
+          "DiffTextAdd:DiffviewDiffTextDelete",
+        }
+        view.winopts.diff2.b.winhl = {
+          "DiffDelete:DiffviewDiffDeleteDim",
+          "DiffAdd:DiffviewDiffAdd",
+          "DiffChange:DiffviewDiffChangeAdd",
+          "DiffText:DiffviewDiffTextAdd",
+          "DiffTextAdd:DiffviewDiffTextAdd",
+        }
+      end
+      if view.panel and view.panel:is_open() then
+        view.panel:resize()
+      end
+      vim.cmd("wincmd =")
+    end,
+  },
   keymaps = {
     disable_defaults = false,
     view = {
