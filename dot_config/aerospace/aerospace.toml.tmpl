@@ -32,7 +32,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 [mode.main.binding]
 cmd-enter = "exec-and-forget open -n /Applications/Ghostty.app"
 {{ if eq .chezmoi.hostname "shined-mac" -}}
-cmd-shift-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwd"
+cmd-shift-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwd6"
 cmd-ctrl-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic rwc"
 {{- else if eq .chezmoi.hostname "baumkuchen" -}}
 cmd-shift-enter = "exec-and-forget open -n /Applications/Ghostty.app --env ZELLIJ_NO_AUTOSTART=1 --args -e /bin/zsh -lic \"ssh -t studio 'zellij a -c persist options --on-force-close detach'\""
